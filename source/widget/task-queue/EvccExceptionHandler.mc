@@ -28,4 +28,9 @@ class EvccExceptionHandler {
             throw _exception;
         }
     }
+
+    // If there is one, throws the exception
+    public function clearException() as Void {
+        _exception = null;
+    }
 }

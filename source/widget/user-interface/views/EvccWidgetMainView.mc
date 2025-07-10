@@ -25,7 +25,6 @@ import Toybox.Math;
     // site (_actAsGlance=true). Only if that one site is selected, the 
     // other sites will be presented as sub view and can be cycled through.
     var _actAsGlance as Boolean;
-    public function actsAsGlance() as Boolean { return _actAsGlance; }
     
     // When we process the state the first time, we check if a
     // forecast is available and if yes add the forecast view 
@@ -51,34 +50,8 @@ import Toybox.Math;
         }
     }
 
-    // Detail views present additional data for a particular site. This function adds 
-    // detail views for this site, either to the lower level or to the same level views, 
-    // depending on the situation.
-    // Detail views are not available on low-memory devices.    
-    // ATTENTION: this function is called everytime there is a new web response, since changed
-    // data may lead to additional views being displayed. Therefore, this function has to protect 
-    // itself from adding the same view twice.
-    (:exclForMemoryLow)   
-    public function addDetailViews( calledDuringAppStartup as Boolean ) as Void {
-        // EvccHelperBase.debug("WidgetSiteMain: addDetailViews" );
-        var stateRequest = getStateRequest();
-
-        // Note that we DO NOT check fore staterq.hasCurrentState(). In this instance we are not interested
-        // whether the stored state is current or not. Regardless of age, if the previous state had a 
-        // forecast we assume that there is still a forecast
-        // If there is an error, we do not add anything. The actual error will be handled by
-        // the content assembly of this view.
-        if( ! stateRequest.hasError() && stateRequest.hasState() ) {
-            if( ! _alreadyHasForecastView && stateRequest.getState().hasForecast() ) {
-                _alreadyHasForecastView = true;
-                addDetailView( EvccWidgetForecastView, calledDuringAppStartup );
-            }
-            if( ! _alreadyHasStatisticsView && stateRequest.getState().getStatistics() != null ) {
-                _alreadyHasStatisticsView = true;
-                addDetailView( EvccWidgetStatisticsView, calledDuringAppStartup );
-            }
-        }
-    }
+    // See _actAsGlance
+    public function actsAsGlance() as Boolean { return _actAsGlance; }
 
     // This function is the one actually decides if a detail view is added
     // on the same or on the lower level. To be able to apply this to 
@@ -115,6 +88,35 @@ import Toybox.Math;
     (:exclForMemoryStandard)   
     public function addDetailViews( calledDuringAppStartup as Boolean ) as Void {}
 
+    // Detail views present additional data for a particular site. This function adds 
+    // detail views for this site, either to the lower level or to the same level views, 
+    // depending on the situation.
+    // Detail views are not available on low-memory devices.    
+    // ATTENTION: this function is called everytime there is a new web response, since changed
+    // data may lead to additional views being displayed. Therefore, this function has to protect 
+    // itself from adding the same view twice.
+    (:exclForMemoryLow)   
+    public function addDetailViews( calledDuringAppStartup as Boolean ) as Void {
+        // EvccHelperBase.debug("WidgetSiteMain: addDetailViews" );
+        var stateRequest = getStateRequest();
+
+        // Note that we DO NOT check fore staterq.hasCurrentState(). In this instance we are not interested
+        // whether the stored state is current or not. Regardless of age, if the previous state had a 
+        // forecast we assume that there is still a forecast
+        // If there is an error, we do not add anything. The actual error will be handled by
+        // the content assembly of this view.
+        if( ! stateRequest.hasError() && stateRequest.hasState() ) {
+            if( ! _alreadyHasForecastView && stateRequest.getState().hasForecast() ) {
+                _alreadyHasForecastView = true;
+                addDetailView( EvccWidgetForecastView, calledDuringAppStartup );
+            }
+            if( ! _alreadyHasStatisticsView && stateRequest.getState().getStatistics() != null ) {
+                _alreadyHasStatisticsView = true;
+                addDetailView( EvccWidgetStatisticsView, calledDuringAppStartup );
+            }
+        }
+    }
+
     // If we act as glance, we update the current site
     function onShow() as Void {
         try {
@@ -131,11 +133,12 @@ import Toybox.Math;
                 if( siteCount > 1 ) {
                     // setSiteIndex will also update the content
                     // if the site index has changed
-                    setSiteIndex( EvccBreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() ) );
+                    setSiteIndex( EvccBreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
                 }
             }
             EvccWidgetSiteViewBase.onShow();
         } catch ( ex ) {
+            getExceptionHandler().registerException( ex );
             EvccHelperBase.debugException( ex );
         }
     }
@@ -144,16 +147,16 @@ import Toybox.Math;
     // With every new web response we check if there are maybe new detail views to be displayed
     // This is important when we initially do not have an up-to-date state and therefore 
     // state-dependent detail views are not added in the addDetailViews() call from the 
-    // constructor
+    // constructor ...
 
-    // If view prerendering is disabled, we do this in the onUpdate
+    // ... if view prerendering is disabled, we do this in the onUpdate ...
     (:exclForViewPreRenderingEnabled) 
     function onUpdate( dc as Dc ) as Void {
         addDetailViews( false );
         EvccWidgetSiteViewBase.onUpdate( dc );
     }
 
-    // If view prerendering is enabled, we have to do this earlier,
+    // ... if view prerendering is enabled, we have to do this earlier,
     // when onStateChange is called, so that the further prerendering
     // of the page and select indicator is already is based on the adapted 
     // detail views.

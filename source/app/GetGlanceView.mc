@@ -5,7 +5,8 @@ import Toybox.WatchUi;
  * This class exists solely to implement getGlanceView() for EvccApp
  * outside the background scope, in order to reduce memory usage.
  */
-(:glance :exclForGlanceNone) class GetGlanceView {
+(:glance :exclForGlanceNone) 
+class GetGlanceView {
     
     // Returns the GlanceView
     public static function getGlanceView() as [ GlanceView ] or [ GlanceView, GlanceViewDelegate ] or Null {

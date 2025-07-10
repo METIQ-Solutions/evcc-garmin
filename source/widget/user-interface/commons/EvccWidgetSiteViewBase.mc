@@ -30,11 +30,14 @@ class EvccWidgetSiteViewBase extends WatchUi.View {
     protected function setSiteIndex( siteIndex as Number ) as Void { 
         if( _siteIndex != siteIndex ) {
             _siteIndex = siteIndex;
+            _exceptionHandler.clearException();
             prepareImmediately();
         }
     }
     
-    public function getStateRequest() as EvccStateRequest { return EvccStateRequestRegistry.getStateRequest( _siteIndex ); }
+    public function getStateRequest() as EvccStateRequest { 
+        return EvccStateRequestRegistry.getStateRequest( _siteIndex ); 
+    }
 
     // Organization of views
 

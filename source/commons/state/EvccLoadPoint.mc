@@ -78,7 +78,7 @@ import Toybox.Lang;
         return loadpoint;
     }
 
-    (:exclForMemoryLow)
+    (:exclForMemoryLow :typecheck(disableGlanceCheck))
     function serializeControllable( loadpoint as JsonContainer ) as JsonContainer {
         if( _controllable != null ) {
             _controllable.serialize( loadpoint );

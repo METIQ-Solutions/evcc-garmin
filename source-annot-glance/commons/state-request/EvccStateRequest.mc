@@ -69,7 +69,9 @@ import Toybox.PersistedContent;
     // Indicates to the parent class that a previousy valid state is available and
     // therefore errors do not yet need to be reported
     public function hasPreviousValidState() as Boolean { 
-        return _stateStore.getState() == null || Time.now().compare( (_stateStore.getState() as EvccState).getTimestamp() ) > _dataExpiry; 
+        var state = _stateStore.getState();
+        return 
+            state != null && Time.now().compare( state.getTimestamp() ) <= _dataExpiry; 
     }
 
     // Loads the initial state from storage

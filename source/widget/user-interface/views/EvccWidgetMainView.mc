@@ -138,11 +138,23 @@ import Toybox.Math;
             }
             EvccWidgetSiteViewBase.onShow();
         } catch ( ex ) {
-            getExceptionHandler().registerException( ex );
+            // setSiteIndex pre-renders the content in case the
+            // index changed, and we need to log any exceptions
+            // coming from that
+            handleOnShowException( ex );
             EvccHelperBase.debugException( ex );
         }
     }
 
+    // Only with view pre-rendering there is an exception
+    // handler at which we have to register the exception
+    // for it to be displayed in onUpdate.
+    (:exclForViewPreRenderingDisabled)
+    private function handleOnShowException( ex as Exception ) as Void {
+        getExceptionHandler().registerException( ex );
+    }
+    (:exclForViewPreRenderingEnabled)
+    private function handleOnShowException( ex as Exception ) as Void {}
 
     // With every new web response we check if there are maybe new detail views to be displayed
     // This is important when we initially do not have an up-to-date state and therefore 

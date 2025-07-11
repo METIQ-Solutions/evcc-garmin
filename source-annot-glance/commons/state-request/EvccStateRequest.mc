@@ -6,11 +6,13 @@ import Toybox.PersistedContent;
 
 // This is the foreground implementation, to the background
 // implementation it adds:
+// - parsing the JSON into an EvccState object
 // - a function to load an initial state from storage
 // - accessors that are only required by UI components
 // - for devices with standard memory additional JQ filters 
 // - additional callback logic for multiple callbacks and
 //   calling WatchUi.requestUpdate
+// - persisting the EvccState object via the EvccStateStore
 (:glance) class EvccStateRequest extends EvccStateRequestBackground {
     
     // If it is not a low memory device, we add statistics and forecast
@@ -113,6 +115,12 @@ import Toybox.PersistedContent;
         if( json != null ) {
             _stateStore.setState( json );
         }
+    }
+
+    // Override the parent function to persist the
+    // state class in the state store instead of the JSON
+    public function persistState() as Void { 
+        _stateStore.persist();
     }
 
     (:exclForWebResponseCallbacksDisabled) 

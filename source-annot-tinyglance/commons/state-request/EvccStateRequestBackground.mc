@@ -14,6 +14,7 @@ typedef EvccStateRequestCallback as interface {
 // This is the base class, holding only the code needed in the background service
 // - It has a makeRequest function for making a request
 // - It makes the result (a state or an error) available.
+//   The result is made available as JSON only, not as EvccState
 // - Once a web response arrives, it calls only the first registered callback,
 //   which is the background service
 (:background) 
@@ -155,6 +156,11 @@ class EvccStateRequestBackground {
     }
 
     // Persists the state 
+    // In the background we persist the JSON directly,
+    // without parsing it into the EvccState
+    // This conserves memory, because the EvccState and all
+    // related classes can be omitted from the background
+    // scope
     public function persistState() as Void { 
         if( _json != null ) {
             EvccStateStoreBackground.persistJson( _json, Time.now(), _siteIndex );
@@ -162,6 +168,7 @@ class EvccStateRequestBackground {
         }
     }
 
+    // Register a callback
     (:exclForWebResponseCallbacksDisabled) 
     public function registerCallback( callback as EvccStateRequestCallback ) as Void {
         _callbacks.add( callback );

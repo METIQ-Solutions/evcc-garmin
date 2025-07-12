@@ -26,15 +26,11 @@ class EvccStateRequestBackground {
     // In the background we only request basic data, the foreground
     // class derived from this one will add additional data to the JQ filter
     protected const JQ_BASE_OPENING = 
-        "{result:{" +
-        "loadpoints:[.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration}]" +
-        ",pvPower,homePower,siteTitle,batterySoc,batteryPower" +
-        ",gridPower,grid:{power:.grid.power}" + 
-        ",vehicles:.vehicles|map_values({title})";
+        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
 
     // Close the main filter and add function to remove all null values and empty objects or arrays
     protected const JQ_BASE_CLOSING = 
-        "}}" +
+        "}" +
         "|walk(if type==\"object\"then with_entries(select(.value!=null and .value!={} and .value!=[]))elif type==\"array\"then map(select(.!=null and .!={} and .!=[]))else . end)";
 
     // Builds the base JQ filter for background scope.
@@ -130,8 +126,8 @@ class EvccStateRequestBackground {
         _error = false; _errorMessage = ""; _errorCode = "";
         
         if( responseCode == 200 ) {
-            if( data instanceof Dictionary && data["result"] != null ) {
-                _json = data["result"] as JsonContainer;
+            if( data instanceof Dictionary ) {
+                _json = data as JsonContainer;
                 onJsonReceive();
             } else {
                 _errorMessage = "Unexpected response: " + data;

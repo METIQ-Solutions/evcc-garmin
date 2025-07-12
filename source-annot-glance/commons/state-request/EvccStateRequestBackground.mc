@@ -97,7 +97,7 @@ class EvccStateRequestBackground {
         var url = siteConfig.getUrl() + "/api/state";
         var parameters = { "jq" => JQ };
 
-        EvccHelperBase.debug( JQ );
+        // EvccHelperBase.debug( JQ );
         
         var options = {
             :method => Communications.HTTP_REQUEST_METHOD_GET,

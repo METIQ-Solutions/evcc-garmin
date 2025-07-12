@@ -139,7 +139,9 @@ The main view includes fixed elements representing power flows from the PV, grid
 
 If a battery is present, the house battery is always displayed first. When multiple batteries exist, a single element consolidates the total data from all batteries.
 
-Load points appear only when a vehicle is connected. Each load point displays a main line with the vehicle name, power flow, state of charge (SoC), and charging mode. If the vehicle is charging, a smaller secondary line shows the charging mode and estimated remaining charge time. The layout prioritizes displaying as many load points as possible, with secondary lines shown only if space permits.
+EV charging load points appear only when a vehicle is connected. Each load point displays a main line with the vehicle name, power flow, state of charge (SoC), and charging mode. If the vehicle is charging, a smaller secondary line shows the charging mode and estimated remaining charge time. The layout prioritizes displaying as many load points as possible, with secondary lines shown only if space permits.
+
+Load points representing heaters or integrated devices are always displayed, even when they are not active. However, on some older devices with very limited app memory, these load points may be omitted entirely. For details, refer to the Detail Views column in the [Supported Devices](#supported-devices) table.
 
 Beyond the main view, additional detail views are available:
 
@@ -342,6 +344,7 @@ The table below lists supported devices along with their capabilities. Click on 
 | venu2s             | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
 | venu3              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | venu3s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| venux1             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | vivoactive3        | -                 | 1                       | No                               | Static           | May not work with large sites (memory limit)                                       |
 | vivoactive3m       | -                 | 5                       | Yes                              | Static           |                                                                                    |
 | vivoactive3mlte    | -                 | 5                       | Yes                              | Static           | May not work with large sites (cpu limit)                                          |
@@ -366,7 +369,7 @@ The app offers five font sizes and selects the most suitable one based on the co
 
 ## Detail Views
 
-On some devices with very limited memory available to apps, the [detail views](#site-views) of the site and the [system info view](#system-info-view) are not available.
+On some devices with very limited memory available to apps, the [detail views](#site-views) of the site and the [system info view](#system-info-view) are not available. Additionally, the [main view](#site-views) is restricted to showing only connected vehicles — heaters and integrated devices are omitted on those devices.
 
 # Troubleshooting
 
@@ -404,6 +407,9 @@ You can get help by posting in [this thread](https://github.com/evcc-io/evcc/dis
 
 | Version | Changes |
 |--------:|-------------|
+| **v1.4.3** | Added support for the newly released Venu X1 [ticket #128](https://github.com/TheNinth7/evccg/issues/128)<br>Updated to handle an upcoming breaking change in the evcc REST API [ticket #127](https://github.com/TheNinth7/evccg/issues/127)
+| **v1.4.2.1** | Fixed an issue where the state did not persist correctly, causing a "Loading" message to appear when opening the widget [ticket #126](https://github.com/TheNinth7/evccg/issues/126)
+| **v1.4.2** | Improved performance of glance rendering [ticket #109](https://github.com/TheNinth7/evccg/issues/109)<br>Enhanced support for integrated devices [ticket #113](https://github.com/TheNinth7/evccg/issues/113)<br>Fixed an issue with the statistics JSON that could cause the app to crash [ticket #112](https://github.com/TheNinth7/evccg/issues/112)
 | **v1.4.1** | Fixed incorrect spacing in glance view [ticket #111](https://github.com/TheNinth7/evccg/issues/111)|
 | **v1.4** | Added a new statistics view displaying the percentage of solar energy used.<br>Improved performance by pre-rendering views in the background, resulting in faster view transitions.<br>Added support for the newly releas33ed Forerunner 165 / 165 Music and Vivoactive 6.<br>Updated feature compatibility for Fenix 6 and the Vivoactive 3 / 3 Music / 3 Music LTE. See [Supported Devices](#supported-devices) for full details.<br>Removed forecast and statistics querying from tiny glance. As a result, on devices using tiny glance, the widget may take a second or two after launch to fetch the full state and display the forecast view.<br>Upgraded to Garmin Connect IQ SDK 8.1.1.
 | **v1.3.3** | Fixed an unexpected TypeError that occurred after updating to v1.3.3 on certain devices. Affected models include: Fenix 6 / 6 Pro, Forerunner 745 / 945, and Vivoactive 3 ([Issue #6](https://github.com/TheNinth7/evcc-garmin/issues/2)).

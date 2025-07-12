@@ -18,10 +18,10 @@ import Toybox.PersistedContent;
     // If it is not a low memory device, we add statistics and forecast
     (:exclForMemoryLow) 
     private const JQ_STATISTICS = 
-        ",statistics:.statistics|map_values({solarPercentage})";
+        ",statistics:$data.statistics|map_values({solarPercentage})";
    (:exclForMemoryLow) 
     private const JQ_FORECAST = 
-        ",forecast:{solar:.forecast.solar|{scale,today:{energy:.today.energy},tomorrow:{energy:.tomorrow.energy},dayAfterTomorrow:{energy:.dayAfterTomorrow.energy}}}";
+        ",forecast:{solar:$data.forecast.solar|{scale,today:{energy:.today.energy},tomorrow:{energy:.tomorrow.energy},dayAfterTomorrow:{energy:.dayAfterTomorrow.energy}}}";
     (:exclForMemoryLow)
     protected var JQ as String = JQ_BASE_OPENING + JQ_FORECAST + JQ_STATISTICS + JQ_BASE_CLOSING;
 

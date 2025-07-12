@@ -142,6 +142,7 @@ venu2plus.resourcePath=$(venu2.resourcePath)
 venu2s.resourcePath=resources-site-settings/site5;resources;resources-drawables/venu2s
 venu3.resourcePath=resources-site-settings/site5;resources;resources-drawables/venu3
 venu3s.resourcePath=resources-site-settings/site5;resources;resources-drawables/venu3s
+venux1.resourcePath=resources-site-settings/site5;resources;resources-drawables/venux1
 vivoactive3.resourcePath=resources-site-settings/site1-noforecast;resources;resources-drawables/vivoactive3
 vivoactive3m.resourcePath=resources-site-settings/site5;resources;resources-drawables/vivoactive3m
 vivoactive3mlte.resourcePath=$(vivoactive3m.resourcePath)

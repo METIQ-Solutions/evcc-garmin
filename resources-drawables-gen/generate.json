@@ -217,6 +217,17 @@
             "icon_small":"45",
             "icon_medium":"51"
         },
+        "venux1":{
+            "fontMode":"vector",
+            "logo_flash":"65",
+            "logo_evcc":"25",
+            "icon_glance":"37",
+            "icon_micro":"34",
+            "icon_xtiny":"41",
+            "icon_tiny":"48",
+            "icon_small":"54",
+            "icon_medium":"61"
+        },
         "fr165":{
             "fontMode":"vector",
             "logo_flash":"54",

@@ -26,10 +26,10 @@ import Toybox.Application.Properties;
 
         var heights = new Array<Float>[fonts.size()];
         // We take either 13 % of the screen height or the size of the medium font, whichever is smaller
-        heights[0] = EvccHelperUI.min( Graphics.getFontHeight( fonts[0] ).toFloat(), System.getDeviceSettings().screenHeight * 0.13 );
+        heights[0] = EvccHelperUI.min( Graphics.getFontHeight( fonts[0] ).toFloat(), System.getDeviceSettings().screenHeight * 0.13 ).toFloat();
         
         // We take either 56 % of the medium font or the height of the xtiny font, whichever is smaller
-        heights[heights.size()-1] = EvccHelperUI.min( Graphics.getFontHeight( fonts[fonts.size()-1] ).toFloat(), heights[0] * 0.56 );
+        heights[heights.size()-1] = EvccHelperUI.min( Graphics.getFontHeight( fonts[fonts.size()-1] ).toFloat(), heights[0] * 0.56 ).toFloat();
         
         var step = ( heights[0] - heights[heights.size()-1] ) / ( heights.size()-1 );
         

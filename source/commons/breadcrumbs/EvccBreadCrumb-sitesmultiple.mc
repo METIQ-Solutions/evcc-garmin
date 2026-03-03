@@ -85,7 +85,7 @@ import Toybox.Application;
         for( var i = 0; i < serializedChildren.size(); i++ ) {
             var child = _children[i];
             if( child != null ) {
-                serializedChildren[i] = child.serialize() as Array;
+                serializedChildren[i] = child.serialize() as SerializedBreadCrumb;
             }
         }        
         return [ _selectedChild, serializedChildren ];

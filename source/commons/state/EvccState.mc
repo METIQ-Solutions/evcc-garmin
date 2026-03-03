@@ -22,6 +22,8 @@ import Toybox.Time;
 
     private const BATTERYSOC = "batterySoc";
     private const BATTERYPOWER = "batteryPower";
+    private const BATTERY = "battery";
+    private const SOC = "soc";
     private const GRIDPOWER = "gridPower";
     private const GRID = "grid";
     private const POWER = "power";
@@ -70,12 +72,20 @@ import Toybox.Time;
     function initialize( result as JsonContainer, dataTimestamp as Moment ) {
         _timestamp = dataTimestamp;
 
-        if( result[BATTERYSOC] != null ) {
+        // For battery power we support both the old structure with
+        // batterySoc and batteryPower and the new structure with
+        // battery.soc and battery.bower.
+        var battery = result[BATTERY] as JsonContainer;
+        if( battery != null && battery[SOC] != null ) {
+            _batterySoc = battery[SOC] as Number;
+            _batteryPower = battery[POWER] as Number;
+            _hasBattery = true;
+        } else if( result[BATTERYSOC] != null ) {
             _batterySoc = result[BATTERYSOC] as Number;
             _batteryPower = result[BATTERYPOWER] as Number;
             _hasBattery = true;
         }
-    
+
         // For grid power we support both the old structure with
         // result.gridPower and the new structure with result.grid.power
         // used by evcc from 0.132.2 onwards

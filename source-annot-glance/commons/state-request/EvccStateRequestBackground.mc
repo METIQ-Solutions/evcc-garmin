@@ -25,12 +25,21 @@ class EvccStateRequestBackground {
     // response to the fields we need on the server side
     // In the background we only request basic data, the foreground
     // class derived from this one will add additional data to the JQ filter
+    // NOTE: in some instances we support newer and older REST API versions,
+    // see for example the access to battery and grid fields.
     protected const JQ_BASE_OPENING = 
-        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,grid:{power:$data.grid.power},gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
+        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
 
-    // Close the main filter and add function to remove all null values and empty objects or arrays
+    // Close the main filter
     protected const JQ_BASE_CLOSING = 
         "}" +
+        // The "battery" fields in JQ_BASE_OPENING are used in evcc versions < 0.301.0
+        // From 0.301.0 onwards, they are in the "battery" object
+        // Since < 0.301.0 "battery" was an array, we cannot just access it like we do 
+        // for the old/new version of "grid", instead we need a conditional access
+        // here and merge it into the main object
+        "+if ($data.battery|type)==\"object\" then {battery:{power:$data.battery.power,soc:$data.battery.soc}} else {} end" +
+        // Add function to remove all null values and empty objects or arrays
         "|walk(if type==\"object\"then with_entries(select(.value!=null and .value!={} and .value!=[]))elif type==\"array\"then map(select(.!=null and .!={} and .!=[]))else . end)";
 
     // Builds the base JQ filter for background scope.

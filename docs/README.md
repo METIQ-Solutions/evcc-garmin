@@ -330,6 +330,7 @@ The table below lists supported devices along with their capabilities. Click on 
 | fenix847mm         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | fenix8solar47mm    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | fenix8solar51mm    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| fenix8pro47mm      | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | fr745              | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
 | fr945              | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
 | fr945lte           | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
@@ -339,12 +340,15 @@ The table below lists supported devices along with their capabilities. Click on 
 | fr265              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | fr265s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | fr965              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| fr970              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | venu2              | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
 | venu2plus          | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
 | venu2s             | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
 | venu3              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | venu3s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | venux1             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| venu441mm          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| venu445mm          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | vivoactive3        | -                 | 1                       | No                               | Static           | May not work with large sites (memory limit)                                       |
 | vivoactive3m       | -                 | 5                       | Yes                              | Static           |                                                                                    |
 | vivoactive3mlte    | -                 | 5                       | Yes                              | Static           | May not work with large sites (cpu limit)                                          |
@@ -407,6 +411,7 @@ You can get help by posting in [this thread](https://github.com/evcc-io/evcc/dis
 
 | Version | Changes |
 |--------:|-------------|
+| **v1.4.4** | Fixed an issue where the battery status was no longer displayed due to a breaking change in evcc 0.301.0. [ticket #129](https://github.com/TheNinth7/evccg/issues/129)<br>Added support for the newly released Fenix 8 Pro, Forerunner 970, and Venu 4 models [ticket #131](https://github.com/TheNinth7/evccg/issues/131)<br>Updated to Garmin Connect IQ SDK 8.4.1. [ticket #130](https://github.com/TheNinth7/evccg/issues/130)
 | **v1.4.3** | Added support for the newly released Venu X1 [ticket #128](https://github.com/TheNinth7/evccg/issues/128)<br>Updated to handle an upcoming breaking change in the evcc REST API [ticket #127](https://github.com/TheNinth7/evccg/issues/127)
 | **v1.4.2.1** | Fixed an issue where the state did not persist correctly, causing a "Loading" message to appear when opening the widget [ticket #126](https://github.com/TheNinth7/evccg/issues/126)
 | **v1.4.2** | Improved performance of glance rendering [ticket #109](https://github.com/TheNinth7/evccg/issues/109)<br>Enhanced support for integrated devices [ticket #113](https://github.com/TheNinth7/evccg/issues/113)<br>Fixed an issue with the statistics JSON that could cause the app to crash [ticket #112](https://github.com/TheNinth7/evccg/issues/112)

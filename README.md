@@ -552,6 +552,7 @@ Below is an additional reference for developers, showing the Connect IQ (CIQ) AP
 | fenix847mm           | 5.1.0         |
 | fenix8solar47mm      | 5.1.0         |
 | fenix8solar51mm      | 5.1.0         |
+| fenix8pro47mm        | 5.1.0         |
 | fr745                | 3.3.0         |
 | fr945                | 3.3.0         |
 | fr945lte             | 3.4.0         |
@@ -561,11 +562,15 @@ Below is an additional reference for developers, showing the Connect IQ (CIQ) AP
 | fr265                | 5.1.0         |
 | fr265s               | 5.1.0         |
 | fr965                | 5.1.0         |
+| fr970                | 5.1.0         |
 | venu2                | 5.0.0         |
 | venu2plus            | 5.0.0         |
 | venu2s               | 5.0.0         |
 | venu3                | 5.1.0         |
 | venu3s               | 5.1.0         |
+| venux1               | 5.1.0         |
+| venu441mm            | 5.1.0         |
+| venu447mm            | 5.1.0         |
 | vivoactive3          | 3.1.0         |
 | vivoactive3m         | 3.2.0         |
 | vivoactive3mlte      | 3.1.0         |

@@ -26,7 +26,7 @@ class EvccStateRequestBackground {
     // In the background we only request basic data, the foreground
     // class derived from this one will add additional data to the JQ filter
     protected const JQ_BASE_OPENING = 
-        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
+        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,grid:{power:$data.grid.power},gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
 
     // Close the main filter and add function to remove all null values and empty objects or arrays
     protected const JQ_BASE_CLOSING = 
@@ -90,6 +90,9 @@ class EvccStateRequestBackground {
     protected function invokeCallbacks() as Void {}
 
     // Make the web request
+    // For some reason this function shows scope errors when compiling
+    // with SDK >= 8.2. Therefore we disable the scope check.
+    (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
     public function makeRequest() as Void {
         // EvccHelperBase.debug( "StateRequest: makeRequest site=" + _siteIndex );
         var siteConfig = new EvccSite( _siteIndex );
@@ -120,6 +123,9 @@ class EvccStateRequestBackground {
     public function onJsonReceive() as Void;
 
     // Receive the data from the web request
+    // For some reason this function shows scope errors when compiling
+    // with SDK >= 8.2. Therefore we disable the scope check.
+    (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
     public function onReceive( responseCode as Number, data as Dictionary<String,Object?> or String or PersistedContent.Iterator or Null ) as Void {
         // EvccHelperBase.debug("StateRequest: onReceive site=" + _siteIndex );
         _hasCurrentState = true;

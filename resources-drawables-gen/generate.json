@@ -173,6 +173,17 @@
             "icon_small":"32",
             "icon_medium":"36"
        },
+        "fenix8pro47mm":{
+            "fontMode":"vector",
+            "logo_flash":"65",
+            "logo_evcc":"26",
+            "icon_glance":"42",
+            "icon_micro":"33",
+            "icon_xtiny":"40",
+            "icon_tiny":"46",
+            "icon_small":"53",
+            "icon_medium":"59"
+        },
         "venu2":{
             "fontMode":"static-opt",
             "logo_flash":"70",

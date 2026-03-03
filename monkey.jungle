@@ -128,6 +128,7 @@ fenix843mm.resourcePath=resources-site-settings/site5;resources;resources-drawab
 fenix847mm.resourcePath=resources-site-settings/site5;resources;resources-drawables/fenix847mm;resources-properties/fenix847mm
 fenix8solar47mm.resourcePath=resources-site-settings/site5;resources;resources-drawables/fenix8solar47mm;resources-properties/fenix8solar47mm
 fenix8solar51mm.resourcePath=resources-site-settings/site5;resources;resources-drawables/fenix8solar51mm;resources-properties/fenix8solar51mm
+fenix8pro47mm.resourcePath=resources-site-settings/site5;resources;resources-drawables/fenix8pro47mm;resources-properties/fenix8pro47mm
 fr745.resourcePath=resources-site-settings/site1;resources;resources-drawables/fr745
 fr945.resourcePath=$(fenix6spro.resourcePath)
 fr945lte.resourcePath=$(fenix6spro.resourcePath)
@@ -155,7 +156,7 @@ vivoactive6.resourcePath=resources-site-settings/site5;resources;resources-drawa
 
 # Default
 # This is applied to all devices that do not have build instructions
-# Full glance, complex code, vector fonts, multipole sites, select indicator at 30° and having onSelect behavior
+# Full glance, complex code, vector fonts, multiple sites, select indicator at 30° and having onSelect behavior
 base.sourcePath = $(sourceGlanceFull)
 base.excludeAnnotations = $(glanceFull);$(fontsVector);$(memoryStandard);$(sitesMultiple);$(select30);$(hasSelect);$(swipeLeftDefault);$(viewPreRenderingEnabled)
 

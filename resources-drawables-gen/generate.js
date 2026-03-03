@@ -34,7 +34,7 @@ if( WScript.Arguments.Unnamed.Count > 0 ) {
 	    }
     }
     else if( ! device_families[WScript.Arguments.Item(0)] ) {
-        errors += "Device family \"" + WScript.Arguments.Item(0) + "\" not found. Note: don't forget the \"resources-\" prefix!";
+        errors += "Device family \"" + WScript.Arguments.Item(0) + "\" not found.";
     } else {
         errors += generateFamily( WScript.Arguments.Item(0), device_families, files, false );
     }

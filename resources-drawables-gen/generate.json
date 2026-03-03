@@ -239,6 +239,28 @@
             "icon_small":"54",
             "icon_medium":"61"
         },
+        "venu441mm":{
+            "fontMode":"vector",
+            "logo_flash":"54",
+            "logo_evcc":"20",
+            "icon_glance":"35",
+            "icon_micro":"28",
+            "icon_xtiny":"34",
+            "icon_tiny":"40",
+            "icon_small":"45",
+            "icon_medium":"51"
+        },
+        "venu445mm":{
+            "fontMode":"vector",
+            "logo_flash":"65",
+            "logo_evcc":"24",
+            "icon_glance":"42",
+            "icon_micro":"33",
+            "icon_xtiny":"40",
+            "icon_tiny":"46",
+            "icon_small":"53",
+            "icon_medium":"59"
+        },
         "fr165":{
             "fontMode":"vector",
             "logo_flash":"54",
@@ -296,6 +318,17 @@
             "icon_medium":"34"
         },
         "fr965":{
+            "fontMode":"vector",
+            "logo_flash":"65",
+            "logo_evcc":"26",
+            "icon_glance":"42",
+            "icon_micro":"33",
+            "icon_xtiny":"40",
+            "icon_tiny":"46",
+            "icon_small":"53",
+            "icon_medium":"59"
+        },
+        "fr970":{
             "fontMode":"vector",
             "logo_flash":"65",
             "logo_evcc":"26",

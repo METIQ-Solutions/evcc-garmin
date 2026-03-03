@@ -349,7 +349,7 @@ The table below lists supported devices along with their capabilities. Click on 
 | vivoactive3m       | -                 | 5                       | Yes                              | Static           |                                                                                    |
 | vivoactive3mlte    | -                 | 5                       | Yes                              | Static           | May not work with large sites (cpu limit)                                          |
 | vivoactive4        | -                 | 5                       | Yes                              | Static           |                                                                                    |
-| vivoactive4s       | -                 | 5                       | Yes                              | Static           |                                                                                    |
+| vivoactive4s       | -                 | 5                       | Yes                              | Sbtatic           |                                                                                    |
 | vivoactive5        | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
 | vivoactive6        | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 

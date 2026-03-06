@@ -411,11 +411,11 @@ You can get help by posting in [this thread](https://github.com/evcc-io/evcc/dis
 
 | Version | Changes |
 |--------:|-------------|
-| **v1.4.4** | Fixed an issue where the battery status was no longer displayed due to a breaking change in evcc 0.301.0. [ticket #129](https://github.com/TheNinth7/evccg/issues/129)<br>Added support for the newly released Fenix 8 Pro, Forerunner 970, and Venu 4 models [ticket #131](https://github.com/TheNinth7/evccg/issues/131)<br>Updated to Garmin Connect IQ SDK 8.4.1. [ticket #130](https://github.com/TheNinth7/evccg/issues/130)
-| **v1.4.3** | Added support for the newly released Venu X1 [ticket #128](https://github.com/TheNinth7/evccg/issues/128)<br>Updated to handle an upcoming breaking change in the evcc REST API [ticket #127](https://github.com/TheNinth7/evccg/issues/127)
-| **v1.4.2.1** | Fixed an issue where the state did not persist correctly, causing a "Loading" message to appear when opening the widget [ticket #126](https://github.com/TheNinth7/evccg/issues/126)
-| **v1.4.2** | Improved performance of glance rendering [ticket #109](https://github.com/TheNinth7/evccg/issues/109)<br>Enhanced support for integrated devices [ticket #113](https://github.com/TheNinth7/evccg/issues/113)<br>Fixed an issue with the statistics JSON that could cause the app to crash [ticket #112](https://github.com/TheNinth7/evccg/issues/112)
-| **v1.4.1** | Fixed incorrect spacing in glance view [ticket #111](https://github.com/TheNinth7/evccg/issues/111)|
+| **v1.4.4** | Fixed an issue where the battery status was no longer displayed due to a breaking change in evcc 0.301.0. [ticket #129](https://github.com/METIQ-Solutions/evcc-garmin/issues/129)<br>Added support for the newly released Fenix 8 Pro, Forerunner 970, and Venu 4 models [ticket #131](https://github.com/METIQ-Solutions/evcc-garmin/issues/131)<br>Updated to Garmin Connect IQ SDK 8.4.1. [ticket #130](https://github.com/METIQ-Solutions/evcc-garmin/issues/130)
+| **v1.4.3** | Added support for the newly released Venu X1 [ticket #128](https://github.com/METIQ-Solutions/evcc-garmin/issues/128)<br>Updated to handle an upcoming breaking change in the evcc REST API [ticket #127](https://github.com/METIQ-Solutions/evcc-garmin/issues/127)
+| **v1.4.2.1** | Fixed an issue where the state did not persist correctly, causing a "Loading" message to appear when opening the widget [ticket #126](https://github.com/METIQ-Solutions/evcc-garmin/issues/126)
+| **v1.4.2** | Improved performance of glance rendering [ticket #109](https://github.com/METIQ-Solutions/evcc-garmin/issues/109)<br>Enhanced support for integrated devices [ticket #113](https://github.com/METIQ-Solutions/evcc-garmin/issues/113)<br>Fixed an issue with the statistics JSON that could cause the app to crash [ticket #112](https://github.com/METIQ-Solutions/evcc-garmin/issues/112)
+| **v1.4.1** | Fixed incorrect spacing in glance view [ticket #111](https://github.com/METIQ-Solutions/evcc-garmin/issues/111)|
 | **v1.4** | Added a new statistics view displaying the percentage of solar energy used.<br>Improved performance by pre-rendering views in the background, resulting in faster view transitions.<br>Added support for the newly releas33ed Forerunner 165 / 165 Music and Vivoactive 6.<br>Updated feature compatibility for Fenix 6 and the Vivoactive 3 / 3 Music / 3 Music LTE. See [Supported Devices](#supported-devices) for full details.<br>Removed forecast and statistics querying from tiny glance. As a result, on devices using tiny glance, the widget may take a second or two after launch to fetch the full state and display the forecast view.<br>Upgraded to Garmin Connect IQ SDK 8.1.1.
 | **v1.3.3** | Fixed an unexpected TypeError that occurred after updating to v1.3.3 on certain devices. Affected models include: Fenix 6 / 6 Pro, Forerunner 745 / 945, and Vivoactive 3 ([Issue #6](https://github.com/TheNinth7/evcc-garmin/issues/2)).
 | **v1.3.2** | Fixed issue on Vivoactive 4 where the wrong site opened in multi-site setups ([Issue #4](https://github.com/TheNinth7/evcc-garmin/issues/4)).<br>Added tap hint for Vivoactive 3 / 4 ([Issue #2](https://github.com/TheNinth7/evcc-garmin/issues/2))<br>Improved content centering between the page indicator and button or tap hints<br>Enhanced vertical spacing for better screen balance with excess whitespace([Issue #3](https://github.com/TheNinth7/evcc-garmin/issues/3))
@@ -430,6 +430,6 @@ You can get help by posting in [this thread](https://github.com/evcc-io/evcc/dis
 
 # GitHub
 
-You can find the GitHub repository here: [TheNinth7/evcc-garmin](https://github.com/TheNinth7/evcc-garmin).  
+You can find the GitHub repository here: [METIQ-Solutions/evcc-garmin](https://github.com/TheNinth7/evcc-garmin).  
 
 The project’s `README.md` provides an overview of the structure and includes additional information to help you better understand the codebase.

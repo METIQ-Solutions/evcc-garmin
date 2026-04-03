@@ -6,7 +6,7 @@ import Toybox.Application.Properties;
 import Toybox.Math;
 
  // The main view showing the most important aspects of the state of one evcc instance
- class EvccWidgetMainView extends EvccWidgetSiteViewBase {
+ class EvccWidgetMainView extends EvccWidgetBaseLoadPointView {
 
     // This function returns a list of views for all sites
     static function getAllSiteViews() as ArrayOfSiteViews {
@@ -31,9 +31,9 @@ import Toybox.Math;
     var _alreadyHasForecastView as Boolean = false;
     var _alreadyHasStatisticsView as Boolean = false;
 
-    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetSiteViewBase?, siteIndex as Number, actAsGlance as Boolean ) {
+    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number, actAsGlance as Boolean ) {
         // EvccHelperBase.debug("Widget: initialize");
-        EvccWidgetSiteViewBase.initialize( views, parentView, siteIndex );
+        EvccWidgetBaseLoadPointView.initialize( views, parentView, siteIndex );
 
         _actAsGlance = actAsGlance;
 
@@ -65,13 +65,13 @@ import Toybox.Math;
         if( ( _actAsGlance && siteCount == 1 ) || ( ! _actAsGlance && siteCount > 1 ) ) {
             view = 
                 new viewClass( getLowerLevelViews(), self, getSiteIndex() )
-                as EvccWidgetSiteViewBase;
+                as EvccWidgetBaseSiteView;
         // But if we are not acting as glance and there is only one site, we directly add the
         // detail view to the same level view
         } else if ( siteCount == 1 ) {
             view =  
                 new viewClass( getSameLevelViews(), self.getParentView(), getSiteIndex() )
-                as EvccWidgetSiteViewBase;
+                as EvccWidgetBaseSiteView;
         }
         // If we already can add the view during startup of the app
         // the pre-rendering is already being scheduled
@@ -136,7 +136,7 @@ import Toybox.Math;
                     setSiteIndex( EvccBreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
                 }
             }
-            EvccWidgetSiteViewBase.onShow();
+            EvccWidgetBaseSiteView.onShow();
         } catch ( ex ) {
             // setSiteIndex pre-renders the content in case the
             // index changed, and we need to log any exceptions
@@ -165,7 +165,7 @@ import Toybox.Math;
     (:exclForViewPreRenderingEnabled) 
     function onUpdate( dc as Dc ) as Void {
         addDetailViews( false );
-        EvccWidgetSiteViewBase.onUpdate( dc );
+        EvccWidgetBaseSiteView.onUpdate( dc );
     }
 
     // ... if view prerendering is enabled, we have to do this earlier,
@@ -175,56 +175,58 @@ import Toybox.Math;
     (:exclForViewPreRenderingDisabled) function prepareImmediately() as Void {
         // EvccHelperBase.debug( "WidgetSiteMain: prepareImmediately site=" + getSiteIndex() );
         addDetailViews( false );
-        EvccWidgetSiteViewBase.prepareImmediately();
+        EvccWidgetBaseSiteView.prepareImmediately();
     }
     (:exclForViewPreRenderingDisabled) function prepareByTasks() as Void {
         // EvccHelperBase.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
         EvccTaskQueue.getInstance().add( new EvccAddDetailViewsTask( self ) );
-        EvccWidgetSiteViewBase.prepareByTasks();
+        EvccWidgetBaseSiteView.prepareByTasks();
     }
 
 
-    private const SMALL_LINE as Float = 0.6; // site title, charging details and logo count only as the fraction of a line specified here
-    private const MAX_VAR_LINES as Number = 6; // 1 x site title, 1 x battery, 2 x loadpoints with 2 lines each
+    (:exclForMemoryStandard) private const SMALL_LINE as Float = 0.6; // site title, charging details and logo count only as the fraction of a line specified here
+    (:exclForMemoryStandard) private const MAX_VAR_LINES as Number = 6; // 1 x site title, 1 x battery, 2 x loadpoints with 2 lines each
 
-    // Generate the content
+    // The addContent function generates the content of
+    // this view.
+    // There are two versions, one for low memory devices, and one for all other devices
+    // There is some redundancy between the two functions, but since low memory devices
+    // will at some point be removed from the code, they were kept completely separate
+    // instead of trying to put common code in common functions.
+
+    // For low memory, we display loadpoints only in the main view, and to the
+    // extend they fit on the screen (if there are more, they are simply not shown)
+    (:exclForMemoryStandard)
     public function addContent( block as EvccVerticalBlock, calcDc as EvccDcInterface ) {
         var state = getStateRequest().getState();
         var variableLineCount = 0;
 
         // PV
-        block.addBlock( getBasicElement( EvccIconBlock.ICON_SUN, state.getPvPowerRounded(), EvccIconBlock.ICON_ARROW_RIGHT ) );
+        block.addBlock( renderBasicElement( EvccIconBlock.ICON_SUN, null, state.getPvPowerRounded(), EvccIconBlock.ICON_ARROW_RIGHT ) );
         // Grid
-        block.addBlock( getBasicElement( EvccIconBlock.ICON_GRID, state.getGridPowerRounded(), EvccIconBlock.ICON_POWER_FLOW ) );
+        block.addBlock( renderBasicElement( EvccIconBlock.ICON_GRID, null, state.getGridPowerRounded(), EvccIconBlock.ICON_POWER_FLOW ) );
         // Battery
         if( state.hasBattery() ) {
-            block.addBlock( getBasicElement( EvccIconBlock.ICON_BATTERY, state.getBatteryPowerRounded(), EvccIconBlock.ICON_POWER_FLOW ) );
+            block.addBlock( renderBasicElement( EvccIconBlock.ICON_BATTERY, EvccHelperUI.formatSoc( state.getBatterySoc() ), state.getBatteryPowerRounded(), EvccIconBlock.ICON_POWER_FLOW ) );
             variableLineCount++;
         }                
 
         // Loadpoints
-        var loadpoints = state.getLoadPoints() as ArrayOfLoadPoints;
+        var loadPointList = state.getConnectedVehicles();
+        var loadPoints = loadPointList.getLoadPoints();
         var hasLoadPoint = false;
-        var showChargingDetails = MAX_VAR_LINES - variableLineCount >= loadpoints.size() + ( state.getNumOfLPsCharging() * SMALL_LINE );
-        for (var i = 0; i < loadpoints.size() && variableLineCount < MAX_VAR_LINES; i++) {
-            var loadpoint = loadpoints[i] as EvccLoadPoint;
-            if( loadpoint.isHeater() ) {
-                block.addBlock( getHeaterElement( loadpoint ) );
+        var showChargingDetails = MAX_VAR_LINES - variableLineCount >= loadPoints.size() + ( loadPointList.getChargingLoadPointCount() * SMALL_LINE );
+        for (var i = 0; i < loadPoints.size() && variableLineCount < MAX_VAR_LINES; i++) {
+            var loadPoint = loadPoints[i] as EvccLoadPoint;
+            if( loadPoint.isVehicle() ) {
+                var loadPointLine = renderVehicle( loadPoint, showChargingDetails );
+                block.addBlock( loadPointLine );
                 variableLineCount++;
                 hasLoadPoint = true;
-            } else if( loadpoint.isVehicle() ) {
-                var loadpointLine = getVehicleElement( loadpoint, showChargingDetails );
-                block.addBlock( loadpointLine );
-                variableLineCount++;
-                hasLoadPoint = true;
-                if( loadpoint.isCharging() && showChargingDetails ) {
-                    block.addBlock( getChargingElement( loadpoint, loadpointLine.getOption( :marginLeft ) as Number ) );
+                if( loadPoint.isCharging() && showChargingDetails ) {
+                    block.addBlock( renderVehicleChargingDetails( loadPoint, loadPointLine.getOption( :marginLeft ) as Number ) );
                     variableLineCount += SMALL_LINE;
                 }
-            } else if( loadpoint.isIntegratedDevice() ) {
-                block.addBlock( getIntegratedDeviceElement( loadpoint ) );
-                variableLineCount++;
-                hasLoadPoint = true;
             }
         }
         if( ! hasLoadPoint ) {
@@ -233,32 +235,93 @@ import Toybox.Math;
         }
 
         // Home
-        block.addBlock( getBasicElement( EvccIconBlock.ICON_HOME, state.getHomePowerRounded(), EvccIconBlock.ICON_ARROW_LEFT ) );
+        block.addBlock( renderBasicElement( EvccIconBlock.ICON_HOME, null, state.getHomePowerRounded(), EvccIconBlock.ICON_ARROW_LEFT ) );
 
         // If there is too much space above and below the content,
         // the lines will be spread out vertically
         block.setOption( :spreadToHeight, getContentArea().height );
     }
 
-    // Helper function to add the charge power of a loadpoint to a line
-    private function addChargePower( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
-        line.addText( " " );
-        line.addIcon( EvccIconBlock.ICON_ACTIVE_PHASES, { :charging => true, :activePhases => loadpoint.getActivePhases() } );
-        line.addText( " " + EvccHelperWidget.formatPower( loadpoint.getChargePowerRounded() ) );
-    }
 
-    // Helper function to add the charging mode of a loadpoint to a line
-    private function addMode( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
-        line.addTextWithOptions( " (" + formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
-    }
+    // For standard devices, we display the same basic elements,
+    // but with more advanced logic for loadpoints.
+    // If there are two or less loadpoints, they will directly
+    // be displayed in the main view.
+    // If they are more, then loadpoints that belong to the same 
+    // category (vehicles, heaters, integrated devices) will be grouped
+    // into one category, with a summary line being displayed.
+    // In this case addDetailViews() will add detail views that then
+    // display the loadpoints in that category.
+    (:exclForMemoryLow)
+    public function addContent( block as EvccVerticalBlock, calcDc as EvccDcInterface ) {
+        var state = getStateRequest().getState();
+        var variableLineCount = 0;
 
-    // Helper function to add the title of the controllable device (vehicle, heater or integreated device)
-    private function addTitle( line as EvccHorizontalBlock, controllable as EvccControllable ) as Void {
-        line.addTextWithOptions( controllable.getTitle(), { :isTruncatable => true } as DbOptions );
+        // PV
+        block.addBlock( renderBasicElement( EvccIconBlock.ICON_SUN, null, state.getPvPowerRounded(), EvccIconBlock.ICON_ARROW_RIGHT ) );
+        // Grid
+        block.addBlock( renderBasicElement( EvccIconBlock.ICON_GRID, null, state.getGridPowerRounded(), EvccIconBlock.ICON_POWER_FLOW ) );
+        // Battery
+        if( state.hasBattery() ) {
+            block.addBlock( renderBasicElement( EvccIconBlock.ICON_BATTERY, EvccHelperUI.formatSoc( state.getBatterySoc() ), state.getBatteryPowerRounded(), EvccIconBlock.ICON_POWER_FLOW ) );
+            variableLineCount++;
+        }
+
+        // Loadpoints
+        // If there are two or less loadpoints, we show them directly
+        if( state.getLoadPointCount() <= 2 ) {
+            var loadPoints = state.getLoadPoints();
+            var hasLoadPoint = false;
+            for( var i = 0; i < loadPoints.size(); i++ ) {
+                hasLoadPoint = hasLoadPoint || addLoadpoint( block, loadPoints[i] );
+            }
+            // We check if at least one of the two loadpoints
+            // was displayed. addLoadPoint will ignore loadpoints that
+            // have no connected vehicle and are not a heater or integrated device
+            if( ! hasLoadPoint ) {
+                block.addText( "No vehicle" );
+            }
+        } else {
+            // If there are more, we look at them per category
+            // First we assemble a 2d array with the icon and loadpoint list
+            // for each category
+            var loadPointLists = [
+                [ EvccIconBlock.ICON_CAR, state.getConnectedVehicles() ],
+                [ EvccIconBlock.ICON_HEATER, state.getHeaters() ],
+                [ EvccIconBlock.ICON_DEVICE, state.getIntegratedDevices() ]
+            ];
+            
+            // Then we loop through all categories
+            for( var i = 0; i < loadPointLists.size(); i++ ) {
+                var loadPoints = loadPointLists[i][1].getLoadPoints();
+                var loadPointCount = loadPoints.size();
+                // If there is only one loadpoint in the category, we directly
+                // display it
+                if( loadPointCount == 1 ) {
+                    addLoadpoint( block, loadPoints[0] );
+                } else if( loadPointCount > 1 ) {
+                    // If there are more than one, we add a summary line
+                    var loadPointList = loadPointLists[i][1];
+                    block.addBlock( renderBasicElement( 
+                        loadPointLists[i][0],
+                        loadPointList.getChargingLoadPointCount() + "/" + loadPointList.getLoadPoints().size(),
+                        loadPointList.getTotalChargingPower(),
+                        EvccIconBlock.ICON_ARROW_LEFT
+                    ) );
+                }
+            }
+        }
+
+        // Home
+        block.addBlock( renderBasicElement( EvccIconBlock.ICON_HOME, null, state.getHomePowerRounded(), EvccIconBlock.ICON_ARROW_LEFT ) );
+
+        // If there is too much space above and below the content,
+        // the lines will be spread out vertically
+        block.setOption( :spreadToHeight, getContentArea().height );
     }
 
     // Function to generate line for PV, grid, battery and home
-    private function getBasicElement( icon as EvccIconBlock.Icon, power as Number, flowIcon as EvccIconBlock.Icon ) as EvccHorizontalBlock {
+    private function renderBasicElement( icon as EvccIconBlock.Icon, text as String?, power as Number, flowIcon as EvccIconBlock.Icon ) as EvccHorizontalBlock {
         var state = getStateRequest().getState();
         var lineOptions = {};
         var iconOptions = {};
@@ -268,8 +331,8 @@ import Toybox.Math;
         }
         var line = new EvccHorizontalBlock( lineOptions );
         line.addIcon( icon, iconOptions );
-        // For battery we display the SoC as text as well
-        if( icon == EvccIconBlock.ICON_BATTERY ) { line.addText( EvccHelperUI.formatSoc( state.getBatterySoc() ) ); }
+        // If a text was provided, we show it after the icon
+        if( text != null ) { line.addText( " " + text ); }
 
         if( power != 0 ) {
             line.addText( " " );
@@ -277,115 +340,17 @@ import Toybox.Math;
             if( flowIcon == EvccIconBlock.ICON_POWER_FLOW ) { flowOptions[:power] = power; }
             line.addIcon( flowIcon, flowOptions );
         }
-        // For battery we show the power only if it is not 0,
+        // For battery and loadpoints we show the power only if it is not 0,
         // for all others we always show it
-        if( icon != EvccIconBlock.ICON_BATTERY || power != 0 ) {
+        if( ( icon != EvccIconBlock.ICON_BATTERY 
+              && icon != EvccIconBlock.ICON_CAR 
+              && icon != EvccIconBlock.ICON_HEATER
+              && icon != EvccIconBlock.ICON_DEVICE
+            ) 
+            || power != 0 
+        ) {
             line.addText( " " + EvccHelperWidget.formatPower( power.abs() ) );
         }
         return line;
-    }
-
-    // Function to generate main loadpoint lines
-    private function getVehicleElement( loadpoint as EvccLoadPoint, showChargingDetails as Boolean ) as EvccHorizontalBlock {
-        var vehicle = loadpoint.getVehicle() as EvccConnectedVehicle;
-
-        var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        
-        addTitle( line, vehicle );
-        
-        // For guest vehicles there is no SoC
-        if( ! vehicle.isGuest() ) {
-            line.addText( " " + EvccHelperUI.formatSoc( vehicle.getSoc() ) );
-        }
-
-        // If the vehicle is charging, we show the power
-        if( loadpoint.isCharging() ) {
-            addChargePower( line, loadpoint );
-            if( ! showChargingDetails ) {
-                line.addTextWithOptions( " (" + formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
-            }
-        }
-
-        if( ! loadpoint.isCharging() || ! showChargingDetails ) {
-            addMode( line, loadpoint );
-        }
-
-        return line;
-    }
-
-    // Function to generate charging info below main loadpoint line
-    private function getChargingElement( loadpoint as EvccLoadPoint, marginLeft as Number ) as EvccHorizontalBlock {
-        var lineCharging = new EvccHorizontalBlock( { :relativeFont => 3, :marginLeft => marginLeft } );
-        lineCharging.addText( formatMode( loadpoint ) );
-        if( loadpoint.getChargeRemainingDuration() > 0 ) {
-            lineCharging.addText( " - " );
-            lineCharging.addIcon( EvccIconBlock.ICON_DURATION, {} as DbOptions );
-            lineCharging.addText( " " + EvccHelperWidget.formatDuration( loadpoint.getChargeRemainingDuration() ) );
-        }
-        return lineCharging;
-    }
-
-
-    // Function to generate the line for heater loadpoints
-    (:exclForMemoryLow)
-    private function getHeaterElement( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
-        var heater = loadpoint.getHeater() as EvccHeater;
-        var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        
-        addTitle( line, heater );
-
-        line.addText( " " + EvccHelperWidget.formatTemp( heater.getTemperature() ) );
-        
-        // If the heater is operating, we show the power
-        if( loadpoint.getChargePowerRounded() > 0 ) {
-            addChargePower( line, loadpoint );
-        }
-
-        addMode( line, loadpoint );
-        
-        return line;
-    }
-
-    // Heater elements are not supported on low memory devices,
-    // but we need a dummy function to satisfy the compiler
-    (:exclForMemoryStandard)
-    private function getHeaterElement( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
-        return new EvccHorizontalBlock( {} );
-    }
-
-
-    // Function to generate the line for integrated device loadpoints
-    (:exclForMemoryLow)
-    private function getIntegratedDeviceElement( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
-        var integratedDevice = loadpoint.getIntegratedDevice() as EvccIntegratedDevice;
-        var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        
-        addTitle( line, integratedDevice );
-        
-        // If the integrated device is operating, we show the power
-        if( loadpoint.getChargePowerRounded() > 0 ) {
-            addChargePower( line, loadpoint );
-        }
-
-        addMode( line, loadpoint );
-        
-        return line;
-    }
-
-    // Integrated device elements are not supported on low memory devices,
-    // but we need a dummy function to satisfy the compiler
-    (:exclForMemoryStandard)
-    private function getIntegratedDeviceElement( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
-        return new EvccHorizontalBlock( {} );
-    }
-
-    // Return the text to be displayed for the mode
-    private function formatMode( loadpoint as EvccLoadPoint ) as String { 
-        var mode = loadpoint.getMode();
-        if( mode.equals( "pv" ) ) { return "Solar"; }
-        else if( mode.equals( "minpv" ) ) { return "Min+Solar"; }
-        else if( mode.equals( "now" ) ) { return "Fast"; }
-        else if( mode.equals( "off" ) ) { return "Off"; }
-        else { return mode; }
     }
 }

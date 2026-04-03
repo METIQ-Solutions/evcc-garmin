@@ -465,7 +465,7 @@ In `drawables-noglance-lowmemory.xml`, the same icon would appear as:
 <br>
 
 
-#### **3. `/source/_base/EvccResourceSet.mc`**  
+#### **3. `/source/commons/resources/EvccResourceSet.mc`**  
 
 This file contains Monkey C classes that define resource sets used in the app. Each resource set defines font sizes to be used and maps them to the corresponding PNG resources.
 

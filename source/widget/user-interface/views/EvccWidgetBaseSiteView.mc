@@ -17,7 +17,7 @@ import Toybox.Math;
 // - Members and functions specific to devices without pre-rendering of views, which is followed by the
 // - Members and function specific to devices with pre-rendering of views
 
-class EvccWidgetSiteViewBase extends WatchUi.View {
+class EvccWidgetBaseSiteView extends WatchUi.View {
     
     // Functions to access the index and state request for the site of this view
     private var _siteIndex as Number;
@@ -42,8 +42,8 @@ class EvccWidgetSiteViewBase extends WatchUi.View {
     // Organization of views
 
     // Parent view
-    private var _parentView as EvccWidgetSiteViewBase?;
-    function getParentView() as EvccWidgetSiteViewBase? { return _parentView; }
+    private var _parentView as EvccWidgetBaseSiteView?;
+    function getParentView() as EvccWidgetBaseSiteView? { return _parentView; }
 
     // Other views on the same level
     private var _sameLevelViews as ArrayOfSiteViews;
@@ -113,7 +113,7 @@ class EvccWidgetSiteViewBase extends WatchUi.View {
     
     // Constructor
     (:exclForViewPreRenderingEnabled) 
-    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetSiteViewBase?, siteIndex as Number ) {
+    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
         // EvccHelperBase.debug("WidgetSiteBase: initialize");
         View.initialize();
 
@@ -179,7 +179,7 @@ class EvccWidgetSiteViewBase extends WatchUi.View {
     // Part of the constructor has to be duplicated, since initialization of non-null members can
     // only be done in the constructor, not in in another function 
     (:exclForViewPreRenderingDisabled) 
-    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetSiteViewBase?, siteIndex as Number ) {
+    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
         // EvccHelperBase.debug("WidgetSiteBase: initialize");
         View.initialize();
 

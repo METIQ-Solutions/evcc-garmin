@@ -4,7 +4,7 @@
 (:exclForViewPreRenderingDisabled) 
 class EvccSiteShellPreRenderer extends EvccSiteShell {
     
-    public function initialize( view as EvccWidgetSiteViewBase ) {
+    public function initialize( view as EvccWidgetBaseSiteView ) {
         EvccSiteShell.initialize( view );
     }
 

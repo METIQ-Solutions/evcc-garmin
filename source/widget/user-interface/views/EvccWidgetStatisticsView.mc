@@ -4,14 +4,14 @@ using Toybox.Time.Gregorian;
 
 // View showing statistics data
 (:exclForMemoryLow)
-class EvccWidgetStatisticsView extends EvccWidgetSiteViewBase {
+class EvccWidgetStatisticsView extends EvccWidgetBaseSiteView {
     private var LABELS as Array<String> = [ "30 days", 
                                             "this year", 
                                             "365 days", 
                                             "all time" ];
 
-    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetSiteViewBase?, siteIndex as Number ) {
-        EvccWidgetSiteViewBase.initialize( views, parentView, siteIndex );
+    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
+        EvccWidgetBaseSiteView.initialize( views, parentView, siteIndex );
     }
 
     // Set icon and title for this page

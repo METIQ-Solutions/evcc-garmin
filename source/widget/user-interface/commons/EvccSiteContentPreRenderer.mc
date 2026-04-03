@@ -5,7 +5,7 @@
 class EvccSiteContentPreRenderer extends EvccSiteContent {
     var _contentUnderPreparation as EvccVerticalBlock?;
     
-    public function initialize( view as EvccWidgetSiteViewBase ) {
+    public function initialize( view as EvccWidgetBaseSiteView ) {
         EvccSiteContent.initialize( view );
     }
 

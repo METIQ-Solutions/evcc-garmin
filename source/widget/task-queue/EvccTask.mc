@@ -8,7 +8,7 @@ class EvccTask {
     
     // Either handlers can be passed in directly, or any class that fullfils the
     // EvccHasExceptionHandler interface (see below this class).
-    // The interface is used to support a EvccWidgetSiteViewBase to be passed in and
+    // The interface is used to support a EvccWidgetBaseSiteView to be passed in and
     // its exception handler to be used
     public function initialize( handler as EvccHasExceptionHandler or EvccExceptionHandler ) {
         if( handler instanceof EvccExceptionHandler ) {

@@ -68,11 +68,7 @@ import Toybox.Application;
         if( _parent != null ) {
             _parent.persist();
         } else {
-            // There is a type-checker bug that prevents the compiler from correctly recognizing
-            // the validity of values passed into Storage.setValue. We therefore cast the
-            // output of self.serialize to a type recognizable by the type checker
-            // https://forums.garmin.com/developer/connect-iq/i/bug-reports/sdk-7-2-0-strict-typechecker-regression
-            Storage.setValue( EvccConstants.STORAGE_BREAD_CRUMBS, self.serialize() as Array<PropertyValueType> );
+            Storage.setValue( EvccConstants.STORAGE_BREAD_CRUMBS, self.serialize() );
         }
     }
 

@@ -5,7 +5,7 @@ import Toybox.Graphics;
 // - assembles the content, meaning
 //   - Showing "Loading..." if not site data is available yet
 //   - Showing errors that occured
-//   - or if all is well obtaining actual content from implementations of EvccWidgetSiteViewBase
+//   - or if all is well obtaining actual content from implementations of EvccWidgetBaseSiteView
 //   - and determining the right font size for displaying that actual content
 // - prepare the drawing: make all calculations that can be done ahead of actual drawing of
 //   this is used where views should be pre-rendered to reduce the time it takes to switch
@@ -17,7 +17,7 @@ import Toybox.Graphics;
 // not separated.
    
 class EvccSiteContent {
-    protected var _view as EvccWidgetSiteViewBase;
+    protected var _view as EvccWidgetBaseSiteView;
     protected var _content as EvccVerticalBlock?;
     
     // The alreadyHasRealContent flag is only needed for pre-rendering views
@@ -26,7 +26,7 @@ class EvccSiteContent {
     (:exclForViewPreRenderingDisabled) private function setAlreadyHasRealContent() as Void { _alreadyHasRealContent = true; }
     (:exclForViewPreRenderingEnabled)  private function setAlreadyHasRealContent() as Void {}
 
-    public function initialize( view as EvccWidgetSiteViewBase ) {
+    public function initialize( view as EvccWidgetBaseSiteView ) {
         _view = view;
     }
 

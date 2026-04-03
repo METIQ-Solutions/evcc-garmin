@@ -42,10 +42,58 @@ import Toybox.Time;
     public function getPvPowerRounded() as Number { return EvccHelperBase.roundPower( _pvPower ); }
     public function getSiteTitle() as String { return _siteTitle != null ? _siteTitle : ""; }
 
-    private var _loadPoints as ArrayOfLoadPoints = new ArrayOfLoadPoints[0];
-    private var _numOfLPsCharging as Number = 0;
-    public function getLoadPoints() as ArrayOfLoadPoints { return _loadPoints; }
-    public function getNumOfLPsCharging() as Number { return _numOfLPsCharging; }
+    // Loadpoints and their accessor
+    // Loadpoints are stored in three lists, depending on their type
+    // On low-memory devices, only vehicles are supported
+    private var _connectedVehicles as EvccLoadPointList = new EvccLoadPointList();
+    (:exclForMemoryLow) private var _heaters as EvccLoadPointList = new EvccLoadPointList();
+    (:exclForMemoryLow) private var _integratedDevices as EvccLoadPointList = new EvccLoadPointList();
+
+    // Function to access and clear the loadpoints
+    // This is used during serialization and frees the memory
+    // immediately, which helps on low memory devices.
+    
+    // On low-memory devices, only connected vehicles are supported
+    (:exclForMemoryStandard) 
+    private function getAndClearLoadPoints() as ArrayOfLoadPoints { 
+        return _connectedVehicles.getAndClearLoadPoints(); 
+    }
+    // For others we have this aggregated accessor, which combines the
+    // three lists. While this comes at some runtime costs (vs. storing
+    // a parallel array of all loadpoints), it conserves memory and needs
+    // less code in the low memory variant
+    (:exclForMemoryLow) 
+    private function getAndClearLoadPoints() as ArrayOfLoadPoints { 
+        var merged = new ArrayOfLoadPoints[0];
+        merged.addAll( _connectedVehicles.getAndClearLoadPoints() );
+        merged.addAll( _heaters.getAndClearLoadPoints() );
+        merged.addAll( _integratedDevices.getAndClearLoadPoints() );
+        return merged;
+    }
+    
+    // Accessor for the loadpoint lists
+    public function getConnectedVehicles() as EvccLoadPointList { return _connectedVehicles; }
+    (:exclForMemoryLow) public function getHeaters() as EvccLoadPointList { return _heaters; }
+    (:exclForMemoryLow) public function getIntegratedDevices() as EvccLoadPointList { return _integratedDevices; }
+
+    // Accessor for the count of loadpoints
+    // Needed only for the categorized, aggregated display not available
+    // on low memory devices
+    (:exclForMemoryLow) public function getLoadPointCount() as Number {
+        return _connectedVehicles.getLoadPoints().size()
+               + _heaters.getLoadPoints().size()
+               + _integratedDevices.getLoadPoints().size();
+    }
+
+    // Accessor for an aggregated list of loadpoints
+    (:exclForMemoryLow) 
+    public function getLoadPoints() as ArrayOfLoadPoints { 
+        var merged = new ArrayOfLoadPoints[0];
+        merged.addAll( _connectedVehicles.getLoadPoints() );
+        merged.addAll( _heaters.getLoadPoints() );
+        merged.addAll( _integratedDevices.getLoadPoints() );
+        return merged;
+    }
 
     (:exclForMemoryLow) private var _forecast as EvccSolarForecast?;
     (:exclForMemoryLow) public function getForecast() as EvccSolarForecast? { return _forecast; }
@@ -99,26 +147,43 @@ import Toybox.Time;
         _pvPower = result[PVPOWER] as Number?;
         _siteTitle = result[SITETITLE] as String?;
 
-        _loadPoints = new ArrayOfLoadPoints[0];
         var loadPoints = result[LOADPOINTS] as Array;
         // If there are no loadpoints, we get null, not an empty array
         if( loadPoints != null ) {
-            for (var i = 0; i < loadPoints.size(); i++) {
+            for( var i = 0; i < loadPoints.size(); i++ ) {
                 var loadPointData = loadPoints[i] as JsonContainer;
                 var loadPoint = new EvccLoadPoint( loadPointData, result );
-                if( ! loadPoint.isHeater() && loadPoint.isCharging() ) { _numOfLPsCharging++; }
-                _loadPoints.add( loadPoint );
+                // In addition to the array of all loadpoints, we also
+                // maintain a list of each type, for the display of categories
+                if( loadPoint.isVehicle() ) { 
+                    _connectedVehicles.add( loadPoint ); 
+                } else {
+                    initOptionalLoadPoint( loadPoint );
+                }
             }
         }
 
-        initializeOptionalElements( result );
+        initOptionalFeatures( result );
+    }
+
+    (:exclForMemoryLow :typecheck([disableBackgroundCheck,disableGlanceCheck]))
+    function initOptionalLoadPoint( loadPoint as EvccLoadPoint ) as Void {
+        if( loadPoint.isHeater() ) {
+            _heaters.add( loadPoint );
+        } else if ( loadPoint.isIntegratedDevice() ) {
+            _integratedDevices.add( loadPoint );
+        }
+    }
+
+    (:exclForMemoryStandard)
+    function initOptionalLoadPoint( loadPoint as EvccLoadPoint ) as Void {
     }
 
     // Function for parsing optional elements out of the JSON
     // Optional elements are excluded on low-memory devices and
     // in the background service of devices using the tiny glance
     (:exclForMemoryLow :typecheck([disableBackgroundCheck,disableGlanceCheck]))
-    function initializeOptionalElements( result as JsonContainer ) as Void {
+    function initOptionalFeatures( result as JsonContainer ) as Void {
         // If we are in the glance of a tiny glance device,
         // we do not initialize these elements to save memory
         var forecast = result[FORECAST] as JsonContainer?;
@@ -133,7 +198,7 @@ import Toybox.Time;
 
     // Dummy for low memory devices
     (:exclForMemoryStandard)
-    function initializeOptionalElements( result as JsonContainer ) as Void {}
+    function initOptionalFeatures( result as JsonContainer ) as Void {}
 
     // Create a dictionary for persisting the state from the data in this class, 
     // with the same structure that is used by the evcc response. Thus the
@@ -157,9 +222,10 @@ import Toybox.Time;
         // In the glance memory can be tight when
         // serializing and storing the state. Therefore we immediately discard
         // each loadpoint, after it was serialized
-        for ( ; _loadPoints.size() > 0; ) {
-            serializedLoadPoints.add( _loadPoints[0].serialize() as Dictionary );
-            _loadPoints.remove( _loadPoints[0] );
+        var loadPoints = getAndClearLoadPoints();
+        for ( ; loadPoints.size() > 0; ) {
+            serializedLoadPoints.add( loadPoints[0].serialize() as Dictionary );
+            loadPoints.remove( loadPoints[0] );
         }
 
         result.put( LOADPOINTS, serializedLoadPoints );

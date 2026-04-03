@@ -23,7 +23,7 @@ import Toybox.Graphics;
 
 (:exclForMemoryLow)
 class EvccSiteShell {
-    protected var _view as EvccWidgetSiteViewBase;
+    protected var _view as EvccWidgetBaseSiteView;
     private var _prepared as Boolean = false;
 
     // Draws the "shell", containing:
@@ -34,7 +34,7 @@ class EvccSiteShell {
     (:exclForSelectNone) private var _selectIndicator as EvccSelectIndicator?;
     (:exclForSelectTouch :exclForSelect27 :exclForSelect30) private var _selectIndicator as Object?;
 
-    public function initialize( view as EvccWidgetSiteViewBase ) {
+    public function initialize( view as EvccWidgetBaseSiteView ) {
         _view = view;
     }
 
@@ -208,10 +208,10 @@ class EvccSiteShell {
 // do not have detail views, only the logo is shown
 (:exclForMemoryStandard)
 class EvccSiteShell {
-    protected var _view as EvccWidgetSiteViewBase;
+    protected var _view as EvccWidgetBaseSiteView;
     private var _logo as EvccBitmapBlock?;
 
-    public function initialize( view as EvccWidgetSiteViewBase ) {
+    public function initialize( view as EvccWidgetBaseSiteView ) {
         _view = view;
     }
 

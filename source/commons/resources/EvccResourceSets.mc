@@ -150,11 +150,14 @@ class EvccWidgetResourceSetBase {
         [ Rez.Drawables.sun_medium, Rez.Drawables.sun_small, Rez.Drawables.sun_tiny, Rez.Drawables.sun_xtiny, null ],
         [ Rez.Drawables.house_medium, Rez.Drawables.house_small, Rez.Drawables.house_tiny, Rez.Drawables.house_xtiny, null ],
         [ Rez.Drawables.grid_medium, Rez.Drawables.grid_small, Rez.Drawables.grid_tiny, Rez.Drawables.grid_xtiny, null ],
-        [ null, null, null, Rez.Drawables.clock_xtiny, Rez.Drawables.clock_micro ],
-        [ Rez.Drawables.forecast_medium, null, null, Rez.Drawables.forecast_xtiny, null ]
+        [ null, null, null, Rez.Drawables.clock_xtiny, Rez.Drawables.clock_micro ]
     ];
     (:exclForMemoryLow)
     public var _optionalIcons as EvccIcons = [
+        [ Rez.Drawables.car_medium, Rez.Drawables.car_small, Rez.Drawables.car_tiny, Rez.Drawables.car_xtiny, null ],
+        [ Rez.Drawables.heater_medium, Rez.Drawables.heater_small, Rez.Drawables.heater_tiny, Rez.Drawables.heater_xtiny, null ],
+        [ Rez.Drawables.device_medium, Rez.Drawables.device_small, Rez.Drawables.device_tiny, Rez.Drawables.device_xtiny, null ],
+        [ Rez.Drawables.forecast_medium, null, null, Rez.Drawables.forecast_xtiny, null ],
         [ Rez.Drawables.statistics_medium, null, null, Rez.Drawables.statistics_xtiny, null ]
     ];
     (:exclForMemoryLow)

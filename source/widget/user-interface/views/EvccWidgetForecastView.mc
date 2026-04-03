@@ -4,12 +4,12 @@ using Toybox.Time.Gregorian;
 
 // View showing forecast data
 (:exclForMemoryLow)
-class EvccWidgetForecastView extends EvccWidgetSiteViewBase {
+class EvccWidgetForecastView extends EvccWidgetBaseSiteView {
     private var _label as Array<String>;
     private var _indicator as Array<String?>;
 
-    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetSiteViewBase?, siteIndex as Number ) {
-        EvccWidgetSiteViewBase.initialize( views, parentView, siteIndex );
+    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
+        EvccWidgetBaseSiteView.initialize( views, parentView, siteIndex );
 
         // Define the labels for the rows
         // Third label is the three-character short code for the weekday

@@ -11,7 +11,7 @@ import Toybox.WatchUi;
     typedef Icon as BaseIcon or ConditionalIcon;
 
     // Constants for the base icons
-    // The number needs to relate to an entry in the static
+    // The number needs to relate to an entry in the EvccResourceSets.icons
     enum BaseIcon {
         ICON_BATTERY_EMPTY,
         ICON_BATTERY_ONEQUARTER,
@@ -25,6 +25,9 @@ import Toybox.WatchUi;
         ICON_HOME,
         ICON_GRID,
         ICON_DURATION,
+        ICON_CAR,
+        ICON_HEATER,
+        ICON_DEVICE,
         ICON_FORECAST,
         ICON_STATISTICS
     }

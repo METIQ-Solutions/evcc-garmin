@@ -184,9 +184,6 @@ import Toybox.Math;
     }
 
 
-    (:exclForMemoryStandard) private const SMALL_LINE as Float = 0.6; // site title, charging details and logo count only as the fraction of a line specified here
-    (:exclForMemoryStandard) private const MAX_VAR_LINES as Number = 6; // 1 x site title, 1 x battery, 2 x loadpoints with 2 lines each
-
     // The addContent function generates the content of
     // this view.
     // There are two versions, one for low memory devices, and one for all other devices
@@ -196,6 +193,8 @@ import Toybox.Math;
 
     // For low memory, we display loadpoints only in the main view, and to the
     // extend they fit on the screen (if there are more, they are simply not shown)
+    (:exclForMemoryStandard) private const SMALL_LINE as Float = 0.6; // site title, charging details and logo count only as the fraction of a line specified here
+    (:exclForMemoryStandard) private const MAX_VAR_LINES as Number = 6; // 1 x site title, 1 x battery, 2 x loadpoints with 2 lines each
     (:exclForMemoryStandard)
     public function addContent( block as EvccVerticalBlock, calcDc as EvccDcInterface ) {
         var state = getStateRequest().getState();

@@ -1,20 +1,44 @@
 import Toybox.Lang;
 
-class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
+/*
+ * Base class for views that display loadpoints.
+ * Loadpoints are shown either in the main view or, if more than two are present,
+ * in dedicated loadpoint views. The rendering logic is shared and implemented
+ * in this class.
+ */
+ class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
 
+    // Constructor
     protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
         EvccWidgetBaseSiteView.initialize( views, parentView, siteIndex );
     }
 
-    // Add a single loadpoint to the given block
+    // Helper function to add the charge power of a loadpoint to a line
+    private function addChargePower( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
+        line.addText( " " );
+        line.addIcon( EvccIconBlock.ICON_ACTIVE_PHASES, { :charging => true, :activePhases => loadpoint.getActivePhases() } );
+        line.addText( " " + EvccHelperWidget.formatPower( loadpoint.getChargePowerRounded() ) );
+    }
+
+    // Adds the display line(s) for a single loadpoint to the given block.
+    // Loadpoints that should not be displayed are ignored.
+    // Returns true if the loadpoint was added, otherwise false.
+    // Ignored are loadpoints without a vehicle that are neither heaters
+    // nor integrated devices.
     (:exclForMemoryLow)
     protected function addLoadpoint( block as EvccVerticalBlock, loadpoint as EvccLoadPoint ) as Boolean {
+
+        // Route to different rendering functions for each
+        // type of loadpoint (connected vehicle, heater, integrated device)
         if( loadpoint.isHeater() ) {
             block.addBlock( renderHeater( loadpoint ) );
             return true;
         } else if( loadpoint.isVehicle() ) {
+            // EV chargers are shown only if a vehicle is connected
             var loadpointLine = renderVehicle( loadpoint, true );
             block.addBlock( loadpointLine );
+            // If the vehicle is charging, a separate line with details
+            // will be added
             if( loadpoint.isCharging() ) {
                 block.addBlock( renderVehicleChargingDetails( loadpoint, loadpointLine.getOption( :marginLeft ) as Number ) );
             }
@@ -27,13 +51,6 @@ class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
         }
     }
 
-    // Helper function to add the charge power of a loadpoint to a line
-    private function addChargePower( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
-        line.addText( " " );
-        line.addIcon( EvccIconBlock.ICON_ACTIVE_PHASES, { :charging => true, :activePhases => loadpoint.getActivePhases() } );
-        line.addText( " " + EvccHelperWidget.formatPower( loadpoint.getChargePowerRounded() ) );
-    }
-
     // Helper function to add the charging mode of a loadpoint to a line
     private function addMode( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
         line.addTextWithOptions( " (" + formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
@@ -44,7 +61,17 @@ class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
         line.addTextWithOptions( controllable.getTitle(), { :isTruncatable => true } as DbOptions );
     }
 
-    // Function to generate main loadpoint lines
+    // Return the text to be displayed for the mode
+    private function formatMode( loadpoint as EvccLoadPoint ) as String { 
+        var mode = loadpoint.getMode();
+        if( mode.equals( "pv" ) ) { return "Solar"; }
+        else if( mode.equals( "minpv" ) ) { return "Min+Solar"; }
+        else if( mode.equals( "now" ) ) { return "Fast"; }
+        else if( mode.equals( "off" ) ) { return "Off"; }
+        else { return mode; }
+    }
+
+    // Function to generate the main line representing a connected vehicle
     protected function renderVehicle( loadpoint as EvccLoadPoint, showChargingDetails as Boolean ) as EvccHorizontalBlock {
         var vehicle = loadpoint.getVehicle() as EvccConnectedVehicle;
 
@@ -72,7 +99,7 @@ class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
         return line;
     }
 
-    // Function to generate charging info below main loadpoint line
+    // Function to generate the charging info line below main vehicle line
     protected function renderVehicleChargingDetails( loadpoint as EvccLoadPoint, marginLeft as Number ) as EvccHorizontalBlock {
         var lineCharging = new EvccHorizontalBlock( { :relativeFont => 3, :marginLeft => marginLeft } );
         lineCharging.addText( formatMode( loadpoint ) );
@@ -121,15 +148,5 @@ class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
         addMode( line, loadpoint );
         
         return line;
-    }
-
-    // Return the text to be displayed for the mode
-    private function formatMode( loadpoint as EvccLoadPoint ) as String { 
-        var mode = loadpoint.getMode();
-        if( mode.equals( "pv" ) ) { return "Solar"; }
-        else if( mode.equals( "minpv" ) ) { return "Min+Solar"; }
-        else if( mode.equals( "now" ) ) { return "Fast"; }
-        else if( mode.equals( "off" ) ) { return "Off"; }
-        else { return mode; }
     }
 }

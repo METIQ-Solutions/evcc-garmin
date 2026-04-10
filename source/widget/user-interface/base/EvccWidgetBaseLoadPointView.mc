@@ -9,8 +9,8 @@ import Toybox.Lang;
  class EvccWidgetBaseLoadPointView extends EvccWidgetBaseSiteView {
 
     // Constructor
-    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
-        EvccWidgetBaseSiteView.initialize( views, parentView, siteIndex );
+    protected function initialize( options as EvccWidgetBaseSiteView.Options ) {
+        EvccWidgetBaseSiteView.initialize( options );
     }
 
     // Helper function to add the charge power of a loadpoint to a line

@@ -8,13 +8,26 @@ import Toybox.Math;
  // The main view showing the most important aspects of the state of one evcc instance
  class EvccWidgetMainView extends EvccWidgetBaseLoadPointView {
 
+    // Options for constructor
+    typedef Options as {
+        :views as ArrayOfSiteViews, 
+        :parentView as EvccWidgetBaseSiteView?, 
+        :siteIndex as Number,
+        :actsAsGlance as Boolean
+    };
+
     // This function returns a list of views for all sites
     static function getAllSiteViews() as ArrayOfSiteViews {
         var views = new ArrayOfSiteViews[0];
         var siteCount = EvccSiteConfiguration.getSiteCount();
         for( var i = 0; i < siteCount; i++ ) {
-           // The view adds itself to views
-           new EvccWidgetMainView( views, null, i, false );
+            // The view adds itself to views
+            views.add( new EvccWidgetMainView( {
+                :actAsGlance => false, 
+                :views => views,
+                :siteIndex => i,
+                :pageIndex => views.size()
+            } ) );
         }
         return views;
     }
@@ -26,67 +39,96 @@ import Toybox.Math;
     // other sites will be presented as sub view and can be cycled through.
     var _actAsGlance as Boolean;
     
-    // When we process the state the first time, we check if a
-    // forecast is available and if yes add the forecast view 
-    var _alreadyHasForecastView as Boolean = false;
-    var _alreadyHasStatisticsView as Boolean = false;
+    // References to detail views
+    var _forecastView as EvccWidgetForecastView?;
+    var _statisticsView as EvccWidgetStatisticsView?;
 
-    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number, actAsGlance as Boolean ) {
+    // An array with an entry for each loadpoint category,
+    // which itself contains an array of detail views showing
+    // the loadpoints in that category.
+    var _loadPointViews as Array<Array<EvccWidgetLoadPointView>>;
+
+    // Tuple containing the target array for the views as the first element,
+    // and the parent view as the second element. The target may refer to
+    // either sibling or child views, depending on where the detail views
+    // (statistics, forecast, ...) should be added.
+    var _detailViewTarget as [ArrayOfSiteViews, EvccWidgetBaseSiteView?]?;
+
+    function initialize( options as Options ) {
         // EvccHelperBase.debug("Widget: initialize");
-        EvccWidgetBaseLoadPointView.initialize( views, parentView, siteIndex );
+        EvccWidgetBaseLoadPointView.initialize( options );
 
-        _actAsGlance = actAsGlance;
+        _actAsGlance = options[:actAsGlance] as Boolean;
 
+        // Create an array of views for each loadpoint category
+        _loadPointViews = new Array<Array<EvccWidgetLoadPointView>>[EvccState.NUM_OF_LOADPOINT_CATEGORIES];
+        for( var i = 0; i < _loadPointViews.size(); i++ ) {
+            _loadPointViews[i] = new Array<EvccWidgetLoadPointView>[0];            
+        }
+
+        // Now we define the target array used for detail views
+        var siteCount = EvccSiteConfiguration.getSiteCount();
+        // If we act as glance, and there is only one site, then we add the detail view to the lower level views
+        // Also if we do not act as glance, but there is more than one site, it goes to the lower level views 
+        if( ( _actAsGlance && siteCount == 1 ) || ( ! _actAsGlance && siteCount > 1 ) ) {
+            _detailViewTarget = [getLowerLevelViews(), self];
+        // But if we are not acting as glance and there is only one site, we directly add the
+        // detail view to the same level view
+        } else if ( siteCount == 1 ) {
+            _detailViewTarget = [getSameLevelViews(), self.getParentView()];
+        }
+
+        // And then we add the detail or lower level views
+        // If we are acting as glance and there is more than one site,
+        // we just add all sites as lower level views
         if( _actAsGlance && EvccSiteConfiguration.getSiteCount() > 1 ) {
-            // If we are acting as glance and there is more than one site,
-            // we just add all sites as lower level views
             addLowerLevelViews( getAllSiteViews() );
         } else {
             // In all other cases we add the detail views.
             // If we act as glance and have only one site, they will be added as lower level views
             // If we do not act as glance, they will be either added to the lower level if there
             // are multiple sites, or to the same level
-            addDetailViews( true );
+            initOrUpdateDetailViews( true );
         }
     }
 
     // See _actAsGlance
     public function actsAsGlance() as Boolean { return _actAsGlance; }
 
-    // This function is the one actually decides if a detail view is added
-    // on the same or on the lower level. To be able to apply this to 
-    // different detail views, it accepts a class type as input
+    // This function initializes a detail view. To be able to apply the
+    // same logic to different detail views, it accepts a class type as input
     (:exclForMemoryLow :typecheck(false))
-    private function addDetailView( viewClass, calledDuringAppStartup as Boolean ) as Void {
-        var siteCount = EvccSiteConfiguration.getSiteCount();
-        var view;
-        // If we act as glance, and there is only one site, then we add the detail view to the lower level views
-        // Also if we do not act as glance, but there is more than one site, it goes to the lower level views 
-        if( ( _actAsGlance && siteCount == 1 ) || ( ! _actAsGlance && siteCount > 1 ) ) {
-            view = 
-                new viewClass( getLowerLevelViews(), self, getSiteIndex() )
-                as EvccWidgetBaseSiteView;
-        // But if we are not acting as glance and there is only one site, we directly add the
-        // detail view to the same level view
-        } else if ( siteCount == 1 ) {
-            view =  
-                new viewClass( getSameLevelViews(), self.getParentView(), getSiteIndex() )
-                as EvccWidgetBaseSiteView;
+    private function initDetailView( 
+        viewClass, 
+        options as EvccWidgetBaseSiteView.Options, 
+        calledDuringAppStartup as Boolean 
+    ) as EvccWidgetBaseSiteView {
+
+        // We have to check for null since if we act as glance and have multiple 
+        // sites, the view is not added since the sites views are the lower level views 
+        if( _detailViewTarget == null ) {
+            throw new OperationNotAllowedException( "EvccWidgetMainView: called initDetailView without a detail view target." );
         }
+
+        options[:views] = _detailViewTarget[0];
+        options[:parentView] = _detailViewTarget[1];
+        options[:siteIndex] = getSiteIndex();
+
+        var view = new viewClass( options ) as EvccWidgetBaseSiteView;
+
         // If we already can add the view during startup of the app
         // the pre-rendering is already being scheduled
         // by the EvccMultiStateRequestsHandler
-        // We have to check for null since statements above does not 
-        // always return a view. If we act as glance and have multiple sites, 
-        // the view is not added since the sites views are the lower level views 
-        if( ! calledDuringAppStartup && view != null ) {
+        if( ! calledDuringAppStartup ) {
             view.onStateUpdate();
         }
+
+        return view;
     }
 
     // Dummy function for low memory devices
     (:exclForMemoryStandard)   
-    public function addDetailViews( calledDuringAppStartup as Boolean ) as Void {}
+    public function initOrUpdateDetailViews( calledDuringAppStartup as Boolean ) as Void {}
 
     // Detail views present additional data for a particular site. This function adds 
     // detail views for this site, either to the lower level or to the same level views, 
@@ -96,8 +138,8 @@ import Toybox.Math;
     // data may lead to additional views being displayed. Therefore, this function has to protect 
     // itself from adding the same view twice.
     (:exclForMemoryLow)   
-    public function addDetailViews( calledDuringAppStartup as Boolean ) as Void {
-        // EvccHelperBase.debug("WidgetSiteMain: addDetailViews" );
+    public function initOrUpdateDetailViews( calledDuringAppStartup as Boolean ) as Void {
+        // EvccHelperBase.debug("WidgetSiteMain: initOrUpdateDetailViews" );
         var stateRequest = getStateRequest();
 
         // Note that we DO NOT check fore staterq.hasCurrentState(). In this instance we are not interested
@@ -105,14 +147,39 @@ import Toybox.Math;
         // forecast we assume that there is still a forecast
         // If there is an error, we do not add anything. The actual error will be handled by
         // the content assembly of this view.
-        if( ! stateRequest.hasError() && stateRequest.hasState() ) {
-            if( ! _alreadyHasForecastView && stateRequest.getState().hasForecast() ) {
-                _alreadyHasForecastView = true;
-                addDetailView( EvccWidgetForecastView, calledDuringAppStartup );
+        if( ! stateRequest.hasError() && stateRequest.hasState() && _detailViewTarget != null ) {
+            var detailViews = _detailViewTarget[0];
+            var state = stateRequest.getState();
+            if( state.hasForecast() ) {
+                if( _forecastView == null ) {
+                    _forecastView = initDetailView( EvccWidgetForecastView, {}, calledDuringAppStartup ) as EvccWidgetForecastView;
+                }
+            } else {
+                _forecastView = null;
             }
-            if( ! _alreadyHasStatisticsView && stateRequest.getState().getStatistics() != null ) {
-                _alreadyHasStatisticsView = true;
-                addDetailView( EvccWidgetStatisticsView, calledDuringAppStartup );
+            if( state.hasStatistics() ) {
+                if( _statisticsView == null ) {
+                    _statisticsView = initDetailView( EvccWidgetStatisticsView, {}, calledDuringAppStartup ) as EvccWidgetStatisticsView;
+                }
+            } else {
+                _statisticsView = null;
+            }
+
+            while( detailViews.size() > 0 ) {
+                detailViews.remove( detailViews[detailViews.size()-1] );
+            }
+
+            var detailViewsRaw = [
+                _forecastView,
+                _statisticsView
+            ];
+
+            for( var i = 0; i < detailViewsRaw.size(); i++ ) {
+                if( detailViewsRaw[i] != null ) {
+                    var view = detailViewsRaw[i] as EvccWidgetBaseSiteView;
+                    view.setPageIndex( detailViews.size() );
+                    detailViews.add( view );
+                }
             }
         }
     }
@@ -158,13 +225,13 @@ import Toybox.Math;
 
     // With every new web response we check if there are maybe new detail views to be displayed
     // This is important when we initially do not have an up-to-date state and therefore 
-    // state-dependent detail views are not added in the addDetailViews() call from the 
+    // state-dependent detail views are not added in the initOrUpdateDetailViews() call from the 
     // constructor ...
 
     // ... if view prerendering is disabled, we do this in the onUpdate ...
     (:exclForViewPreRenderingEnabled) 
     function onUpdate( dc as Dc ) as Void {
-        addDetailViews( false );
+        initOrUpdateDetailViews( false );
         EvccWidgetBaseSiteView.onUpdate( dc );
     }
 
@@ -174,12 +241,12 @@ import Toybox.Math;
     // detail views.
     (:exclForViewPreRenderingDisabled) function prepareImmediately() as Void {
         // EvccHelperBase.debug( "WidgetSiteMain: prepareImmediately site=" + getSiteIndex() );
-        addDetailViews( false );
+        initOrUpdateDetailViews( false );
         EvccWidgetBaseSiteView.prepareImmediately();
     }
     (:exclForViewPreRenderingDisabled) function prepareByTasks() as Void {
         // EvccHelperBase.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
-        EvccTaskQueue.getInstance().add( new EvccAddDetailViewsTask( self ) );
+        EvccTaskQueue.getInstance().add( new EvccinitOrUpdateDetailViewsTask( self ) );
         EvccWidgetBaseSiteView.prepareByTasks();
     }
 
@@ -249,7 +316,7 @@ import Toybox.Math;
     // If they are more, then loadpoints that belong to the same 
     // category (vehicles, heaters, integrated devices) will be grouped
     // into one category, with a summary line being displayed.
-    // In this case addDetailViews() will add detail views that then
+    // In this case initOrUpdateDetailViews() will add detail views that then
     // display the loadpoints in that category.
     (:exclForMemoryLow)
     public function addContent( block as EvccVerticalBlock, calcDc as EvccDcInterface ) {
@@ -284,11 +351,7 @@ import Toybox.Math;
             // If there are more, we look at them per category
             // First we assemble a 2d array with the icon and loadpoint list
             // for each category
-            var loadPointLists = [
-                [ EvccIconBlock.ICON_CAR, state.getConnectedVehicles() ],
-                [ EvccIconBlock.ICON_HEATER, state.getHeaters() ],
-                [ EvccIconBlock.ICON_DEVICE, state.getIntegratedDevices() ]
-            ];
+            var loadPointLists = state.getAllLoadPointsCategories();
             
             // Then we loop through all categories
             for( var i = 0; i < loadPointLists.size(); i++ ) {

@@ -10,8 +10,8 @@ class EvccWidgetStatisticsView extends EvccWidgetBaseSiteView {
                                             "365 days", 
                                             "all time" ];
 
-    function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
-        EvccWidgetBaseSiteView.initialize( views, parentView, siteIndex );
+    function initialize( options as EvccWidgetBaseSiteView.Options ) {
+        EvccWidgetBaseSiteView.initialize( options );
     }
 
     // Set icon and title for this page

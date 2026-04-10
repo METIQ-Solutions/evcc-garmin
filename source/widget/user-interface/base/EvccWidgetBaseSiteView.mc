@@ -18,7 +18,15 @@ import Toybox.Math;
 // - Members and function specific to devices with pre-rendering of views
 
 class EvccWidgetBaseSiteView extends WatchUi.View {
-    
+
+    // Options for constructor
+    typedef Options as {
+        :views as ArrayOfSiteViews, 
+        :parentView as EvccWidgetBaseSiteView?, 
+        :siteIndex as Number,
+        :pageIndex as Number
+    };
+
     // Functions to access the index and state request for the site of this view
     private var _siteIndex as Number;
     protected function getSiteIndex() as Number { return _siteIndex; }
@@ -47,10 +55,11 @@ class EvccWidgetBaseSiteView extends WatchUi.View {
 
     // Other views on the same level
     private var _sameLevelViews as ArrayOfSiteViews;
-    private var _pageIndex as Number; // index of this view in the array
+    private var _pageIndex as Number = 0; // index of this view in the array
     protected function getSameLevelViews() as ArrayOfSiteViews { return _sameLevelViews; }
     public function getSameLevelViewCount() as Number { return _sameLevelViews.size(); }
     public function getPageIndex() as Number { return _pageIndex; }
+    public function setPageIndex( pageIndex as Number ) as Void { _pageIndex = pageIndex; }
 
     // Views on the lower level
     private var _lowerLevelViews as ArrayOfSiteViews = new ArrayOfSiteViews[0];
@@ -113,18 +122,19 @@ class EvccWidgetBaseSiteView extends WatchUi.View {
     
     // Constructor
     (:exclForViewPreRenderingEnabled) 
-    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
+    protected function initialize( options as Options ) {
         // EvccHelperBase.debug("WidgetSiteBase: initialize");
         View.initialize();
 
-        _siteIndex = siteIndex;
-        _parentView = parentView;
+        _siteIndex = options[:siteIndex] as Number;
+        _parentView = options[:parentView] as EvccWidgetBaseSiteView;
+        _sameLevelViews = options[:views] as ArrayOfSiteViews;
 
-        // Add ourself to the list of same level views
-        views.add( self );
-        _pageIndex = views.size() - 1;
-        _sameLevelViews = views;
-    }
+        var pageIndex = options[:pageIndex];
+        if( pageIndex instanceof Number ) {
+            _pageIndex = pageIndex as Number;
+        }
+   }
 
     // Render the view
     (:exclForViewPreRenderingEnabled :exclForMemoryLow) 
@@ -179,17 +189,18 @@ class EvccWidgetBaseSiteView extends WatchUi.View {
     // Part of the constructor has to be duplicated, since initialization of non-null members can
     // only be done in the constructor, not in in another function 
     (:exclForViewPreRenderingDisabled) 
-    protected function initialize( views as ArrayOfSiteViews, parentView as EvccWidgetBaseSiteView?, siteIndex as Number ) {
+    protected function initialize( options as Options ) {
         // EvccHelperBase.debug("WidgetSiteBase: initialize");
         View.initialize();
 
-        _siteIndex = siteIndex;
-        _parentView = parentView;
+        _siteIndex = options[:siteIndex] as Number;
+        _parentView = options[:parentView] as EvccWidgetBaseSiteView;
+        _sameLevelViews = options[:views] as ArrayOfSiteViews;
 
-        // Add ourself to the list of same level views
-        views.add( self );
-        _pageIndex = views.size() - 1;
-        _sameLevelViews = views;
+        var pageIndex = options[:pageIndex];
+        if( pageIndex instanceof Number ) {
+            _pageIndex = pageIndex as Number;
+        }
 
         // This part is special for pre-rendering
         // For pre-rendering, the state request should not just call WatchUi.requestUpdate, but

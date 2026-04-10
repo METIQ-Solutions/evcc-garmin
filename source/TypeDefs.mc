@@ -6,6 +6,7 @@ typedef ArrayOfSiteViews as Array<EvccWidgetBaseSiteView>;
 typedef ArrayOfLoadPoints as Array<EvccLoadPoint>;
 typedef GarminFont as FontDefinition or VectorFont;
 typedef ArrayOfGarminFonts as Array<GarminFont>;
+typedef LoadPointCategory as [ EvccIconBlock.Icon, EvccLoadPointList ];
 
 typedef JsonContainer as Dictionary<String,Object?>;
 

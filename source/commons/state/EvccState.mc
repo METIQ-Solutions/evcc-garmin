@@ -95,6 +95,30 @@ import Toybox.Time;
         return merged;
     }
 
+    (:exclForMemoryLow) 
+    public static var NUM_OF_LOADPOINT_CATEGORIES as Number = 3;
+    (:exclForMemoryLow) 
+    public function getAllLoadPointsCategories() as Array<LoadPointCategory> { 
+        var lpCategories = [
+            [ EvccIconBlock.ICON_CAR, _connectedVehicles ],
+            [ EvccIconBlock.ICON_HEATER, _heaters ],
+            [ EvccIconBlock.ICON_DEVICE, _integratedDevices ]
+        ];
+        if( lpCategories.size() != NUM_OF_LOADPOINT_CATEGORIES ) {
+            throw new InvalidValueException( "EvccState: number of categories does not match NUM_OF_LOADPOINT_CATEGORIES." );
+        }
+        return lpCategories;
+    }
+
+    (:exclForMemoryLow) 
+    public function getLoadPointCategory( index as Number ) as LoadPointCategory { 
+        var categories = getAllLoadPointsCategories();
+        if( index >= categories.size() ) {
+            throw new InvalidValueException( "EvccState: unknown category" );
+        }
+        return categories[index];
+    }
+
     (:exclForMemoryLow) private var _forecast as EvccSolarForecast?;
     (:exclForMemoryLow) public function getForecast() as EvccSolarForecast? { return _forecast; }
     (:exclForMemoryLow :typecheck([disableBackgroundCheck,disableGlanceCheck])) public function hasForecast() as Boolean { return _forecast == null ? false : _forecast.hasForecast(); }

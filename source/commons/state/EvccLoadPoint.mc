@@ -31,11 +31,11 @@ import Toybox.Lang;
         _mode = dataLp[MODE] as String;
         _chargeRemainingDuration = dataLp[CHARGEREMAININGDURATION] as Number?;
 
-        _controllable = getControllable( dataLp, dataResult );
+        _controllable = readControllable( dataLp, dataResult );
     }
 
     (:exclForMemoryLow :typecheck(disableGlanceCheck))
-    private function getControllable( 
+    private function readControllable( 
         dataLp as JsonContainer, 
         dataResult as JsonContainer 
     ) as EvccControllable? {
@@ -50,7 +50,7 @@ import Toybox.Lang;
     }
 
     (:exclForMemoryStandard)
-    private function getControllable( 
+    private function readControllable( 
         dataLp as JsonContainer, 
         dataResult as JsonContainer 
     ) as EvccControllable? {
@@ -108,6 +108,9 @@ import Toybox.Lang;
     public function isCharging() as Boolean { return _isCharging; }
     public function getActivePhases() as Number { return _activePhases; }
     public function getChargePowerRounded() as Number { return EvccHelperBase.roundPower( _chargePower ); }
+
+    (:exclForMemoryLow)
+    public function getControllable() as EvccControllable? { return _controllable; }
 
     public function isVehicle() as Boolean { return _controllable instanceof EvccConnectedVehicle; }
     public function getVehicle() as EvccConnectedVehicle? { return isVehicle() ? _controllable as EvccConnectedVehicle : null; }

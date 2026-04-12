@@ -7,6 +7,7 @@ import Toybox.WatchUi;
 // based on the font that is passed in the options or used by its parent element
 (:glance) class EvccIconBlock extends EvccBitmapBlock {
     var _icon as BaseIcon;
+    var _suppressIcon as Boolean = false;
 
     typedef Icon as BaseIcon or ConditionalIcon;
 
@@ -48,7 +49,7 @@ import Toybox.WatchUi;
         ICON_ACTIVE_PHASES = -3
     }
 
-    function initialize( icon as Icon, options as DbOptions ) {
+    public function initialize( icon as Icon, options as DbOptions ) {
         EvccBitmapBlock.initialize( null, options );
 
         // We analyse the icon and passed in data and from that

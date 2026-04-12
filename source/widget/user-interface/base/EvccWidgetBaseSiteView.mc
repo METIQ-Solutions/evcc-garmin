@@ -24,12 +24,12 @@ class EvccWidgetBaseSiteView extends WatchUi.View {
         :views as ArrayOfSiteViews, 
         :parentView as EvccWidgetBaseSiteView?, 
         :siteIndex as Number,
-        :pageIndex as Number
+        :pageIndex as Number?
     };
 
     // Functions to access the index and state request for the site of this view
     private var _siteIndex as Number;
-    protected function getSiteIndex() as Number { return _siteIndex; }
+    public function getSiteIndex() as Number { return _siteIndex; }
     (:exclForViewPreRenderingEnabled)
     protected function setSiteIndex( siteIndex as Number ) as Void { _siteIndex = siteIndex; }
     // If view pre-rendering is active, we need to immediately redraw
@@ -56,14 +56,14 @@ class EvccWidgetBaseSiteView extends WatchUi.View {
     // Other views on the same level
     private var _sameLevelViews as ArrayOfSiteViews;
     private var _pageIndex as Number = 0; // index of this view in the array
-    protected function getSameLevelViews() as ArrayOfSiteViews { return _sameLevelViews; }
+    public function getSameLevelViews() as ArrayOfSiteViews { return _sameLevelViews; }
     public function getSameLevelViewCount() as Number { return _sameLevelViews.size(); }
     public function getPageIndex() as Number { return _pageIndex; }
     public function setPageIndex( pageIndex as Number ) as Void { _pageIndex = pageIndex; }
 
     // Views on the lower level
     private var _lowerLevelViews as ArrayOfSiteViews = new ArrayOfSiteViews[0];
-    protected function addLowerLevelViews( views as ArrayOfSiteViews ) as Void { _lowerLevelViews.addAll( views ); }
+    public function addLowerLevelViews( views as ArrayOfSiteViews ) as Void { _lowerLevelViews.addAll( views ); }
     public function getLowerLevelViews() as ArrayOfSiteViews { return _lowerLevelViews; }
     public function getLowerLevelViewCount() as Number { return _lowerLevelViews.size(); }
 

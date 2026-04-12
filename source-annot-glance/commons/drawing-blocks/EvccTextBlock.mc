@@ -18,14 +18,12 @@ import Toybox.WatchUi;
 
     // Removes the specified number of characters from the
     // end of the text 
-    // one version for enabled cache, one for disabled
     function truncate( chars as Number ) as Void {
         _text = _text.substring( 0, _text.length() - chars ) as String;
         resetCache( :resetWidth, :resetDirectionUp );
     }
 
     // Appends characters to the text
-    // one version for enabled cache, one for disabled
     function append( text as String ) as Void { 
         _text += text;
         resetCache( :resetWidth, :resetDirectionUp );

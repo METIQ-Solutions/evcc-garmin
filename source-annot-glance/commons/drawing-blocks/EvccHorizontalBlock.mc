@@ -30,7 +30,16 @@ import Toybox.WatchUi;
         var availableWidth = getDcWidthAtY( y ) - getOption( :truncateSpacing ) as Number;
         if( _truncatableElement != null ) {
             var truncatableElement = _truncatableElement as EvccTextBlock;
+            var first = true;
             while( availableWidth < getWidth() && truncatableElement.getTextLength() > 1 ) {
+                // If the option is enabled, we add ellipsis ("...") at the
+                // end of the truncated text element
+                if( first ) {
+                    if( truncatableElement.getOption( :useEllipsis ) as Boolean ) {
+                        insertAfter( new EvccTextBlock( "...", {} ), truncatableElement );
+                    }
+                    first = false;
+                }
                 //System.println( "**** before truncate " + _truncatableElement._text );
                 truncatableElement.truncate( 1 );
                 //System.println( "**** after truncate " + _truncatableElement._text );

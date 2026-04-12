@@ -59,14 +59,14 @@ class GetInitialView {
                 if ( ! ( settings has :isGlanceModeEnabled ) || ! settings.isGlanceModeEnabled ) {
                     // EvccHelperBase.debug( "EvccApp: no glance, starting with active site only" );
                     var views = new ArrayOfSiteViews[0];
-                    // The view adds itself to views
-                    views.add( new EvccWidgetMainView( {
+                    // The main view adds itself to views
+                    var view = new EvccWidgetMainView( {
                         :views => views,
                         :siteIndex => activeSite,
                         :actAsGlance => true
-                    } ) );
+                    } );
                     var delegate = new EvccViewCarouselDelegate( views, breadCrumb );
-                    return [views[0], delegate];
+                    return [view, delegate];
                 // If glances are supported, we present the full list of sites or menu entries right away
                 } else {
                     var views = EvccWidgetMainView.getAllSiteViews();

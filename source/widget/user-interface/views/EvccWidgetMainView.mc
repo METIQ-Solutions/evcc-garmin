@@ -1,12 +1,15 @@
-import Toybox.Graphics;
 import Toybox.Lang;
-import Toybox.WatchUi;
-import Toybox.Timer;
-import Toybox.Application.Properties;
-import Toybox.Math;
 
- // The main view showing the most important aspects of the state of one evcc instance
- class EvccWidgetMainView extends EvccWidgetBaseLoadPointView {
+/*
+ * Main view showing the most important aspects of a single evcc instance.
+ * Also responsible for initializing and updating the detail views
+ * via the associated EvccDetailViewManager.
+ */
+ class EvccWidgetMainView extends EvccWidgetBaseSiteView {
+
+
+    /******** TYPES ********/
+
 
     // Options for constructor
     typedef Options as {
@@ -16,238 +19,86 @@ import Toybox.Math;
         :actsAsGlance as Boolean
     };
 
+
+    /******** STATIC ********/
+
+
     // This function returns a list of views for all sites
-    static function getAllSiteViews() as ArrayOfSiteViews {
+    public static function getAllSiteViews() as ArrayOfSiteViews {
         var views = new ArrayOfSiteViews[0];
         var siteCount = EvccSiteConfiguration.getSiteCount();
         for( var i = 0; i < siteCount; i++ ) {
             // The view adds itself to views
-            views.add( new EvccWidgetMainView( {
+            new EvccWidgetMainView( {
                 :actAsGlance => false, 
                 :views => views,
-                :siteIndex => i,
-                :pageIndex => views.size()
-            } ) );
+                :siteIndex => i
+            } );
         }
         return views;
     }
-    
+
+
+    /******** INSTANCE ********/
+
+
     // Indicates that we act as glance and present only one site
     // If a device does not support glances, then in the initial
     // widget view only one site can be presented, which is the active
-    // site (_actAsGlance=true). Only if that one site is selected, the 
+    // site (_actsAsGlance=true). Only if that one site is selected, the 
     // other sites will be presented as sub view and can be cycled through.
-    var _actAsGlance as Boolean;
-    
-    // References to detail views
-    var _forecastView as EvccWidgetForecastView?;
-    var _statisticsView as EvccWidgetStatisticsView?;
+    var _actsAsGlance as Boolean;
 
-    // An array with an entry for each loadpoint category,
-    // which itself contains an array of detail views showing
-    // the loadpoints in that category.
-    var _loadPointViews as Array<Array<EvccWidgetLoadPointView>>;
 
-    // Tuple containing the target array for the views as the first element,
-    // and the parent view as the second element. The target may refer to
-    // either sibling or child views, depending on where the detail views
-    // (statistics, forecast, ...) should be added.
-    var _detailViewTarget as [ArrayOfSiteViews, EvccWidgetBaseSiteView?]?;
+    // The detail view manager initializes detail views and updates
+    // the list of detail views with every state update
+    (:exclForMemoryLow)
+    var _detailViewManager as EvccDetailViewManager?;
 
+
+    // Constructor
+    // Low memory version, without detail views
+    (:exclForMemoryStandard)
     function initialize( options as Options ) {
-        // EvccHelperBase.debug("Widget: initialize");
         EvccWidgetBaseLoadPointView.initialize( options );
+        _actsAsGlance = options[:actAsGlance] as Boolean;
+    }
 
-        _actAsGlance = options[:actAsGlance] as Boolean;
 
-        // Create an array of views for each loadpoint category
-        _loadPointViews = new Array<Array<EvccWidgetLoadPointView>>[EvccState.NUM_OF_LOADPOINT_CATEGORIES];
-        for( var i = 0; i < _loadPointViews.size(); i++ ) {
-            _loadPointViews[i] = new Array<EvccWidgetLoadPointView>[0];            
-        }
+    // Constructor
+    // Standard version, with detail views and multi-site support
+    (:exclForMemoryLow)
+    function initialize( options as Options ) {
 
-        // Now we define the target array used for detail views
-        var siteCount = EvccSiteConfiguration.getSiteCount();
-        // If we act as glance, and there is only one site, then we add the detail view to the lower level views
-        // Also if we do not act as glance, but there is more than one site, it goes to the lower level views 
-        if( ( _actAsGlance && siteCount == 1 ) || ( ! _actAsGlance && siteCount > 1 ) ) {
-            _detailViewTarget = [getLowerLevelViews(), self];
-        // But if we are not acting as glance and there is only one site, we directly add the
-        // detail view to the same level view
-        } else if ( siteCount == 1 ) {
-            _detailViewTarget = [getSameLevelViews(), self.getParentView()];
-        }
+        var views = options[:views] as ArrayOfSiteViews;
+        options[:pageIndex] = views.size();
+        views.add( self );
 
-        // And then we add the detail or lower level views
-        // If we are acting as glance and there is more than one site,
-        // we just add all sites as lower level views
-        if( _actAsGlance && EvccSiteConfiguration.getSiteCount() > 1 ) {
-            addLowerLevelViews( getAllSiteViews() );
+        EvccWidgetBaseSiteView.initialize( options );
+
+        _actsAsGlance = options[:actAsGlance] as Boolean;
+
+        // We add the sites as lower level views if the current view
+        // acts as glance in the widget carousel and there are more
+        // than one sites. In this case there are no detail views.
+        if( _actsAsGlance && EvccSiteConfiguration.getSiteCount() > 1 ) {
+            addLowerLevelViews( EvccWidgetMainView.getAllSiteViews() );
         } else {
-            // In all other cases we add the detail views.
-            // If we act as glance and have only one site, they will be added as lower level views
-            // If we do not act as glance, they will be either added to the lower level if there
-            // are multiple sites, or to the same level
-            initOrUpdateDetailViews( true );
+            // In all other cases we instantiate a detail view manager.
+            _detailViewManager = new EvccDetailViewManager( self );
         }
     }
 
-    // See _actAsGlance
-    public function actsAsGlance() as Boolean { return _actAsGlance; }
 
-    // This function initializes a detail view. To be able to apply the
-    // same logic to different detail views, it accepts a class type as input
-    (:exclForMemoryLow :typecheck(false))
-    private function initDetailView( 
-        viewClass, 
-        options as EvccWidgetBaseSiteView.Options, 
-        calledDuringAppStartup as Boolean 
-    ) as EvccWidgetBaseSiteView {
+    // See _actsAsGlance
+    public function actsAsGlance() as Boolean { return _actsAsGlance; }
 
-        // We have to check for null since if we act as glance and have multiple 
-        // sites, the view is not added since the sites views are the lower level views 
-        if( _detailViewTarget == null ) {
-            throw new OperationNotAllowedException( "EvccWidgetMainView: called initDetailView without a detail view target." );
-        }
 
-        options[:views] = _detailViewTarget[0];
-        options[:parentView] = _detailViewTarget[1];
-        options[:siteIndex] = getSiteIndex();
-
-        var view = new viewClass( options ) as EvccWidgetBaseSiteView;
-
-        // If we already can add the view during startup of the app
-        // the pre-rendering is already being scheduled
-        // by the EvccMultiStateRequestsHandler
-        if( ! calledDuringAppStartup ) {
-            view.onStateUpdate();
-        }
-
-        return view;
-    }
-
-    // Dummy function for low memory devices
-    (:exclForMemoryStandard)   
-    public function initOrUpdateDetailViews( calledDuringAppStartup as Boolean ) as Void {}
-
-    // Detail views present additional data for a particular site. This function adds 
-    // detail views for this site, either to the lower level or to the same level views, 
-    // depending on the situation.
-    // Detail views are not available on low-memory devices.    
-    // ATTENTION: this function is called everytime there is a new web response, since changed
-    // data may lead to additional views being displayed. Therefore, this function has to protect 
-    // itself from adding the same view twice.
-    (:exclForMemoryLow)   
-    public function initOrUpdateDetailViews( calledDuringAppStartup as Boolean ) as Void {
-        // EvccHelperBase.debug("WidgetSiteMain: initOrUpdateDetailViews" );
-        var stateRequest = getStateRequest();
-
-        // Note that we DO NOT check fore staterq.hasCurrentState(). In this instance we are not interested
-        // whether the stored state is current or not. Regardless of age, if the previous state had a 
-        // forecast we assume that there is still a forecast
-        // If there is an error, we do not add anything. The actual error will be handled by
-        // the content assembly of this view.
-        if( ! stateRequest.hasError() && stateRequest.hasState() && _detailViewTarget != null ) {
-            var detailViews = _detailViewTarget[0];
-            var state = stateRequest.getState();
-            if( state.hasForecast() ) {
-                if( _forecastView == null ) {
-                    _forecastView = initDetailView( EvccWidgetForecastView, {}, calledDuringAppStartup ) as EvccWidgetForecastView;
-                }
-            } else {
-                _forecastView = null;
-            }
-            if( state.hasStatistics() ) {
-                if( _statisticsView == null ) {
-                    _statisticsView = initDetailView( EvccWidgetStatisticsView, {}, calledDuringAppStartup ) as EvccWidgetStatisticsView;
-                }
-            } else {
-                _statisticsView = null;
-            }
-
-            while( detailViews.size() > 0 ) {
-                detailViews.remove( detailViews[detailViews.size()-1] );
-            }
-
-            var detailViewsRaw = [
-                _forecastView,
-                _statisticsView
-            ];
-
-            for( var i = 0; i < detailViewsRaw.size(); i++ ) {
-                if( detailViewsRaw[i] != null ) {
-                    var view = detailViewsRaw[i] as EvccWidgetBaseSiteView;
-                    view.setPageIndex( detailViews.size() );
-                    detailViews.add( view );
-                }
-            }
-        }
-    }
-
-    // If we act as glance, we update the current site
-    function onShow() as Void {
-        try {
-            // EvccHelperBase.debug( "Widget: onShow" );
-            // If we are in glance view, it may happen that we are
-            // returning from the sub views showing multiple sites,
-            // and we have to switch the glance view to the 
-            // site last selected
-            if( _actAsGlance ) {
-                var siteCount = EvccSiteConfiguration.getSiteCount();
-                // Only if there is more than one site, we set the site
-                // index to the currently active, in case the currently
-                // active was changed in the lower level views
-                if( siteCount > 1 ) {
-                    // setSiteIndex will also update the content
-                    // if the site index has changed
-                    setSiteIndex( EvccBreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
-                }
-            }
-            EvccWidgetBaseSiteView.onShow();
-        } catch ( ex ) {
-            // setSiteIndex pre-renders the content in case the
-            // index changed, and we need to log any exceptions
-            // coming from that
-            handleOnShowException( ex );
-            EvccHelperBase.debugException( ex );
-        }
-    }
-
-    // Only with view pre-rendering there is an exception
-    // handler at which we have to register the exception
-    // for it to be displayed in onUpdate.
-    (:exclForViewPreRenderingDisabled)
-    private function handleOnShowException( ex as Exception ) as Void {
-        getExceptionHandler().registerException( ex );
-    }
-    (:exclForViewPreRenderingEnabled)
-    private function handleOnShowException( ex as Exception ) as Void {}
-
-    // With every new web response we check if there are maybe new detail views to be displayed
-    // This is important when we initially do not have an up-to-date state and therefore 
-    // state-dependent detail views are not added in the initOrUpdateDetailViews() call from the 
-    // constructor ...
-
-    // ... if view prerendering is disabled, we do this in the onUpdate ...
-    (:exclForViewPreRenderingEnabled) 
-    function onUpdate( dc as Dc ) as Void {
-        initOrUpdateDetailViews( false );
-        EvccWidgetBaseSiteView.onUpdate( dc );
-    }
-
-    // ... if view prerendering is enabled, we have to do this earlier,
-    // when onStateChange is called, so that the further prerendering
-    // of the page and select indicator is already is based on the adapted 
-    // detail views.
-    (:exclForViewPreRenderingDisabled) function prepareImmediately() as Void {
-        // EvccHelperBase.debug( "WidgetSiteMain: prepareImmediately site=" + getSiteIndex() );
-        initOrUpdateDetailViews( false );
-        EvccWidgetBaseSiteView.prepareImmediately();
-    }
-    (:exclForViewPreRenderingDisabled) function prepareByTasks() as Void {
-        // EvccHelperBase.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
-        EvccTaskQueue.getInstance().add( new EvccinitOrUpdateDetailViewsTask( self ) );
-        EvccWidgetBaseSiteView.prepareByTasks();
+    // Helper function to add the charge power of a loadpoint to a line
+    private function addChargePower( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
+        line.addText( " " );
+        line.addIcon( EvccIconBlock.ICON_ACTIVE_PHASES, { :charging => true, :activePhases => loadpoint.getActivePhases() } );
+        line.addText( " " + EvccHelperWidget.formatPower( loadpoint.getChargePowerRounded() ) );
     }
 
 
@@ -382,6 +233,136 @@ import Toybox.Math;
         block.setOption( :spreadToHeight, getContentArea().height );
     }
 
+
+    // Adds the display line(s) for a single loadpoint to the given block.
+    // Loadpoints that should not be displayed are ignored.
+    // Returns true if the loadpoint was added, otherwise false.
+    // Ignored are loadpoints without a vehicle that are neither heaters
+    // nor integrated devices.
+    (:exclForMemoryLow)
+    private function addLoadpoint( block as EvccVerticalBlock, loadpoint as EvccLoadPoint ) as Boolean {
+        // Route to different rendering functions for each
+        // type of loadpoint (connected vehicle, heater, integrated device)
+        if( loadpoint.isHeater() ) {
+            block.addBlock( renderHeater( loadpoint ) );
+            return true;
+        } else if( loadpoint.isVehicle() ) {
+            // EV chargers are shown only if a vehicle is connected
+            var loadpointLine = renderVehicle( loadpoint, true );
+            block.addBlock( loadpointLine );
+            // If the vehicle is charging, a separate line with details
+            // will be added
+            if( loadpoint.isCharging() ) {
+                block.addBlock( renderVehicleChargingDetails( loadpoint, loadpointLine.getOption( :marginLeft ) as Number ) );
+            }
+            return true;
+        } else if( loadpoint.isIntegratedDevice() ) {
+            block.addBlock( renderIntegratedDevice( loadpoint ) );
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    // Helper function to add the charging mode of a loadpoint to a line
+    private function addMode( line as EvccHorizontalBlock, loadpoint as EvccLoadPoint ) as Void {
+        line.addTextWithOptions( " (" + EvccHelperWidget.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
+    }
+
+
+    // Helper function to add the title of the controllable device (vehicle, heater or integreated device)
+    private function addTitle( line as EvccHorizontalBlock, controllable as EvccControllable ) as Void {
+        line.addTextWithOptions( controllable.getTitle(), { :isTruncatable => true } as DbOptions );
+    }
+
+
+    // Returns the detail view manager for this view
+    // If we act as glance (see above) and there is more than
+    // one site, there are no detail views and this function
+    // will return null.
+    (:exclForMemoryLow)
+    public function getDetailViewManager() as EvccDetailViewManager? { return _detailViewManager; }
+
+
+    // Only with view pre-rendering there is an exception
+    // handler at which we have to register exceptions occuring during onShow
+    // for it to be displayed in onUpdate.
+    (:exclForViewPreRenderingDisabled)
+    private function handleOnShowException( ex as Exception ) as Void {
+        getExceptionHandler().registerException( ex );
+    }
+    (:exclForViewPreRenderingEnabled)
+    private function handleOnShowException( ex as Exception ) as Void {}
+
+
+    // Called when the view is shown first, or returned to
+    // If we act as glance, we update the current site
+    function onShow() as Void {
+        try {
+            // EvccHelperBase.debug( "Widget: onShow" );
+            // If we are in glance view, it may happen that we are
+            // returning from the sub views showing multiple sites,
+            // and we have to switch the glance view to the 
+            // site last selected
+            if( _actsAsGlance ) {
+                var siteCount = EvccSiteConfiguration.getSiteCount();
+                // Only if there is more than one site, we set the site
+                // index to the currently active, in case the currently
+                // active was changed in the lower level views
+                if( siteCount > 1 ) {
+                    // setSiteIndex will also update the content
+                    // if the site index has changed
+                    setSiteIndex( EvccBreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
+                }
+            }
+            EvccWidgetBaseSiteView.onShow();
+        } catch ( ex ) {
+            // setSiteIndex pre-renders the content in case the
+            // index changed, and we need to log any exceptions
+            // coming from that
+            handleOnShowException( ex );
+            EvccHelperBase.debugException( ex );
+        }
+    }
+
+
+    // With every new web response we check if the list of 
+    // detail views needs to be updated.
+    // For example, the state in storage used during initialization may not
+    // yet include a forecast, but it was activated in the meantime and
+    // will then be part of the first server response.
+    // Also vehicles could be connected or disconnected while the app is running, changing
+    // the number of connected vehicle loadpoints, which may or may not require a detail
+    // view.
+
+    // ... if view prerendering is disabled, we do this in the onUpdate ...
+    (:exclForViewPreRenderingEnabled) 
+    function onUpdate( dc as Dc ) as Void {
+        initOrUpdateDetailViews( false );
+        EvccWidgetBaseSiteView.onUpdate( dc );
+    }
+
+    // ... if view prerendering is enabled, we have to do this earlier,
+    // when onStateChange is called, so that the further prerendering
+    // of the page and select indicator is already is based on the adapted 
+    // detail views.
+    (:exclForViewPreRenderingDisabled) function prepareImmediately() as Void {
+        // EvccHelperBase.debug( "WidgetSiteMain: prepareImmediately site=" + getSiteIndex() );
+        if( _detailViewManager != null ) {
+            _detailViewManager.initOrUpdateDetailViews( false );
+        }
+        EvccWidgetBaseSiteView.prepareImmediately();
+    }
+    (:exclForViewPreRenderingDisabled) function prepareByTasks() as Void {
+        // EvccHelperBase.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
+        if( _detailViewManager != null ) {
+            EvccTaskQueue.getInstance().add( new EvccInitOrUpdateDetailViewsTask( self ) );
+        }
+        EvccWidgetBaseSiteView.prepareByTasks();
+    }
+
+
     // Function to generate line for PV, grid, battery and home
     private function renderBasicElement( icon as EvccIconBlock.Icon, text as String?, power as Number, flowIcon as EvccIconBlock.Icon ) as EvccHorizontalBlock {
         var state = getStateRequest().getState();
@@ -415,4 +396,86 @@ import Toybox.Math;
         }
         return line;
     }
+
+
+    // Function to generate the main line representing a connected vehicle
+    private function renderVehicle( loadpoint as EvccLoadPoint, showChargingDetails as Boolean ) as EvccHorizontalBlock {
+        var vehicle = loadpoint.getVehicle() as EvccConnectedVehicle;
+
+        var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
+        
+        addTitle( line, vehicle );
+        
+        // For guest vehicles there is no SoC
+        if( ! vehicle.isGuest() ) {
+            line.addText( " " + EvccHelperUI.formatSoc( vehicle.getSoc() ) );
+        }
+
+        // If the vehicle is charging, we show the power
+        if( loadpoint.isCharging() ) {
+            addChargePower( line, loadpoint );
+            if( ! showChargingDetails ) {
+                line.addTextWithOptions( " (" +  EvccHelperWidget.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
+            }
+        }
+
+        if( ! loadpoint.isCharging() || ! showChargingDetails ) {
+            addMode( line, loadpoint );
+        }
+
+        return line;
+    }
+
+
+    // Function to generate the charging info line below main vehicle line
+    private function renderVehicleChargingDetails( loadpoint as EvccLoadPoint, marginLeft as Number ) as EvccHorizontalBlock {
+        var lineCharging = new EvccHorizontalBlock( { :relativeFont => 3, :marginLeft => marginLeft } );
+        lineCharging.addText( EvccHelperWidget.formatMode( loadpoint ) );
+        if( loadpoint.getChargeRemainingDuration() > 0 ) {
+            lineCharging.addText( " - " );
+            lineCharging.addIcon( EvccIconBlock.ICON_DURATION, {} as DbOptions );
+            lineCharging.addText( " " + EvccHelperWidget.formatDuration( loadpoint.getChargeRemainingDuration() ) );
+        }
+        return lineCharging;
+    }
+
+
+    // Function to generate the line for heater loadpoints
+    private function renderHeater( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
+        var heater = loadpoint.getHeater() as EvccHeater;
+        var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
+        
+        addTitle( line, heater );
+
+        line.addText( " " + EvccHelperWidget.formatTemp( heater.getTemperature() ) );
+        
+        // If the heater is operating, we show the power
+        if( loadpoint.getChargePowerRounded() > 0 ) {
+            addChargePower( line, loadpoint );
+        }
+
+        addMode( line, loadpoint );
+
+        return line;
+    }
+
+
+    // Function to generate the line for integrated device loadpoints
+    (:exclForMemoryLow)
+    private function renderIntegratedDevice( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
+        var integratedDevice = loadpoint.getIntegratedDevice() as EvccIntegratedDevice;
+        var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
+        
+        addTitle( line, integratedDevice );
+        
+        // If the integrated device is operating, we show the power
+        if( loadpoint.getChargePowerRounded() > 0 ) {
+            addChargePower( line, loadpoint );
+        }
+
+        addMode( line, loadpoint );
+        
+        return line;
+    }
+
 }

@@ -48,6 +48,16 @@ class EvccHelperWidget {
         }
     }
 
+    // Returns the text to be displayed for the charging mode
+    public static function formatMode( loadpoint as EvccLoadPoint ) as String { 
+        var mode = loadpoint.getMode();
+        if( mode.equals( "pv" ) ) { return "Solar"; }
+        else if( mode.equals( "minpv" ) ) { return "Min+Solar"; }
+        else if( mode.equals( "now" ) ) { return "Fast"; }
+        else if( mode.equals( "off" ) ) { return "Off"; }
+        else { return mode; }
+    }
+
     // Sets the colors and clears the device context
     public static function clearDc( dc as Dc ) as Void {
         dc.setColor( EvccColors.FOREGROUND, EvccColors.BACKGROUND );

@@ -18,6 +18,22 @@ It is automatically copied by generate.js into each device resource folder, sinc
             <color>000000</color>    
         </palette>
     </bitmap>
+    <bitmap scope="foreground" id="arrow_left_micro" filename="icon_micro_arrow_left.png">
+        <palette disableTransparency="true">
+            <color>FFFFFF</color>
+            <color>AAAAAA</color>
+            <color>555555</color>
+            <color>000000</color>    
+        </palette>
+    </bitmap>
+    <bitmap scope="foreground" id="arrow_left_three_micro" filename="icon_micro_arrow_left_three.png">
+        <palette disableTransparency="true">
+            <color>FFFFFF</color>
+            <color>AAAAAA</color>
+            <color>555555</color>
+            <color>000000</color>    
+        </palette>
+    </bitmap>
 
     <!-- xtiny font size -->
     <bitmap scope="foreground" id="battery_empty_xtiny" filename="icon_xtiny_battery_empty.png">
@@ -405,6 +421,5 @@ It is automatically copied by generate.js into each device resource folder, sinc
             <color>000000</color>    
         </palette>
     </bitmap>
-
 
 </drawables>

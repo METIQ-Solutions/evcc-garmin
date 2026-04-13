@@ -18,7 +18,8 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="glance" id="arrow_left_three_glance" filename="icon_glance_arrow_left_three.png" packingFormat="png"/>
 
     <!-- micro font size -->
-    <!-- only the clock icon (indicating remaining charging time) is needed here
+    <!-- only the clock icon (indicating remaining charging time) and the
+         phase indicator arrows are needed here 
          all other icons are not used in the smallest size -->
     <bitmap scope="foreground" id="clock_micro" filename="icon_micro_clock.png" packingFormat="png"/>
     <bitmap scope="foreground" id="arrow_left_micro" filename="icon_micro_arrow_left.png" packingFormat="png"/>

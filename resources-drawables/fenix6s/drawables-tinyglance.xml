@@ -49,9 +49,12 @@ It is automatically copied by generate.js into each device resource folder, sinc
     </bitmap>
 
     <!-- micro font size -->
-    <!-- only the clock icon (indicating remaining charging time) is needed here
+    <!-- only the clock icon (indicating remaining charging time) and the
+         phase indicator arrows are needed here 
          all other icons are not used in the smallest size -->
     <bitmap scope="foreground" id="clock_micro" filename="icon_micro_clock.png" packingFormat="png"/>
+    <bitmap scope="foreground" id="arrow_left_micro" filename="icon_micro_arrow_left.png" packingFormat="png"/>
+    <bitmap scope="foreground" id="arrow_left_three_micro" filename="icon_micro_arrow_left_three.png" packingFormat="png"/>
 
     <!-- xtiny font size -->
     <bitmap scope="foreground" id="battery_empty_xtiny" filename="icon_xtiny_battery_empty.png" packingFormat="png"/>
@@ -118,7 +121,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="sun_medium" filename="icon_medium_sun.png" packingFormat="png"/>
     <bitmap scope="foreground" id="house_medium" filename="icon_medium_house.png" packingFormat="png"/>
     <bitmap scope="foreground" id="grid_medium" filename="icon_medium_grid.png" packingFormat="png"/>
-    <bitmap scope="foreground" id="car_medium" filename="icon_medium_grid.png" packingFormat="png"/>
+    <bitmap scope="foreground" id="car_medium" filename="icon_medium_car.png" packingFormat="png"/>
     <bitmap scope="foreground" id="heater_medium" filename="icon_medium_heater.png" packingFormat="png"/>
     <bitmap scope="foreground" id="device_medium" filename="icon_medium_device.png" packingFormat="png"/>
     <!-- exceptions - icons not available in all font sizes -->

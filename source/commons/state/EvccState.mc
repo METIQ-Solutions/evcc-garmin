@@ -97,7 +97,9 @@ import Toybox.Time;
 
     (:exclForMemoryLow) 
     public static var NUM_OF_LOADPOINT_CATEGORIES as Number = 3;
-    (:exclForMemoryLow) 
+    // EvccIconBlock is not available in the glance scope of tiny glances
+    // The icon is not really needed, so we can just disable the typechecker
+    (:exclForMemoryLow :typecheck([disableGlanceCheck])) 
     public function getAllLoadPointsCategories() as Array<LoadPointCategory> { 
         var lpCategories = [
             [ EvccIconBlock.ICON_CAR, _connectedVehicles ],

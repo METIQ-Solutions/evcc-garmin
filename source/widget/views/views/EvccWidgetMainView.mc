@@ -60,7 +60,12 @@ import Toybox.Lang;
     // Low memory version, without detail views
     (:exclForMemoryStandard)
     function initialize( options as Options ) {
-        EvccWidgetBaseLoadPointView.initialize( options );
+        var views = options[:views] as ArrayOfSiteViews;
+        options[:pageIndex] = views.size();
+        views.add( self );
+
+        EvccWidgetBaseSiteView.initialize( options );
+
         _actsAsGlance = options[:actAsGlance] as Boolean;
     }
 
@@ -313,7 +318,7 @@ import Toybox.Lang;
                 if( siteCount > 1 ) {
                     // setSiteIndex will also update the content
                     // if the site index has changed
-                    setSiteIndex( EvccBreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
+                    setSiteIndex( BreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
                 }
             }
             EvccWidgetBaseSiteView.onShow();
@@ -337,7 +342,7 @@ import Toybox.Lang;
     // view.
 
     // ... if view prerendering is disabled, we do this in the onUpdate ...
-    (:exclForViewPreRenderingEnabled) 
+    (:exclForMemoryLow :exclForViewPreRenderingEnabled) 
     function onUpdate( dc as Dc ) as Void {
         initOrUpdateDetailViews( false );
         EvccWidgetBaseSiteView.onUpdate( dc );
@@ -441,6 +446,7 @@ import Toybox.Lang;
 
 
     // Function to generate the line for heater loadpoints
+    (:exclForMemoryLow)
     private function renderHeater( loadpoint as EvccLoadPoint ) as EvccHorizontalBlock {
         var heater = loadpoint.getHeater() as EvccHeater;
         var line = new EvccHorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );

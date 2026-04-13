@@ -19,7 +19,7 @@ import Toybox.Application.Storage;
     function initialize( index as Number ) {
         // EvccHelperBase.debug("TinyGlance: initialize");
         GlanceView.initialize();
-        _stateStore = new EvccStateStore( EvccBreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() ) );
+        _stateStore = new EvccStateStore( BreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() ) );
     }
 
     // Start the timer for the background service

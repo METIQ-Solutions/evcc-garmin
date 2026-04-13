@@ -19,7 +19,7 @@ class GetGlanceView {
             // We store the active site, so when the widget is reopened, it 
             // starts with the site displayed last. Also the glance is using
             // the active site and is only displaying its data.
-            var activeSite = EvccBreadCrumbSiteReadOnly.getSelectedSite( siteCount );
+            var activeSite = BreadCrumbSiteReadOnly.getSelectedSite( siteCount );
 
             // We delete any unused site entries from storage
             // This is for the case when sites get deleted from

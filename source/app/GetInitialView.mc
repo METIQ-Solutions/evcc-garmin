@@ -22,7 +22,7 @@ class GetInitialView {
             var siteCount = EvccSiteConfiguration.getSiteCount();
 
             // The bread crumbs are used to store which sites/pages have been opened last
-            var breadCrumb = new EvccBreadCrumb( null );
+            var breadCrumb = new BreadCrumb( null );
 
             // We delete any unused site entries from storage
             // This is for the case when sites get deleted from
@@ -75,6 +75,10 @@ class GetInitialView {
                     // (such as forecast) presented on the same level
                     var activeView = breadCrumb.getSelectedChild( views.size() );
                     var delegate = new EvccViewCarouselDelegate( views, breadCrumb );
+                    
+                    EvccHelperBase.debug( "GetInitialView: views.size()=" + views.size() );
+                    EvccHelperBase.debug( "GetInitialView: activeView=" + activeView );
+                    
                     // Start with the active page
                     return [views[activeView], delegate];
                 }

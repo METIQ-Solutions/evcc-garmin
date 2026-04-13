@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-typedef ArrayOfBreadCrumbs as Array<EvccBreadCrumb?>;
+typedef ArrayOfBreadCrumbs as Array<BreadCrumb?>;
 
 // Crumb, serialized for storage
 // ATTENTION: there is a bug in the compiler typecheck that causes stack overflow

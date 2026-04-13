@@ -84,7 +84,7 @@ import Toybox.Math;
         // We store the active site, so when the widget is reopened, it 
         // starts with the site displayed last. Also the glance is using
         // the active site and is only displaying its data.
-        var activeSite = EvccBreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() );
+        var activeSite = BreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() );
 
         return [new EvccBackground( activeSite )];
     }    

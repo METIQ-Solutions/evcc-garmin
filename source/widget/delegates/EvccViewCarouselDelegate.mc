@@ -14,7 +14,7 @@ import Toybox.Application;
 
 // Standard derivate, that just implements onSwipe for swipe left
 (:exclForSwipeLeftOverride) class EvccViewCarouselDelegate extends EvccViewCarouselDelegateBase {
-    function initialize( views as ArrayOfSiteViews, breadCrumb as EvccBreadCrumb ) {
+    function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
         EvccViewCarouselDelegateBase.initialize( views, breadCrumb );
     }
     (:exclForMemoryLow) 
@@ -38,7 +38,7 @@ import Toybox.Application;
 (:exclForSwipeLeftDefault) class EvccViewCarouselDelegate extends EvccViewCarouselDelegateBase {
     (:exclForMemoryLow) 
     private var _onNextPage as Boolean = false;
-    function initialize( views as ArrayOfSiteViews, breadCrumb as EvccBreadCrumb ) {
+    function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
         EvccViewCarouselDelegateBase.initialize( views, breadCrumb );
     }
     // We call onNextPage again if it was the original behavior,
@@ -87,15 +87,15 @@ import Toybox.Application;
 // Main class implementing most of the delegate functionality
 class EvccViewCarouselDelegateBase extends EvccViewSimpleDelegate {
     (:exclForMemoryLow) private var _views as ArrayOfSiteViews;
-    (:exclForMemoryLow) private var _breadCrumb as EvccBreadCrumb;
+    (:exclForMemoryLow) private var _breadCrumb as BreadCrumb;
 
-    (:exclForMemoryLow) function initialize( views as ArrayOfSiteViews, breadCrumb as EvccBreadCrumb ) {
+    (:exclForMemoryLow) function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
         EvccViewSimpleDelegate.initialize();
         _views = views;
         _breadCrumb = breadCrumb;
     }
 
-    (:exclForMemoryStandard) function initialize( views as ArrayOfSiteViews, breadCrumb as EvccBreadCrumb ) {
+    (:exclForMemoryStandard) function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
         EvccViewSimpleDelegate.initialize();
     }
 

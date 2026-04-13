@@ -192,4 +192,15 @@ class EvccViewCarouselDelegateBase extends EvccViewSimpleDelegate {
             return false;
         }
     }
+
+    (:exclForMemoryLow) 
+    public function switchToFirst() as Void {
+        EvccHelperBase.debug("ViewCarouselDelegate: switchToFirst");
+        if( _views.size() == 0 ) {
+            throw new OperationNotAllowedException( "EvccViewCarouselDelegate: attempted switch to first on an empty view array." );
+        }
+        WatchUi.switchToView( _views[0], self, WatchUi.SLIDE_DOWN );
+        _breadCrumb.setSelectedChild( 0 );
+    }
+
 }

@@ -7,11 +7,12 @@ import Toybox.WatchUi;
 // based on the font that is passed in the options or used by its parent element
 class EvccIconBlock extends EvccBitmapBlock {
     var _icon as BaseIcon;
+    var _suppressIcon as Boolean = false;
 
     typedef Icon as BaseIcon or ConditionalIcon;
 
     // Constants for the base icons
-    // The number needs to relate to an entry in the static
+    // The number needs to relate to an entry in the EvccResourceSets.icons
     enum BaseIcon {
         ICON_BATTERY_EMPTY,
         ICON_BATTERY_ONEQUARTER,
@@ -25,6 +26,9 @@ class EvccIconBlock extends EvccBitmapBlock {
         ICON_HOME,
         ICON_GRID,
         ICON_DURATION,
+        ICON_CAR,
+        ICON_HEATER,
+        ICON_DEVICE,
         ICON_FORECAST,
         ICON_STATISTICS
     }
@@ -45,7 +49,7 @@ class EvccIconBlock extends EvccBitmapBlock {
         ICON_ACTIVE_PHASES = -3
     }
 
-    function initialize( icon as Icon, options as DbOptions ) {
+    public function initialize( icon as Icon, options as DbOptions ) {
         EvccBitmapBlock.initialize( null, options );
 
         // We analyse the icon and passed in data and from that

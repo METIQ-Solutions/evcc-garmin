@@ -34,6 +34,7 @@ import Toybox.PersistedContent;
     // Instance of the state store for persisting the state
     protected var _stateStore as EvccStateStore;
 
+
     // Constructor
     public function initialize( siteIndex as Number ) {
         EvccStateRequestBackground.initialize( siteIndex );
@@ -42,6 +43,7 @@ import Toybox.PersistedContent;
         _stateStore = new EvccStateStore( siteIndex );
     }
 
+
     // If there was a web request error, throw an exception
     public function checkForError() as Void {
         if( _error ) {
@@ -49,24 +51,30 @@ import Toybox.PersistedContent;
         }
     }
 
+
     // Accessor for the site index
     (:exclForSitesOne :exclForViewPreRenderingDisabled) 
     public function getSiteIndex() as Number { return _siteIndex; }
 
+
     // Accessor for the state
     public function getState() as EvccState { return _stateStore.getState() as EvccState; }
 
+
     // Accessor for refresh interval
     public function getRefreshInterval() as Number { return _refreshInterval; }
+
 
     // Current state is true if either data from storage that is within the
     // expiry time has been loaded, or a web response has been received
     // also an error is counted as current state
     public function hasCurrentState() as Boolean { return _hasCurrentState; }
 
+
     // hasState is true if a state is available, even if it is expired
     // this can be used for decision 
     public function hasState() as Boolean { return _stateStore.getState() != null; }
+
 
     // Indicates to the parent class that a previousy valid state is available and
     // therefore errors do not yet need to be reported
@@ -75,6 +83,45 @@ import Toybox.PersistedContent;
         return 
             state != null && Time.now().compare( state.getTimestamp() ) <= _dataExpiry; 
     }
+
+
+    // This is used only after the initial loadInitialState for the
+    // active site. The first callback is the main view, and for the
+    // active site the pre-rendering is anyway then done in the
+    // first onUpdate
+    (:exclForViewPreRenderingDisabled)
+    public function invokeAllCallbacksButFirst() as Void {
+        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks except first" );
+        for( var i = 1; i < _callbacks.size(); i++ ) {
+            _callbacks[i].onStateUpdate();
+        }
+    }
+
+
+    // If callbacks are disabled, we request a screen update from WatchUi
+    (:exclForWebResponseCallbacksEnabled) 
+    public function invokeCallbacks() as Void {
+        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks" );
+        WatchUi.requestUpdate();
+    }    
+
+
+    (:exclForWebResponseCallbacksDisabled) 
+    public function invokeCallbacks() as Void {
+        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks" );
+        if( _callbacks.size() == 0 ) {
+            // If not callbacks are registered, we request a screen update from WatchUi
+            // Note that the background task has to register a callback, otherwise
+            // this call would trip an error
+            WatchUi.requestUpdate();
+        } else {
+            for( var i = 0; i < _callbacks.size(); i++ ) {
+                // EvccHelperBase.debug( "EvccStateRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
+                _callbacks[i].onStateUpdate();
+            }
+        }
+    }
+
 
     // Loads the initial state from storage
     // If none is available or it is outdated, makes an immediate web request
@@ -109,7 +156,8 @@ import Toybox.PersistedContent;
         }
     }
 
-    // Receive the data from the web request
+
+     // Receive the data from the web request
     public function onJsonReceive() as Void {
         var json = EvccStateRequestBackground.consumeJson();
         if( json != null ) {
@@ -123,36 +171,14 @@ import Toybox.PersistedContent;
         _stateStore.persist();
     }
 
+
+    // Unregister a callback
     (:exclForWebResponseCallbacksDisabled) 
-    public function invokeCallbacks() as Void {
-        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks" );
-        if( _callbacks.size() == 0 ) {
-            // If not callbacks are registered, we request a screen update from WatchUi
-            // Note that the background task has to register a callback, otherwise
-            // this call would trip an error
-            WatchUi.requestUpdate();
-        } else {
-            for( var i = 0; i < _callbacks.size(); i++ ) {
-                // EvccHelperBase.debug( "EvccStateRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
-                _callbacks[i].onStateUpdate();
-            }
+    public function unregisterCallback( callback as EvccStateRequestCallback ) as Void {
+        EvccHelperBase.debug( "EvccStateRequest: unregistering callback" );
+        if( ! _callbacks.remove( callback ) ) {
+            throw new InvalidValueException( "EvccStateRequest: unregistering callback failed." );
         }
     }
-    // If callbacks are disabled, we request a screen update from WatchUi
-    (:exclForWebResponseCallbacksEnabled) 
-    public function invokeCallbacks() as Void {
-        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks" );
-        WatchUi.requestUpdate();
-    }    
-    // This is used only after the initial loadInitialState for the
-    // active site. The first callback is the main view, and for the
-    // active site the pre-rendering is anyway then done in the
-    // first onUpdate
-    (:exclForViewPreRenderingDisabled)
-    public function invokeAllCallbacksButFirst() as Void {
-        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks except first" );
-        for( var i = 1; i < _callbacks.size(); i++ ) {
-            _callbacks[i].onStateUpdate();
-        }
-    }
+
 }

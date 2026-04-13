@@ -19,13 +19,17 @@ import Toybox.WatchUi;
 // :font - font for text
 // :relativeFont - for specificy font size in relation to the parent. Value of 1 for example means shift to one font size smaller
 // :isTruncatable - indicates if a text element can be truncated to make the line fit to the screen
+// :useEllipsis - if true, "..." is added at the end of a truncated element.
 // :truncateSpacing - indicates spacing that needs to be left for the page indicator when truncating
 // :parent - parent drawing element. :color, :backgroundColor and :font may be inherited from a parent
 // :batterySoc, :power, :activePhases - for icons that change bases on these inputs
 // :verticalJustifyToBaseFont - by default, text is center aligned to the passed coordinate. If :verticalJustifyToBaseFont of a text element within a horizontal container is set to true, it will be aligned to the bottom instead.
 // :spreadToHeight - if set for a vertical block, it will spread out the content to the specified height in pixel
 // :baseFont - not to be set but calculated only, showing the applicable :font, without considering :relativeFont
-
+// :relativeToScreenWidth - width of a spacer block, relative to the screen width
+// :relativeToScreenHeight - height of a spacer block, relative to the screen height
+// :relativeToFontheight - height of the spacer block, relative to the font size
+// :suppressDrawing - if true, the element will be taken into account for layouting but is not actually drawn
 class EvccBlock {
     // The options for this block (see documentation above)
     private var _options as DbOptions;
@@ -91,7 +95,7 @@ class EvccBlock {
             }
             return value;
         } else {
-            if( option == :font ) { throw new InvalidValueException( "NOFONT"); }
+            if( option == :font ) { throw new InvalidValueException( "NOFONT" ); }
             if( option == :backgroundColor ) { return EvccColors.BACKGROUND; }
             if( option == :color ) { return EvccColors.FOREGROUND; }
         }
@@ -122,6 +126,28 @@ class EvccBlock {
     public function getMarginTop() as Number { return getOption( :marginTop ) as Number; }
     public function getMarginBottom() as Number { return getOption( :marginBottom ) as Number; }
     public function getFont() as EvccFont { return getOption( :font ) as EvccFont; }
+    
+    // If isDrawingSuppressed returns true, subclasses shall not perform drawing
+    // Not supported on low memory devices
+    (:exclForMemoryStandard)
+    public function isDrawingSuppressed() as Boolean { return false; }
+    (:exclForMemoryLow)
+    public function isDrawingSuppressed() as Boolean {
+        var value = _options[:suppressDrawing];
+        return value instanceof Boolean
+                ? value as Boolean
+                : false;
+    }
+    
+    (:exclForMemoryLow)
+    public function getFloatOption( option as Symbol ) as Float {
+        var value = getOption( option );
+        if( value instanceof Float ) {
+            return value as Float;
+        } else {
+            return 0.0;
+        }
+    }
     
     // For view pre-rendering, we default to the stub since pre-rendering
     // happens at a time where no real Dc is available

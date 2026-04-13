@@ -1,6 +1,7 @@
 import Toybox.Lang;
 import Toybox.Math;
 
+(:exclForMemoryLow)
 class EvccWidgetLoadPointView extends EvccWidgetBaseSiteView {
 
 
@@ -118,41 +119,46 @@ class EvccWidgetLoadPointView extends EvccWidgetBaseSiteView {
         // Get the loadpoints for the category
         var loadPoints = getStateRequest().getState().getLoadPointCategory( _category )[1].getLoadPoints();
 
-        // Define the range of loadpoints displayed on this
-        // page. getLoadPointRange() ensures an even distribution
-        // of loadpoints across pages
-        var loadPointRange = getLoadpointRange( 
-            loadPoints.size(), 
-            _categoryPageIndex, 
-            getLoadPointsPerPage( _category ) 
-        );
+        if( loadPoints.size() > 0 ) {
 
-        // Determine if any loadpoint is charging
-        // If any is charging, the spacing for showing the phase indicator arrows 
-        // will be applied to all loadpoints, even if they are not charging        
-        var isAnyLoadpointCharging = false;
-        for( var i = loadPointRange[0]; i <= loadPointRange[1]; i++ ) {
-            isAnyLoadpointCharging = isAnyLoadpointCharging || loadPoints[i].getChargePowerRounded() > 0;
-        }
+            // Define the range of loadpoints displayed on this
+            // page. getLoadPointRange() ensures an even distribution
+            // of loadpoints across pages
+            var loadPointRange = getLoadpointRange( 
+                loadPoints.size(), 
+                _categoryPageIndex,
+                getLoadPointsPerPage( _category ) 
+            );
 
-        // Iterate and render all loadpoints
-        var first = true;
-        for( var i = loadPointRange[0]; i <= loadPointRange[1]; i++ ) {
-            // From the 2nd loadpoint onwards, a spacing will be
-            // applied before the loadpoint
-            if( first ) {
-                first = false;
-            } else {
-                // The spacing is relative to font height AND less, if there
-                // are more loadpoints
-                block.addBlock(
-                    new EvccSpacerBlock( {
-                        :relativeToFontHeight => 0.8 / ( loadPointRange[1] - loadPointRange[0] + 1 )
-                    } )
-                );
+            // Determine if any loadpoint is charging
+            // If any is charging, the spacing for showing the phase indicator arrows 
+            // will be applied to all loadpoints, even if they are not charging        
+            var isAnyLoadpointCharging = false;
+            for( var i = loadPointRange[0]; i <= loadPointRange[1]; i++ ) {
+                isAnyLoadpointCharging = isAnyLoadpointCharging || loadPoints[i].getChargePowerRounded() > 0;
             }
-            // Render and add the loadpoint
-            addLoadpoint( block, loadPoints[i], isAnyLoadpointCharging );
+
+            // Iterate and render all loadpoints
+            var first = true;
+            for( var i = loadPointRange[0]; i <= loadPointRange[1]; i++ ) {
+                // From the 2nd loadpoint onwards, a spacing will be
+                // applied before the loadpoint
+                if( first ) {
+                    first = false;
+                } else {
+                    // The spacing is relative to font height AND less, if there
+                    // are more loadpoints
+                    block.addBlock(
+                        new EvccSpacerBlock( {
+                            :relativeToFontHeight => 0.8 / ( loadPointRange[1] - loadPointRange[0] + 1 )
+                        } )
+                    );
+                }
+                // Render and add the loadpoint
+                addLoadpoint( block, loadPoints[i], isAnyLoadpointCharging );
+            }
+        } else {
+            block.addText( "No loadpoints" );
         }
 
         // Add a small margin to the bottom. While the content is centered vertically between title and logo,

@@ -115,6 +115,25 @@ class EvccDetailViewManager {
     }
 
 
+    // This function initializes a single detail view. To be able to apply the
+    // same logic to different detail views, it accepts a class type as input.
+    (:typecheck(false))
+    private function ensureDetailView( 
+        isNeeded as Boolean,
+        currentView as EvccWidgetBaseSiteView?,
+        viewClass,
+        calledDuringAppStartup as Boolean 
+    ) as EvccWidgetBaseSiteView {
+        if( isNeeded && currentView == null ) {
+            currentView = initDetailView( viewClass, {}, calledDuringAppStartup ) as EvccWidgetForecastView;
+        } else if( ! isNeeded && currentView != null ) {
+            currentView.dispose();
+            currentView = null;
+        }
+        return currentView;
+    }
+
+
     // Initializes the content of the loadpoint view array, or resets it
     private function initOrResetLoadPointViewArray() as Void {
         for( var i = 0; i < _loadPointViews.size(); i++ ) {
@@ -140,20 +159,8 @@ class EvccDetailViewManager {
             
             // We check the forecast and statistic and update
             // the view accordingly
-            if( state.hasForecast() ) {
-                if( _forecastView == null ) {
-                    _forecastView = initDetailView( EvccWidgetForecastView, {}, calledDuringAppStartup ) as EvccWidgetForecastView;
-                }
-            } else {
-                _forecastView = null;
-            }
-            if( state.hasStatistics() ) {
-                if( _statisticsView == null ) {
-                    _statisticsView = initDetailView( EvccWidgetStatisticsView, {}, calledDuringAppStartup ) as EvccWidgetStatisticsView;
-                }
-            } else {
-                _statisticsView = null;
-            }
+            _forecastView = ensureDetailView( state.hasForecast(), _forecastView, EvccWidgetForecastView, calledDuringAppStartup ) as EvccWidgetForecastView?;
+            _statisticsView = ensureDetailView( state.hasStatistics(), _statisticsView, EvccWidgetStatisticsView, calledDuringAppStartup ) as EvccWidgetStatisticsView?;
 
             // The list of detail views is re-assembled
             // on every execution from scratch
@@ -212,7 +219,9 @@ class EvccDetailViewManager {
                         }
                         // If there are more views than we need, we remove them
                         while( lpv < categoryViews.size() ) {
-                            categoryViews.remove( categoryViews[categoryViews.size()-1] );
+                            var viewToDispose = categoryViews[categoryViews.size()-1];
+                            viewToDispose.dispose();
+                            categoryViews.remove( viewToDispose );
                         }
                     }
                 }

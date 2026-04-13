@@ -20,10 +20,13 @@ typedef DbOptions as {
     :baseFont as EvccFont?,
     :relativeFont as Number?,
     :isTruncatable as Boolean?,
+    :useEllipsis as Boolean?,
     :truncateSpacing as Number?,
     :batterySoc as Number?,
     :power as Number?,
-    :activePhases as Number?
+    :activePhases as Number?,
+    :relativeToScreenWidth as Float?,
+    :relativeToScreenHeight as Float?
 };
 
 // Defines all the possible values, needs to duplicate all types used in DbOptions

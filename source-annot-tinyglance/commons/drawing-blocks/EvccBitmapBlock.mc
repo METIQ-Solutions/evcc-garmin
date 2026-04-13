@@ -88,6 +88,8 @@ class EvccBitmapBlock extends EvccBlock {
 
     // Perform the actual drawing
     function drawPrepared( dc as Dc ) as Void {
-        dc.drawBitmap( _x as Number, _y as Number, bitmap() );
+        if( ! isDrawingSuppressed() ) {
+            dc.drawBitmap( _x as Number, _y as Number, bitmap() );
+        }
     }
 }

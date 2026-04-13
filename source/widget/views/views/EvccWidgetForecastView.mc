@@ -58,8 +58,7 @@ class EvccWidgetForecastView extends EvccWidgetBaseSiteView {
 
             }
         } else {
-            block.addText( "Site has no forecast!" );
-            block.addTextWithOptions( "Restart app to remove view", { :relativeFont => 4, :marginTop => dcHeight * 0.007 } );
+            block.addText( "No forecast" );
         }
 
         // Add a small margin to the bottom. While the content is centered vertically between title and logo,

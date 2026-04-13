@@ -45,10 +45,21 @@ import Toybox.Math;
     }
 
     // Called if the app runs in widget mode
-    (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
+    // To conserve memory, the actual implementation is done in a separate class,
+    // which can be excluded from glance/background scope
+    (:exclForMemoryStandard :typecheck([disableBackgroundCheck, disableGlanceCheck]))
     function getInitialView() as [Views] or [Views, InputDelegates] {
         isBackground = false;
         return GetInitialView.getInitialView();
+    }
+    // For standard devices, a custom ViewStack is used,
+    // and the initial view has to be registered with it
+    (:exclForMemoryLow :typecheck([disableBackgroundCheck, disableGlanceCheck]))
+    function getInitialView() as [Views] or [Views, InputDelegates] {
+        isBackground = false;
+        var view = GetInitialView.getInitialView();
+        ViewStack.registerInitialView( view[0], view[1] );
+        return view;
     }
 
     // If a new version of the app is installed,

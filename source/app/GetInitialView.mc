@@ -11,7 +11,7 @@ import Toybox.Math;
 class GetInitialView {
     
     // Called if the app runs in widget mode
-    public static function getInitialView() as [Views] or [Views, InputDelegates] {
+    public static function getInitialView() as [Views, InputDelegates] {
         // EvccHelperBase.debug( "EvccApp: getInitialView" );
         try {
             // Initialize the resources here, to save computing time

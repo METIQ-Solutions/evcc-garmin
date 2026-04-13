@@ -218,6 +218,25 @@ class EvccWidgetBaseSiteView extends WatchUi.View {
         _content = new EvccSiteContentPreRenderer( self );
     }
 
+
+    // The dispose function must be called when a view is not needed
+    // anymore. It unregisters the callback with the state request,
+    // and switches to the first view in the carousel if disposed
+    // view is currently being displayed.
+    (:exclForViewPreRenderingDisabled) 
+    public function dispose() as Void { 
+        EvccHelperBase.debug( "EvccWidgetBaseSiteView.dispose" );
+        getStateRequest().unregisterCallback( self );
+        if( _isActiveView ) {
+            var delegate = ViewStack.getCurrentView()[1];
+            if( delegate instanceof EvccViewCarouselDelegate ) {
+                EvccHelperBase.debug( "EvccWidgetBaseSiteView.dispose: view is active, switching to first view." );
+                delegate.switchToFirst();
+            }
+        }     
+    }
+
+
     (:exclForViewPreRenderingDisabled)
     private function removeTasks() as Void {
         EvccTaskQueue.getInstance().removeByExceptionHandler( getExceptionHandler() );

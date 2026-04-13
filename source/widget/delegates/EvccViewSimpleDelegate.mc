@@ -10,6 +10,12 @@ class EvccViewSimpleDelegate extends WatchUi.BehaviorDelegate {
     }
 
     (:exclForMemoryLow) 
+    public function onBack() as Boolean {
+        ViewStack.popView( WatchUi.SLIDE_BLINK );
+        return true;
+    }
+
+    (:exclForMemoryLow) 
     public function onMenu() as Boolean {
         // EvccHelperBase.debug( "EvccViewSimpleDelegate: onMenu" );
         WatchUi.pushView( new EvccWidgetSystemInfoView(), new EvccViewSystemInfoDelegate(), WatchUi.SLIDE_BLINK );

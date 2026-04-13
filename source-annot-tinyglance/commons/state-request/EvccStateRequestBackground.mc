@@ -18,7 +18,7 @@ typedef EvccStateRequestCallback as interface {
 // - Once a web response arrives, it calls only the first registered callback,
 //   which is the background service
 (:background) 
-class EvccStateRequestBackground {
+class EvccBackgroundStateRequest {
     
     // On older devices, there is not enough memory to process the complete
     // JSON response from evcc. We therefore use a jq filter to narrow the
@@ -65,7 +65,7 @@ class EvccStateRequestBackground {
 
     // Constructor
     function initialize( siteIndex as Number ) {
-        // EvccHelperBase.debug("StateRequest: initialize");
+        // HelperBase.debug("StateRequest: initialize");
         _siteIndex = siteIndex;
     }
 
@@ -89,7 +89,7 @@ class EvccStateRequestBackground {
     // there should always be only one, the background service
     (:exclForWebResponseCallbacksDisabled) 
     protected function invokeCallbacks() as Void {
-        // EvccHelperBase.debug( "EvccStateRequestBackground: invoking first callback" );
+        // HelperBase.debug( "EvccBackgroundStateRequest: invoking first callback" );
         _callbacks[0].onStateUpdate();
     }
 
@@ -103,13 +103,13 @@ class EvccStateRequestBackground {
     // with SDK >= 8.2. Therefore we disable the scope check.
     (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
     public function makeRequest() as Void {
-        // EvccHelperBase.debug( "StateRequest: makeRequest site=" + _siteIndex );
-        var siteConfig = new EvccSite( _siteIndex );
+        // HelperBase.debug( "StateRequest: makeRequest site=" + _siteIndex );
+        var siteConfig = new SiteConfig( _siteIndex );
 
         var url = siteConfig.getUrl() + "/api/state";
         var parameters = { "jq" => JQ };
 
-        // EvccHelperBase.debug( JQ );
+        // HelperBase.debug( JQ );
         
         var options = {
             :method => Communications.HTTP_REQUEST_METHOD_GET,
@@ -124,7 +124,7 @@ class EvccStateRequestBackground {
         }
 
         Communications.makeWebRequest( url, parameters, options, method(:onReceive) );
-        // EvccHelperBase.debug("StateRequest: makeRequest done" );
+        // HelperBase.debug("StateRequest: makeRequest done" );
     }
 
     // Callback that can be overriden by subclasses to trigger
@@ -136,7 +136,7 @@ class EvccStateRequestBackground {
     // with SDK >= 8.2. Therefore we disable the scope check.
     (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
     public function onReceive( responseCode as Number, data as Dictionary<String,Object?> or String or PersistedContent.Iterator or Null ) as Void {
-        // EvccHelperBase.debug("StateRequest: onReceive site=" + _siteIndex );
+        // HelperBase.debug("StateRequest: onReceive site=" + _siteIndex );
         _hasCurrentState = true;
         _error = false; _errorMessage = ""; _errorCode = "";
         
@@ -157,13 +157,13 @@ class EvccStateRequestBackground {
                 _errorMessage = "No phone"; _errorCode = "";
             } else {
                 _errorMessage = "Request failed"; _errorCode = responseCode.toString();
-                // EvccHelperBase.debug("StateRequest: request failed" );
+                // HelperBase.debug("StateRequest: request failed" );
             }
         }
 
         // Trigger the callback logic, see below
         invokeCallbacks();
-        // EvccHelperBase.debug("StateRequest: onReceive done" );
+        // HelperBase.debug("StateRequest: onReceive done" );
     }
 
     // Persists the state 
@@ -174,7 +174,7 @@ class EvccStateRequestBackground {
     // scope
     public function persistState() as Void { 
         if( _json != null ) {
-            EvccStateStoreBackground.persistJson( _json, Time.now(), _siteIndex );
+            StateStoreBackground.persistJson( _json, Time.now(), _siteIndex );
             _json = null;
         }
     }

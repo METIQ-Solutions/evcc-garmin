@@ -7,8 +7,8 @@ import Toybox.Lang;
 
 // Class representing an integrated device
 (:exclForMemoryLow) 
-class EvccIntegratedDevice extends EvccControllable {
+class IntegratedDevice extends Controllable {
     function initialize( dataLp as JsonContainer ) {
-        EvccControllable.initialize( dataLp );
+        Controllable.initialize( dataLp );
     }
 }

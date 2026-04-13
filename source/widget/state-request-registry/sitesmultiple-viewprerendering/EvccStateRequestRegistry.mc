@@ -10,7 +10,7 @@ import Toybox.Lang;
 
     // Sets the active site (information is only passed on to the handler, not needed in this class)
     public static function setActiveSite( activeSite as Number ) as Void { 
-        // EvccHelperBase.debug( "EvccStateRequestRegistry: setting activeSite=" + activeSite );
+        // HelperBase.debug( "EvccStateRequestRegistry: setting activeSite=" + activeSite );
         ( _stateRequestTimer as EvccMultiStateRequestsHandler ).setActiveSite( activeSite );
     }
 
@@ -20,7 +20,7 @@ import Toybox.Lang;
     // the EvccMultiStateRequestsHandler for the initial loading of data and then 
     // regular request of new data
     public static function start( activeSite as Number ) as Void {
-        for( var i = 0; i < EvccSiteConfiguration.getSiteCount(); i++ ) {
+        for( var i = 0; i < SiteConfiguration.getSiteCount(); i++ ) {
             _stateRequests.add( new EvccStateRequest( i ) );
         }
         _stateRequestTimer = new EvccMultiStateRequestsHandler( _stateRequests, activeSite );

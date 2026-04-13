@@ -25,10 +25,10 @@ import Toybox.Math;
 
     function initialize() {
         try {
-            // EvccHelperBase.debug( "EvccApp: initialize" );
+            // HelperBase.debug( "EvccApp: initialize" );
             AppBase.initialize();
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
         }
     }
 
@@ -68,10 +68,10 @@ import Toybox.Math;
     // data
     (:release) function onAppUpdate() as Void {
         try {
-            // EvccHelperBase.debug( "EvccApp: onAppUpdate" );
+            // HelperBase.debug( "EvccApp: onAppUpdate" );
             Storage.clearValues();
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
        }
     }
     
@@ -79,14 +79,14 @@ import Toybox.Math;
     // It is currently only used in tinyglance mode
     (:exclForGlanceFull :exclForGlanceNone :typecheck(disableGlanceCheck)) 
     function getServiceDelegate() as [ System.ServiceDelegate ] {  
-        // EvccHelperBase.debug( "EvccApp: getServiceDelegate" );
+        // HelperBase.debug( "EvccApp: getServiceDelegate" );
 
         // We store the active site, so when the widget is reopened, it 
         // starts with the site displayed last. Also the glance is using
         // the active site and is only displaying its data.
-        var activeSite = BreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() );
+        var activeSite = BreadCrumbSiteReadOnly.getSelectedSite( SiteConfiguration.getSiteCount() );
 
-        return [new EvccBackground( activeSite )];
+        return [new EvccServiceDelegate( activeSite )];
     }    
 
     // Called when the app is stopped
@@ -96,20 +96,20 @@ import Toybox.Math;
     (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
     function onStop( state as Lang.Dictionary or Null ) as Void {
         try {
-            // EvccHelperBase.debug( "EvccApp: onStop" );
+            // HelperBase.debug( "EvccApp: onStop" );
             hideGlance();
             if( ! isGlance && ! isBackground ) {
                 EvccStateRequestRegistry.stopStateRequests();
             }
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
        }
     }
 
     (:exclForGlanceNone :typecheck([disableBackgroundCheck, disableGlanceCheck]))
     private function hideGlance() as Void {
         if( _glanceView != null ) {
-            // EvccHelperBase.debug( "EvccApp: onStop: glance mode, calling onHide" );
+            // HelperBase.debug( "EvccApp: onStop: glance mode, calling onHide" );
             _glanceView.onHide();
         }
     }
@@ -125,14 +125,14 @@ import Toybox.Math;
     // before updating the screen after the response is received initially
     (:exclForGlanceFull :exclForGlanceNone :typecheck(disableBackgroundCheck))
     function onStorageChanged() {  
-        // EvccHelperBase.debug( "EvccApp: onStorageChanged" );
+        // HelperBase.debug( "EvccApp: onStorageChanged" );
         try {
             if( ! isBackground ) {
-                // EvccHelperBase.debug( "EvccApp: requesting update" );
+                // HelperBase.debug( "EvccApp: requesting update" );
                 WatchUi.requestUpdate();
             }
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
        }
     }    
 }

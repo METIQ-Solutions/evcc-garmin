@@ -3,11 +3,11 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 // Text element
-class EvccTextBlock extends EvccBlock {
+class TextBlock extends DrawingBlockBase {
     private var _text as String;
 
     function initialize( text as String, options as DbOptions ) {
-        EvccBlock.initialize( options );
+        DrawingBlockBase.initialize( options );
         _text = text;
     }
 

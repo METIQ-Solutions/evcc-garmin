@@ -6,7 +6,7 @@ import Toybox.WatchUi;
 // This class is written with the goal of keeping memory usage low
 // The actual bitmap is therefore only loaded when needed and then
 // immediatly discarded again
-class EvccBitmapBlock extends EvccBlock {
+class BitmapBlock extends DrawingBlockBase {
 
     // We store only the reference and width and height,
     // the actual bitmap resource is loaded only when needed
@@ -14,7 +14,7 @@ class EvccBitmapBlock extends EvccBlock {
     var _bitmapRef as ResourceId?; 
 
     function initialize( reference as ResourceId?, options as DbOptions ) {
-        EvccBlock.initialize( options );
+        DrawingBlockBase.initialize( options );
         _bitmapRef = reference;
     }
 
@@ -37,8 +37,8 @@ class EvccBitmapBlock extends EvccBlock {
 
     // NOTE: in addition to the standard caching, bitmaps additionally cache the bitmap
     // height and width, to avoid having to load the bitmap too often.
-    // For normal EvccBitmapBlock, the size will never change and is unaffected by
-    // cache resets. For EvccIconBlock, we reset these values when the font size changes (see EvccIconBlock.resetCache)
+    // For normal BitmapBlock, the size will never change and is unaffected by
+    // cache resets. For IconBlock, we reset these values when the font size changes (see IconBlock.resetCache)
     protected var _bitmapWidth as Number?;
     protected var _bitmapHeight as Number?;
 
@@ -47,7 +47,7 @@ class EvccBitmapBlock extends EvccBlock {
     protected function calculateWidth() as Number { loadData(); return _bitmapWidth as Number + getMarginLeft() + getMarginRight(); }
     protected function calculateHeight() as Number { loadData(); return _bitmapHeight as Number + getMarginTop() + getMarginBottom(); }
     // Load width/height
-    // We don't do this in the constructor because for the EvccIconBlock sub class, the font
+    // We don't do this in the constructor because for the IconBlock sub class, the font
     // size is needed to determine the actual icon used, and that one is not available
     // at initialization time
     protected function loadData() as Void {

@@ -14,48 +14,48 @@ import Toybox.Application.Storage;
 // the storage by the background service
 (:glance :exclForGlanceFull :exclForGlanceNone) class EvccGlanceView extends WatchUi.GlanceView {
     private var _timer as Timer.Timer = new Timer.Timer();
-    private var _stateStore as EvccStateStore;
+    private var _stateStore as StateStore;
 
     function initialize( index as Number ) {
-        // EvccHelperBase.debug("TinyGlance: initialize");
+        // HelperBase.debug("TinyGlance: initialize");
         GlanceView.initialize();
-        _stateStore = new EvccStateStore( BreadCrumbSiteReadOnly.getSelectedSite( EvccSiteConfiguration.getSiteCount() ) );
+        _stateStore = new StateStore( BreadCrumbSiteReadOnly.getSelectedSite( SiteConfiguration.getSiteCount() ) );
     }
 
     // Start the timer for the background service
     // Start a local timer for updating the view regularly
     function onShow() as Void {
-        // EvccHelperBase.debug( "TinyGlance: onShow");
+        // HelperBase.debug( "TinyGlance: onShow");
         try {
             Background.registerForTemporalEvent( new Time.Duration( 300 ) );
             _timer.start( method(:onTimer), 10000, true );
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
         }
     }
 
     function onTimer() as Void {
-        // EvccHelperBase.debug( "TinyGlance: onTimer");
+        // HelperBase.debug( "TinyGlance: onTimer");
         try {
             WatchUi.requestUpdate();
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
         }
     }
 
     // Update the view
     function onUpdate( dc as Dc ) as Void {
         try {
-            // EvccHelperBase.debug("TinyGlance: onUpdate");
+            // HelperBase.debug("TinyGlance: onUpdate");
 
             // Getting the state is memory-intense, so we do it before we
             // allocate space for other variables
             var siteData = _stateStore.getStateFromStorage() as EvccState?;
-            var errorMsg = Storage.getValue( EvccConstants.STORAGE_BG_ERROR_MSG ) as String;
+            var errorMsg = Storage.getValue( Constants.STORAGE_BG_ERROR_MSG ) as String;
 
             // Check the storage for error messages
             if( errorMsg != null && ! errorMsg.equals( "" ) ) {
-                var errorCode = Storage.getValue( EvccConstants.STORAGE_BG_ERROR_CODE ) as String;
+                var errorCode = Storage.getValue( Constants.STORAGE_BG_ERROR_CODE ) as String;
                 throw new StateRequestException( errorMsg, errorCode );
             }
 
@@ -90,14 +90,14 @@ import Toybox.Application.Storage;
                     dc.drawBitmap( line1X, line1Y - Math.round( ( bmp.getHeight() / 2 ) ).toNumber() + 1, bmp );
                     line1X += bmp.getWidth();
                     line2X += bmp.getWidth() * 0.21;
-                    line1 += EvccHelperUI.formatSoc( siteData.getBatterySoc() ) + "  ";
+                    line1 += HelperUI.formatSoc( siteData.getBatterySoc() ) + "  ";
                 }
                 var loadpoints = siteData.getLoadPoints();
                 if( loadpoints.size() > 0 && loadpoints[0].getVehicle() != null ) {
-                    var vehicle = loadpoints[0].getVehicle() as EvccConnectedVehicle;
+                    var vehicle = loadpoints[0].getVehicle() as ConnectedVehicle;
                     line1 += vehicle.getTitle().substring( 0, 8 );
                     if( ! vehicle.isGuest() ) {
-                        line1 += " " + EvccHelperUI.formatSoc( vehicle.getSoc() );
+                        line1 += " " + HelperUI.formatSoc( vehicle.getSoc() );
                     }
                 } else {
                     line1 += "No vehicle";
@@ -115,12 +115,12 @@ import Toybox.Application.Storage;
             //dc.drawRectangle( 0, 0, dc.getWidth(), dc.getHeight() );
 
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
             // clear Dc with transparent background color does
             // not work a second time within an onUpdate call
             // See issue #108
-            // EvccHelperWidget.clearDc( dc );
-            EvccHelperUI.drawGlanceError( ex, dc );
+            // HelperWidget.clearDc( dc );
+            HelperUI.drawGlanceError( ex, dc );
         }
     }
 
@@ -129,11 +129,11 @@ import Toybox.Application.Storage;
     // instead we do it manually in the EvccApp.onStop() function
     function onHide() as Void {
         try {
-            // EvccHelperBase.debug("TinyGlance: onHide");
+            // HelperBase.debug("TinyGlance: onHide");
             Background.deleteTemporalEvent();
             _timer.stop();
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
         }
     }
 }

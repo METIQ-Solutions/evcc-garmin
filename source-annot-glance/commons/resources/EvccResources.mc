@@ -19,23 +19,23 @@ import Toybox.Graphics;
         return _instance as EvccResources;
     }
  
-    public var resourceSet as EvccResourceSet; // needs to be public for static member functions to access it
+    public var resourceSet as ResourceSet; // needs to be public for static member functions to access it
     
     // For full glance, we initialize the resources depending on the
     // mode we are in
     (:exclForGlanceTiny :exclForGlanceNone :typecheck(disableGlanceCheck)) 
     private function initialize() {
         if( EvccApp.isGlance ) {
-            resourceSet = new EvccGlanceResourceSet();
+            resourceSet = new GlanceResourceSet();
         } else {
-            resourceSet = new EvccWidgetResourceSet();
+            resourceSet = new WidgetResourceSet();
         }
     }
     // For tiny glance or devices without glance we
     // always work with widget resources, since they
     // do not use this class
     (:exclForGlanceFull) private function initialize() {
-        resourceSet = new EvccWidgetResourceSet();
+        resourceSet = new WidgetResourceSet();
     }
 
     // Various functions to access resources

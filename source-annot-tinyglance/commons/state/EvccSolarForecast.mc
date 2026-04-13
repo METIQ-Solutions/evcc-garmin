@@ -7,7 +7,7 @@ import Toybox.Lang;
 
 // Class to represent the solar forecast
 (:exclForMemoryLow) 
-class EvccSolarForecast {
+class SolarForecast {
     private var _hasForecast as Boolean = false;
     function hasForecast() as Boolean { return _hasForecast; }
     private var _scale as Float?;

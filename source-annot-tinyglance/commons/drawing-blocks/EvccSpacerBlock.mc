@@ -16,7 +16,7 @@ import Toybox.Graphics;
  * If both :relativeToScreenHeight and :relativeToFontHeight are set,
  * :relativeToScreenHeight takes precedence.
  */
- (:exclForMemoryLow) class EvccSpacerBlock extends EvccBlock {
+ (:exclForMemoryLow) class SpacerBlock extends DrawingBlockBase {
 
     private var _relativeToScreenWidth as Float;
     private var _relativeToScreenHeight as Float;
@@ -24,7 +24,7 @@ import Toybox.Graphics;
 
     // Constructor
     function initialize( options as DbOptions ) {
-        EvccBlock.initialize( options );
+        DrawingBlockBase.initialize( options );
         _relativeToScreenWidth = getFloatOption(:relativeToScreenWidth);
         _relativeToScreenHeight = getFloatOption(:relativeToScreenHeight);
         _relativeToFontHeight = getFloatOption(:relativeToFontHeight);

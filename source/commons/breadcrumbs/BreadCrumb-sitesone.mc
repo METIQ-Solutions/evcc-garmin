@@ -16,7 +16,7 @@ class BreadCrumb {
 
     // Initialize a new bread crumb
     public function initialize( parentCrumb as BreadCrumb? ) {
-        var storedCrumb = Storage.getValue( EvccConstants.STORAGE_BREAD_CRUMBS ) as SerializedBreadCrumb?;
+        var storedCrumb = Storage.getValue( Constants.STORAGE_BREAD_CRUMBS ) as SerializedBreadCrumb?;
         if( storedCrumb != null && storedCrumb instanceof Array && storedCrumb.size() > 0 ) {
             _selectedChild = storedCrumb[0];
         } else {
@@ -35,7 +35,7 @@ class BreadCrumb {
     public function setSelectedChild( activeChild as Number ) as Void {
         if( _selectedChild != activeChild ) {
             _selectedChild = activeChild;
-            Storage.setValue( EvccConstants.STORAGE_BREAD_CRUMBS, [ _selectedChild, null ] );
+            Storage.setValue( Constants.STORAGE_BREAD_CRUMBS, [ _selectedChild, null ] );
         }
     }
     

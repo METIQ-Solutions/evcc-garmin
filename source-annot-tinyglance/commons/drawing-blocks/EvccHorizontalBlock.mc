@@ -3,12 +3,12 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 // An element containing other elements that shall stacked horizontally
-class EvccHorizontalBlock extends EvccContainerBlock {
+class HorizontalBlock extends ContainerBlock {
     
-    var _truncatableElement as EvccTextBlock?;
+    var _truncatableElement as TextBlock?;
 
     function initialize( options as DbOptions ) {
-        EvccContainerBlock.initialize( options );
+        ContainerBlock.initialize( options );
     }
     
     // Prepare the drawing of all elements
@@ -29,14 +29,14 @@ class EvccHorizontalBlock extends EvccContainerBlock {
 
         var availableWidth = getDcWidthAtY( y ) - getOption( :truncateSpacing ) as Number;
         if( _truncatableElement != null ) {
-            var truncatableElement = _truncatableElement as EvccTextBlock;
+            var truncatableElement = _truncatableElement as TextBlock;
             var first = true;
             while( availableWidth < getWidth() && truncatableElement.getTextLength() > 1 ) {
                 // If the option is enabled, we add ellipsis ("...") at the
                 // end of the truncated text element
                 if( first ) {
                     if( truncatableElement.getOption( :useEllipsis ) as Boolean ) {
-                        insertAfter( new EvccTextBlock( "...", {} ), truncatableElement );
+                        insertAfter( new TextBlock( "...", {} ), truncatableElement );
                     }
                     first = false;
                 }
@@ -60,7 +60,7 @@ class EvccHorizontalBlock extends EvccContainerBlock {
             // They should center at the x passed on to them
             // Therefore justify should not be specified and defaults to center
             if( _elements[i].getOption(:justify) as TextJustification != Graphics.TEXT_JUSTIFY_CENTER 
-                && ! ( _elements[i] instanceof EvccVerticalBlock ) ) 
+                && ! ( _elements[i] instanceof VerticalBlock ) ) 
             {
                 throw new InvalidValueException( "JUSTNOTSUP" );
             }
@@ -86,7 +86,7 @@ class EvccHorizontalBlock extends EvccContainerBlock {
     {
         var height = 0;
         for( var i = 0; i < _elements.size(); i++ ) {
-            height = EvccHelperUI.max( height, _elements[i].getHeight() );
+            height = HelperUI.max( height, _elements[i].getHeight() );
         }
         return getMarginTop() + height as Number + getMarginBottom();
     }
@@ -101,14 +101,14 @@ class EvccHorizontalBlock extends EvccContainerBlock {
         // - and we do not have any options set for the new text
         var lastElement = _elements.size() - 1;
         if( lastElement >= 0 && 
-            _elements[lastElement] instanceof EvccTextBlock && 
+            _elements[lastElement] instanceof TextBlock && 
             _elements[lastElement].getOption( :isTruncatable ) as Boolean != true && 
             options.isEmpty() ) 
         {
-            ( _elements[lastElement] as EvccTextBlock ).append( text );
+            ( _elements[lastElement] as TextBlock ).append( text );
         } else { 
             options[:parent] = self;
-            var textBlock = new EvccTextBlock( text, options );
+            var textBlock = new TextBlock( text, options );
             _elements.add( textBlock );
             if( options[:isTruncatable] == true ) {
                 _truncatableElement = textBlock;

@@ -12,14 +12,14 @@ class GetInitialView {
     
     // Called if the app runs in widget mode
     public static function getInitialView() as [Views, InputDelegates] {
-        // EvccHelperBase.debug( "EvccApp: getInitialView" );
+        // HelperBase.debug( "EvccApp: getInitialView" );
         try {
             // Initialize the resources here, to save computing time
             // in the view (reduce chance to trip the watchdog)
             EvccResources.load();
 
             // Read the site count
-            var siteCount = EvccSiteConfiguration.getSiteCount();
+            var siteCount = SiteConfiguration.getSiteCount();
 
             // The bread crumbs are used to store which sites/pages have been opened last
             var breadCrumb = new BreadCrumb( null );
@@ -28,7 +28,7 @@ class GetInitialView {
             // This is for the case when sites get deleted from
             // the settings and we want to clean up their persistant
             // data
-            EvccStateStore.clearUnusedSites( siteCount );
+            StateStore.clearUnusedSites( siteCount );
 
             if( siteCount == 0 ) {
                 throw new NoSiteException();
@@ -57,35 +57,35 @@ class GetInitialView {
                 // If not, we initially present a widget view that acts as glance, i.e. displays
                 // only the active site and has all the other sites as sub views
                 if ( ! ( settings has :isGlanceModeEnabled ) || ! settings.isGlanceModeEnabled ) {
-                    // EvccHelperBase.debug( "EvccApp: no glance, starting with active site only" );
+                    // HelperBase.debug( "EvccApp: no glance, starting with active site only" );
                     var views = new ArrayOfSiteViews[0];
                     // The main view adds itself to views
-                    var view = new EvccWidgetMainView( {
+                    var view = new MainView( {
                         :views => views,
                         :siteIndex => activeSite,
                         :actAsGlance => true
                     } );
-                    var delegate = new EvccViewCarouselDelegate( views, breadCrumb );
+                    var delegate = new ViewCarouselDelegate( views, breadCrumb );
                     return [view, delegate];
                 // If glances are supported, we present the full list of sites or menu entries right away
                 } else {
-                    var views = EvccWidgetMainView.getAllSiteViews();
+                    var views = MainView.getAllSiteViews();
                     // We use the number of views to determine the maximum number of children
                     // since it can be either multiple sites, or one site with detailed views
                     // (such as forecast) presented on the same level
                     var activeView = breadCrumb.getSelectedChild( views.size() );
-                    var delegate = new EvccViewCarouselDelegate( views, breadCrumb );
+                    var delegate = new ViewCarouselDelegate( views, breadCrumb );
                     
-                    EvccHelperBase.debug( "GetInitialView: views.size()=" + views.size() );
-                    EvccHelperBase.debug( "GetInitialView: activeView=" + activeView );
+                    HelperBase.debug( "GetInitialView: views.size()=" + views.size() );
+                    HelperBase.debug( "GetInitialView: activeView=" + activeView );
                     
                     // Start with the active page
                     return [views[activeView], delegate];
                 }
             }
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
-            return [new EvccWidgetErrorView( ex ), new EvccViewSimpleDelegate()];
+            HelperBase.debugException( ex );
+            return [new ErrorView( ex ), new ViewSimpleDelegate()];
         }
     }
 }

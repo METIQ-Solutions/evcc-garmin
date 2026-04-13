@@ -2,7 +2,7 @@ import Toybox.Lang;
 import Toybox.Application.Properties;
 
 // This class represents the configuration of one site
-(:background) class EvccSite {
+(:background) class SiteConfig {
     private var _url as String;
     private var _user as String;
     private var _pass as String;
@@ -16,9 +16,9 @@ import Toybox.Application.Properties;
     (:exclForMemoryLow) function scaleForecast() as Boolean { return _scaleForecast; }
     
     function initialize( index as Number ) {
-        _url = Properties.getValue( EvccConstants.PROPERTY_SITE_PREFIX + index + EvccConstants.PROPERTY_SITE_URL_SUFFIX ) as String;
-        _user = Properties.getValue( EvccConstants.PROPERTY_SITE_PREFIX + index + EvccConstants.PROPERTY_SITE_USER_SUFFIX ) as String;
-        _pass = Properties.getValue( EvccConstants.PROPERTY_SITE_PREFIX + index + EvccConstants.PROPERTY_SITE_PASS_SUFFIX ) as String;
+        _url = Properties.getValue( Constants.PROPERTY_SITE_PREFIX + index + Constants.PROPERTY_SITE_URL_SUFFIX ) as String;
+        _user = Properties.getValue( Constants.PROPERTY_SITE_PREFIX + index + Constants.PROPERTY_SITE_USER_SUFFIX ) as String;
+        _pass = Properties.getValue( Constants.PROPERTY_SITE_PREFIX + index + Constants.PROPERTY_SITE_PASS_SUFFIX ) as String;
 
         _basicAuth = ! _user.equals( "" );
 
@@ -31,7 +31,7 @@ import Toybox.Application.Properties;
 
     (:exclForMemoryLow) 
     function readScaleForecast( index as Number ) as Void {
-        _scaleForecast = Properties.getValue( EvccConstants.PROPERTY_SITE_PREFIX + index + EvccConstants.PROPERTY_SITE_SCALE_FORECAST_SUFFIX ) as Boolean;
+        _scaleForecast = Properties.getValue( Constants.PROPERTY_SITE_PREFIX + index + Constants.PROPERTY_SITE_SCALE_FORECAST_SUFFIX ) as Boolean;
     }
     (:exclForMemoryStandard) function readScaleForecast( index as Number ) as Void {}
 }

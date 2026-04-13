@@ -7,16 +7,16 @@ import Toybox.Lang;
 
 // Class to represent the solar forecast
 (:exclForMemoryLow) 
-class EvccStatistics {
-    private var _statistics as Array<EvccStatisticsPeriod> = new Array<EvccStatisticsPeriod>[0];
-    public function getStatisticsPeriods() as Array<EvccStatisticsPeriod> { return _statistics; }
+class Statistics {
+    private var _statistics as Array<StatisticsPeriod> = new Array<StatisticsPeriod>[0];
+    public function getStatisticsPeriods() as Array<StatisticsPeriod> { return _statistics; }
 
     private const STATISTICS_PERIOD = [ "30d", "thisYear", "365d", "total" ];
 
     function initialize( statistics as JsonContainer ) {
         for( var i = 0; i < STATISTICS_PERIOD.size(); i++ ) {
             _statistics.add( 
-                new EvccStatisticsPeriod( 
+                new StatisticsPeriod( 
                     statistics[STATISTICS_PERIOD[i]]
                 ) 
             );
@@ -33,7 +33,7 @@ class EvccStatistics {
     }
 }
 
-(:exclForMemoryLow) class EvccStatisticsPeriod {
+(:exclForMemoryLow) class StatisticsPeriod {
     
     // If no value is found, the solar percentage is left at null    
     private var _solarPercent as Float?;

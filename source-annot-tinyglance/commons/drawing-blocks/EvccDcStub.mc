@@ -5,18 +5,18 @@ import Toybox.Graphics;
 // Dc (device context) available, the class used by CIQ to draw content.
 // However we still need some functions found in Dc, which we emulate in this class 
 // by other means.
-(:exclForViewPreRenderingDisabled) class EvccDcStub {
+(:exclForViewPreRenderingDisabled) class DcStub {
     private var _width as Number;
     private var _height as Number;
     private var _bufferedBitmap as BufferedBitmapReference or BufferedBitmap;
 
-    private static var _instance as EvccDcStub?;
+    private static var _instance as DcStub?;
     
-    public static function getInstance() as EvccDcStub {
+    public static function getInstance() as DcStub {
         if( _instance == null ) {
-            _instance = new EvccDcStub();
+            _instance = new DcStub();
         }
-        return _instance as EvccDcStub;
+        return _instance as DcStub;
     }
     
     // Width and height is obtained from device settings

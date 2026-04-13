@@ -38,7 +38,7 @@ import Toybox.Lang;
     // start/stop will not be called in background, therefore we disable the
     // scope check for these two functions, to avoid error about the Timer
     public function stop() as Void {
-        // EvccHelperBase.debug("StateRequest: stop");
+        // HelperBase.debug("StateRequest: stop");
         if( _timer != null ) {
             _timer.stop();
         }

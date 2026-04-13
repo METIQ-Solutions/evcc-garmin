@@ -7,18 +7,18 @@ import Toybox.Lang;
 
 // Class representing a heater
 (:exclForMemoryLow) 
-class EvccHeater extends EvccControllable {
+class Heater extends Controllable {
     private var _temp as Number = 0;
     
     private const VEHICLESOC = "vehicleSoc";
 
     function initialize( dataLp as JsonContainer ) {
-        EvccControllable.initialize( dataLp );
+        Controllable.initialize( dataLp );
         _temp = dataLp[VEHICLESOC] as Number;
     }
 
     function serialize( loadpoint as JsonContainer ) as JsonContainer {
-        EvccControllable.serialize( loadpoint );
+        Controllable.serialize( loadpoint );
         loadpoint[VEHICLESOC] = _temp;
         return loadpoint;
     }

@@ -5,14 +5,14 @@ import Toybox.WatchUi;
 // Class representing an icon. The difference between an icon and the bitmap above
 // is that for icons multiple sizes are supported and this element shows the icon
 // based on the font that is passed in the options or used by its parent element
-class EvccIconBlock extends EvccBitmapBlock {
+class IconBlock extends BitmapBlock {
     var _icon as BaseIcon;
     var _suppressIcon as Boolean = false;
 
     typedef Icon as BaseIcon or ConditionalIcon;
 
     // Constants for the base icons
-    // The number needs to relate to an entry in the EvccResourceSets.icons
+    // The number needs to relate to an entry in the ResourceSets.icons
     enum BaseIcon {
         ICON_BATTERY_EMPTY,
         ICON_BATTERY_ONEQUARTER,
@@ -50,7 +50,7 @@ class EvccIconBlock extends EvccBitmapBlock {
     }
 
     public function initialize( icon as Icon, options as DbOptions ) {
-        EvccBitmapBlock.initialize( null, options );
+        BitmapBlock.initialize( null, options );
 
         // We analyse the icon and passed in data and from that
         // store the interpreted icon
@@ -82,7 +82,7 @@ class EvccIconBlock extends EvccBitmapBlock {
         }
     }
 
-    // Override the function from EvccBitmapBlock and
+    // Override the function from BitmapBlock and
     // determine the reference based on the icon constant and font size
     // This is not done in the constructor, because we need to adapt
     // to changing font size
@@ -100,7 +100,7 @@ class EvccIconBlock extends EvccBitmapBlock {
     // Special handling of the cache reset - if the font is changed,
     // we also invalidate the cache for the bitmap dimensions
     public function resetCache( resetType as Symbol, direction as Symbol ) {
-        EvccBlock.resetCache( resetType, direction );
+        DrawingBlockBase.resetCache( resetType, direction );
         if( resetType == :resetFont ) {
             _bitmapWidth = null;
             _bitmapHeight = null;

@@ -20,7 +20,7 @@ import Toybox.Application.Properties;
 
     // Constructor
     public function initialize( index as Number ) {
-        // EvccHelperBase.debug("Glance: initialize");
+        // HelperBase.debug("Glance: initialize");
         GlanceView.initialize();
         _stateRequest = new EvccTimedStateRequest( index );
     }
@@ -36,10 +36,10 @@ import Toybox.Application.Properties;
 
             try {
 
-                // EvccHelperBase.debug("Glance: onUpdate");
-                var line = new EvccHorizontalBlock( { 
+                // HelperBase.debug("Glance: onUpdate");
+                var line = new HorizontalBlock( { 
                     :dc => dc, 
-                    :font => EvccGlanceResourceSet.FONT_GLANCE, 
+                    :font => GlanceResourceSet.FONT_GLANCE, 
                     :justify => Graphics.TEXT_JUSTIFY_LEFT, 
                     :backgroundColor => Graphics.COLOR_TRANSPARENT } );
 
@@ -50,13 +50,13 @@ import Toybox.Application.Properties;
                 } else { 
                     var state=_stateRequest.getState();
                     if( state.hasBattery() ) {
-                        var column = new EvccVerticalBlock( { :font => EvccGlanceResourceSet.FONT_GLANCE } );
-                        column.addIcon( EvccIconBlock.ICON_BATTERY, { :batterySoc => state.getBatterySoc() } );
+                        var column = new VerticalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
+                        column.addIcon( IconBlock.ICON_BATTERY, { :batterySoc => state.getBatterySoc() } );
 
-                        var batteryState = new EvccHorizontalBlock( { :font => EvccGlanceResourceSet.FONT_GLANCE } );
-                        batteryState.addText( EvccHelperUI.formatSoc( state.getBatterySoc() ) );
+                        var batteryState = new HorizontalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
+                        batteryState.addText( HelperUI.formatSoc( state.getBatterySoc() ) );
                         
-                        batteryState.addIcon( EvccIconBlock.ICON_POWER_FLOW, { :power => state.getBatteryPowerRounded() } );
+                        batteryState.addIcon( IconBlock.ICON_POWER_FLOW, { :power => state.getBatteryPowerRounded() } );
 
                         column.addBlock( batteryState );
                         line.addBlock( column );
@@ -69,25 +69,25 @@ import Toybox.Application.Properties;
 
                     var displayedLPs = new ArrayOfLoadPoints[0];
                     for (var i = 0; i < loadpoints.size(); i++) {
-                        var loadpoint = loadpoints[i] as EvccLoadPoint;
+                        var loadpoint = loadpoints[i] as Loadpoint;
                         if( loadpoint.getVehicle() != null ) {
                             displayedLPs.add( loadpoint );
                         }
                     }
 
                     for (var i = 0; i < displayedLPs.size(); i++) {
-                        var loadpoint = displayedLPs[i] as EvccLoadPoint;
+                        var loadpoint = displayedLPs[i] as Loadpoint;
                         var vehicle = loadpoint.getVehicle();
                         if( vehicle != null ) {
-                            var column = new EvccVerticalBlock( { :font => EvccGlanceResourceSet.FONT_GLANCE } );
+                            var column = new VerticalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
                             column.addText( vehicle.getTitle().substring( 0, 8 ) as String );
-                            var vehicleState = new EvccHorizontalBlock( { :font => EvccGlanceResourceSet.FONT_GLANCE } );
+                            var vehicleState = new HorizontalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
                             if( vehicle.isGuest() ) {
                                 vehicleState.addBitmap( Rez.Drawables.car_glance, {} as DbOptions );
                             } else {
-                                vehicleState.addText( EvccHelperUI.formatSoc( vehicle.getSoc() ) );
+                                vehicleState.addText( HelperUI.formatSoc( vehicle.getSoc() ) );
                             }
-                            vehicleState.addIcon( EvccIconBlock.ICON_ACTIVE_PHASES, { :charging => loadpoint.isCharging(), :activePhases => loadpoint.getActivePhases() } );
+                            vehicleState.addIcon( IconBlock.ICON_ACTIVE_PHASES, { :charging => loadpoint.isCharging(), :activePhases => loadpoint.getActivePhases() } );
                             column.addBlock( vehicleState );
                             line.addBlock( column );
                             hasVehicle = true;
@@ -114,7 +114,7 @@ import Toybox.Application.Properties;
 
                 // We do this in the end, because spacing may be modified based on the number of loadpoints
                 try {
-                    var glanceMarginLeft = Properties.getValue( EvccConstants.PROPERTY_GLANCE_MARGIN_LEFT ) as Boolean;
+                    var glanceMarginLeft = Properties.getValue( Constants.PROPERTY_GLANCE_MARGIN_LEFT ) as Boolean;
                     if( glanceMarginLeft) {
                         line.setOption( :marginLeft, spacing );
                     }
@@ -125,12 +125,12 @@ import Toybox.Application.Properties;
                 // dc.drawRectangle( 0, 0, dc.getWidth(), dc.getHeight() );
                 //throw new InvalidOptionsException( "This is a test exception. Not sure where it happend. Beware!" );
             } catch ( ex ) {
-                EvccHelperBase.debugException( ex );
+                HelperBase.debugException( ex );
                 // clear Dc with transparent background color does
                 // not work a second time within an onUpdate call
                 // See issue #108
-                // EvccHelperWidget.clearDc( dc );
-                EvccHelperUI.drawGlanceError( ex, dc );
+                // HelperWidget.clearDc( dc );
+                HelperUI.drawGlanceError( ex, dc );
             }
         }
         //System.println( "drawGlance: e " + System.getSystemStats().usedMemory );
@@ -140,10 +140,10 @@ import Toybox.Application.Properties;
     // instead we do it manually in the EvccApp.onStop() function
     function onHide() as Void {
         try {
-            // EvccHelperBase.debug("Glance: onHide");
+            // HelperBase.debug("Glance: onHide");
             _stateRequest.stop();
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
         }
     }
 
@@ -151,7 +151,7 @@ import Toybox.Application.Properties;
     // the Dc becomes available.
     public function onLayout( dc as Dc ) as Void {
         try {
-            // EvccHelperBase.debug("Glance: onLayout");
+            // HelperBase.debug("Glance: onLayout");
             _stateRequest.registerCallback( self );
             _stateRequest.start();
 
@@ -163,7 +163,7 @@ import Toybox.Application.Properties;
             drawGlance();
 
         } catch ( ex ) {
-            EvccHelperBase.debugException( ex );
+            HelperBase.debugException( ex );
         }
     }
 
@@ -181,7 +181,7 @@ import Toybox.Application.Properties;
         if( _buffer != null ) {
             dc.drawBitmap( 0, 0, _buffer );
         } else {
-            EvccHelperUI.drawGlanceError( new GlanceBufferException(), dc );
+            HelperUI.drawGlanceError( new GlanceBufferException(), dc );
         }
     }
 }

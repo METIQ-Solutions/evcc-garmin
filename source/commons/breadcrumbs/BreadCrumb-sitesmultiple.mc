@@ -25,7 +25,7 @@ import Toybox.Application;
         
         // If no parent is given, we initialize from the storage
         if( parentCrumb == null ) {
-            var storedCrumb = Storage.getValue( EvccConstants.STORAGE_BREAD_CRUMBS ) as SerializedBreadCrumb?;
+            var storedCrumb = Storage.getValue( Constants.STORAGE_BREAD_CRUMBS ) as SerializedBreadCrumb?;
             if( storedCrumb != null && storedCrumb instanceof Array ) {
                 self.deserialize( storedCrumb );
             }
@@ -68,7 +68,7 @@ import Toybox.Application;
         if( _parent != null ) {
             _parent.persist();
         } else {
-            Storage.setValue( EvccConstants.STORAGE_BREAD_CRUMBS, self.serialize() );
+            Storage.setValue( Constants.STORAGE_BREAD_CRUMBS, self.serialize() );
         }
     }
 

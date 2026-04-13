@@ -12,8 +12,8 @@ import Toybox.PersistedContent;
 // - for devices with standard memory additional JQ filters 
 // - additional callback logic for multiple callbacks and
 //   calling WatchUi.requestUpdate
-// - persisting the EvccState object via the EvccStateStore
-(:glance) class EvccStateRequest extends EvccStateRequestBackground {
+// - persisting the EvccState object via the StateStore
+(:glance) class EvccStateRequest extends EvccBackgroundStateRequest {
     
     // If it is not a low memory device, we add statistics and forecast
     (:exclForMemoryLow) 
@@ -32,15 +32,15 @@ import Toybox.PersistedContent;
     protected var _refreshInterval as Number;
 
     // Instance of the state store for persisting the state
-    protected var _stateStore as EvccStateStore;
+    protected var _stateStore as StateStore;
 
 
     // Constructor
     public function initialize( siteIndex as Number ) {
-        EvccStateRequestBackground.initialize( siteIndex );
-        _refreshInterval = Properties.getValue( EvccConstants.PROPERTY_REFRESH_INTERVAL ) as Number;
-        _dataExpiry = Properties.getValue( EvccConstants.PROPERTY_DATA_EXPIRY ) as Number;
-        _stateStore = new EvccStateStore( siteIndex );
+        EvccBackgroundStateRequest.initialize( siteIndex );
+        _refreshInterval = Properties.getValue( Constants.PROPERTY_REFRESH_INTERVAL ) as Number;
+        _dataExpiry = Properties.getValue( Constants.PROPERTY_DATA_EXPIRY ) as Number;
+        _stateStore = new StateStore( siteIndex );
     }
 
 
@@ -91,7 +91,7 @@ import Toybox.PersistedContent;
     // first onUpdate
     (:exclForViewPreRenderingDisabled)
     public function invokeAllCallbacksButFirst() as Void {
-        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks except first" );
+        // HelperBase.debug( "EvccStateRequest: invoking callbacks except first" );
         for( var i = 1; i < _callbacks.size(); i++ ) {
             _callbacks[i].onStateUpdate();
         }
@@ -101,14 +101,14 @@ import Toybox.PersistedContent;
     // If callbacks are disabled, we request a screen update from WatchUi
     (:exclForWebResponseCallbacksEnabled) 
     public function invokeCallbacks() as Void {
-        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks" );
+        // HelperBase.debug( "EvccStateRequest: invoking callbacks" );
         WatchUi.requestUpdate();
     }    
 
 
     (:exclForWebResponseCallbacksDisabled) 
     public function invokeCallbacks() as Void {
-        // EvccHelperBase.debug( "EvccStateRequest: invoking callbacks" );
+        // HelperBase.debug( "EvccStateRequest: invoking callbacks" );
         if( _callbacks.size() == 0 ) {
             // If not callbacks are registered, we request a screen update from WatchUi
             // Note that the background task has to register a callback, otherwise
@@ -116,7 +116,7 @@ import Toybox.PersistedContent;
             WatchUi.requestUpdate();
         } else {
             for( var i = 0; i < _callbacks.size(); i++ ) {
-                // EvccHelperBase.debug( "EvccStateRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
+                // HelperBase.debug( "EvccStateRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
                 _callbacks[i].onStateUpdate();
             }
         }
@@ -126,7 +126,7 @@ import Toybox.PersistedContent;
     // Loads the initial state from storage
     // If none is available or it is outdated, makes an immediate web request
     public function loadInitialState() as Void {
-        // EvccHelperBase.debug("StateRequest: loadInitialState site=" + _siteIndex );
+        // HelperBase.debug("StateRequest: loadInitialState site=" + _siteIndex );
 
         // Only when this state request is started we load the state data
         // We cannot load the state in initialize, because on some devices,
@@ -135,19 +135,19 @@ import Toybox.PersistedContent;
         
         // If no stored data is found a request is made immediately
         if( state == null ) {
-            // EvccHelperBase.debug( "StateRequest: no stored data found");
+            // HelperBase.debug( "StateRequest: no stored data found");
             makeRequest(); 
         } else { 
             var dataAge = Time.now().compare( state.getTimestamp() );
             // If the persisted data is older than the expiry time it is not used and a request is made immediately
             if( dataAge > _dataExpiry ) {
-                // EvccHelperBase.debug( "StateRequest: stored data too old!" ); 
+                // HelperBase.debug( "StateRequest: stored data too old!" ); 
                 makeRequest(); 
             } else { 
                 // otherwise the data is used, but if it is older than refreshInterval, a request is made immediately^
                 // if the device is using tiny glance, then also a request is made immediately, because the data obtained by
                 // the tiny glance may be incomplete due to memory restrictions in the tiny glance's background service. 
-                // EvccHelperBase.debug( "StateRequest: using stored data" );
+                // HelperBase.debug( "StateRequest: using stored data" );
                 _hasCurrentState = true;
                 if( dataAge > _refreshInterval || EvccApp.deviceUsesTinyGlance ) {
                     makeRequest(); 
@@ -159,7 +159,7 @@ import Toybox.PersistedContent;
 
      // Receive the data from the web request
     public function onJsonReceive() as Void {
-        var json = EvccStateRequestBackground.consumeJson();
+        var json = EvccBackgroundStateRequest.consumeJson();
         if( json != null ) {
             _stateStore.setState( json );
         }
@@ -175,7 +175,7 @@ import Toybox.PersistedContent;
     // Unregister a callback
     (:exclForWebResponseCallbacksDisabled) 
     public function unregisterCallback( callback as EvccStateRequestCallback ) as Void {
-        EvccHelperBase.debug( "EvccStateRequest: unregistering callback" );
+        HelperBase.debug( "EvccStateRequest: unregistering callback" );
         if( ! _callbacks.remove( callback ) ) {
             throw new InvalidValueException( "EvccStateRequest: unregistering callback failed." );
         }

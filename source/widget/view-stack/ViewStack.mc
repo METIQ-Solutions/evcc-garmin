@@ -31,7 +31,7 @@ import Toybox.WatchUi;
     // Replacing that API was the primary reason for introducing our own view stack. 
     // See the class-level comment above for details.
     public static function getCurrentView() as [ WatchUi.Views?, WatchUi.InputDelegates? ] {
-        EvccHelperBase.debug( "ViewStack.getCurrentView" );
+        HelperBase.debug( "ViewStack.getCurrentView" );
         return _viewStack.size() > 0 
                ? _viewStack[_viewStack.size()-1]
                : [null, null];
@@ -39,14 +39,14 @@ import Toybox.WatchUi;
     
     // Pops a view from the stack, replacing WatchUi.popView().
     public static function popView( transition as SlideType ) as Void {
-        EvccHelperBase.debug( "ViewStack.popView" );
+        HelperBase.debug( "ViewStack.popView" );
         WatchUi.popView( transition );
         _viewStack = _viewStack.slice( 0, _viewStack.size() - 1 );
     }
 
     // Pushes a view onto the stack, replacing WatchUi.pushView().
     public static function pushView( view as Views, delegate as InputDelegates?, transition as SlideType ) as Void {
-        EvccHelperBase.debug( "ViewStack.pushView" );
+        HelperBase.debug( "ViewStack.pushView" );
         WatchUi.pushView( view, delegate, transition );
         _viewStack.add( [ view, delegate ] );
     }
@@ -55,13 +55,13 @@ import Toybox.WatchUi;
     // The initial view only needs to be stored, since the API automatically
     // pushes it onto the stack when it is returned from getInitialView().
     public static function registerInitialView( view as Views, delegate as InputDelegates? ) as Void {
-        EvccHelperBase.debug( "ViewStack.registerInitialView" );
+        HelperBase.debug( "ViewStack.registerInitialView" );
         _viewStack.add( [ view, delegate ] );
     }
 
     // Switches the view on the top of the view stack, replaces ViewStack.switchToView()
     public static function switchToView( view as Views, delegate as InputDelegates?, transition as SlideType ) as Void {
-        EvccHelperBase.debug( "ViewStack.switchToView" );
+        HelperBase.debug( "ViewStack.switchToView" );
         WatchUi.switchToView( view, delegate, transition );
         _viewStack[_viewStack.size()-1] = [view, delegate];
     }

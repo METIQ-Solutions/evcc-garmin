@@ -12,7 +12,7 @@ import Toybox.WatchUi;
 //   once a view comes into the foreground.
 
 // In the options dictionary, the following entries are used:
-// :dc - the Dc to be used, can be a real Dc or EvccDcStubStub
+// :dc - the Dc to be used, can be a real Dc or DcStubStub
 // :marginLeft, :marginRight, :marginTop, :marginBottom - margins in pixels to be put around the element
 // :justify - one of the Graphics.TEXT_JUSTIFY_xxx constants, horizontal alignment
 // :color, :backgroundColor - colors to be used to draw the element
@@ -30,7 +30,7 @@ import Toybox.WatchUi;
 // :relativeToScreenHeight - height of a spacer block, relative to the screen height
 // :relativeToFontheight - height of the spacer block, relative to the font size
 // :suppressDrawing - if true, the element will be taken into account for layouting but is not actually drawn
-class EvccBlock {
+class DrawingBlockBase {
     // The options for this block (see documentation above)
     private var _options as DbOptions;
 
@@ -88,10 +88,10 @@ class EvccBlock {
         if( parent != null ) {
             var value = parent.getOption( option );
             // If we take over the font form the parent element, we apply any relativeFont definition
-            // and shift the font accordingly. E.g. parent font EvccWidgetResourceSet.FONT_MEDIUM (=0) and :relativeFont=3
-            // results in using EvccWidgetResourceSet.FONT_XTINY (=3)
+            // and shift the font accordingly. E.g. parent font WidgetResourceSet.FONT_MEDIUM (=0) and :relativeFont=3
+            // results in using WidgetResourceSet.FONT_XTINY (=3)
             if( option == :font && _options[:relativeFont] != null ) {
-                value = EvccHelperUI.min( ( value as Number ) + ( _options[:relativeFont] as Number ), EvccResources.getGarminFonts().size() - 1 );
+                value = HelperUI.min( ( value as Number ) + ( _options[:relativeFont] as Number ), EvccResources.getGarminFonts().size() - 1 );
             }
             return value;
         } else {
@@ -154,7 +154,7 @@ class EvccBlock {
     (:exclForViewPreRenderingDisabled) 
     public function getDc() as EvccDcInterface { 
         var dc = getOption( :dc );
-        return ( dc == null ? EvccDcStub.getInstance() : dc ) as EvccDcInterface;
+        return ( dc == null ? DcStub.getInstance() : dc ) as EvccDcInterface;
     }
     // Without view pre-rendering, a real Dc must be set
     (:exclForViewPreRenderingEnabled) 
@@ -170,13 +170,13 @@ class EvccBlock {
     // Accessor for parent needs special treatment
     // Parent can be passed into an element either in the options structure
     // or later via this set function
-    public function setParent( parent as EvccContainerBlock ) as Void {
+    public function setParent( parent as ContainerBlock ) as Void {
         setOption( :parent, parent.weak() );
     }
     // For the get function we resolve the weak reference
-    protected function getParent() as EvccContainerBlock? {
+    protected function getParent() as ContainerBlock? {
         var parentRef = _options[:parent] as WeakReference?;
-        return ( parentRef != null ? parentRef.get() : null ) as EvccContainerBlock?;
+        return ( parentRef != null ? parentRef.get() : null ) as ContainerBlock?;
     }
 
 
@@ -206,7 +206,7 @@ class EvccBlock {
     // resetType:   :resetHeight to reset only the height
     //              :resetWidth to reset only the width
     //              :resetFont for font size changes. Both dimensions will be invalidated, and 
-    //              also the bitmap dimension, by EvccIconBlock.resetCache overriding this function
+    //              also the bitmap dimension, by IconBlock.resetCache overriding this function
     // direction:   :resetDirectionUp to recursively reset all parents
     //              :resetDirectionDown to recursively reset all children
     //              :resetDirectionBoth to recursively reset both parents and children

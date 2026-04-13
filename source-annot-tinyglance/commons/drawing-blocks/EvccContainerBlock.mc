@@ -3,11 +3,11 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 // Base class for all drawing elements that consists of other drawing elements
-class EvccContainerBlock extends EvccBlock {
-    protected var _elements as Array<EvccBlock> = new Array<EvccBlock>[0];
+class ContainerBlock extends DrawingBlockBase {
+    protected var _elements as Array<DrawingBlockBase> = new Array<DrawingBlockBase>[0];
 
     public function initialize( options as DbOptions ) {
-        EvccBlock.initialize( options );
+        DrawingBlockBase.initialize( options );
     }
 
     public function getElementCount() as Number {
@@ -15,7 +15,7 @@ class EvccContainerBlock extends EvccBlock {
     }
 
     (:exclForGlanceTiny :exclForGlanceNone) 
-    public function getElements() as Array<EvccBlock> {
+    public function getElements() as Array<DrawingBlockBase> {
         return _elements;
     }
 
@@ -29,32 +29,32 @@ class EvccContainerBlock extends EvccBlock {
     public function addError( text as String, options as DbOptions ) as Void {
         options[:color] = EvccColors.ERROR;
         options[:parent] = self;
-        _elements.add( new EvccTextBlock( text, options ) );
+        _elements.add( new TextBlock( text, options ) );
     }
     public function addBitmap( reference as ResourceId, options as DbOptions ) as Void {
         options[:parent] = self;
-        _elements.add( new EvccBitmapBlock( reference, options ) );
+        _elements.add( new BitmapBlock( reference, options ) );
     }
     
-    public function addIcon( icon as EvccIconBlock.Icon, options as DbOptions ) as Void {
+    public function addIcon( icon as IconBlock.Icon, options as DbOptions ) as Void {
         options[:parent] = self;
         
         // Special handling for the power flow and active phases icons
         // power flow is only shown if power is not equal 0, and
         // active phases is only shown if the loadpoint is charging
-        if( ( icon != EvccIconBlock.ICON_POWER_FLOW || options[:power] != 0 ) &&
-            ( icon != EvccIconBlock.ICON_ACTIVE_PHASES || options[:charging] == true ) )
+        if( ( icon != IconBlock.ICON_POWER_FLOW || options[:power] != 0 ) &&
+            ( icon != IconBlock.ICON_ACTIVE_PHASES || options[:charging] == true ) )
         {
-            _elements.add( new EvccIconBlock( icon, options ) );
+            _elements.add( new IconBlock( icon, options ) );
         }
     }
 
-    public function addBlock( block as EvccBlock ) as Void {
+    public function addBlock( block as DrawingBlockBase ) as Void {
         block.setParent( self );
         _elements.add( block );
     }
  
-    public function insertAfter( block as EvccBlock, afterBlock as EvccBlock ) as Void {
+    public function insertAfter( block as DrawingBlockBase, afterBlock as DrawingBlockBase ) as Void {
         var elements = _elements.slice( null, _elements.indexOf( afterBlock ) + 1 );
         block.setParent( self );
         elements.add( block );
@@ -64,7 +64,7 @@ class EvccContainerBlock extends EvccBlock {
     
     // For containers, the resetCache function additionally resets all elements
     public function resetCache( resetType as Symbol, direction as Symbol ) as Void {
-        EvccBlock.resetCache( resetType, direction );
+        DrawingBlockBase.resetCache( resetType, direction );
         if( direction == :resetDirectionDown || direction == :resetDirectionBoth ) {
             for( var i = 0; i < _elements.size(); i++ ) {
                 _elements[i].resetCache( resetType, :resetDirectionDown );

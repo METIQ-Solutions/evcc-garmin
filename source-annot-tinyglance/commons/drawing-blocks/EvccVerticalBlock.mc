@@ -3,11 +3,11 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 // An element containing other elements that shall be stacked vertically
-class EvccVerticalBlock extends EvccContainerBlock {
+class VerticalBlock extends ContainerBlock {
     
     // Just pass on the options
     function initialize( options as DbOptions ) {
-        EvccContainerBlock.initialize( options );
+        ContainerBlock.initialize( options );
     }
 
     // The standard prepareDraw prepares all elements in this container
@@ -17,22 +17,22 @@ class EvccVerticalBlock extends EvccContainerBlock {
     }
     
     // This function delegates the preparation of each element to a task
-    // in the EvccTaskQueue. This is done for the root element, to 
+    // in the TaskQueue. This is done for the root element, to 
     // split the processing in smaller tasks with possibility to process user
     // input between them
     (:exclForViewPreRenderingDisabled)
-    public function prepareDrawByTasks( x as Number, y as Number, exceptionHandler as EvccExceptionHandler ) as Void {
+    public function prepareDrawByTasks( x as Number, y as Number, exceptionHandler as TaskExceptionState ) as Void {
         prepareDrawInternal( x, y, true, exceptionHandler );
     }
 
     // This is an internal function that prepares the drawing of 
     // this vertical block. If byTasks is true, then the drawing
     // of each element in this container will be done in a separate
-    // task handled by EvccTaskQueue.
+    // task handled by TaskQueue.
 
     // Vertical alignment is always centered, therefore for each element we calculate 
     // the y at the center of the element and pass it as starting point.
-    private function prepareDrawInternal( x as Number, y as Number, byTasks as Boolean, exceptionHandler as EvccExceptionHandler? ) as Void
+    private function prepareDrawInternal( x as Number, y as Number, byTasks as Boolean, exceptionHandler as TaskExceptionState? ) as Void
     {
         if( getJustify() != Graphics.TEXT_JUSTIFY_CENTER ) {
             throw new InvalidValueException( "JUSTCENTONL" );
@@ -80,19 +80,19 @@ class EvccVerticalBlock extends EvccContainerBlock {
 
     // This function ignores the byTasks and calls prepareDraw immediately
     (:exclForViewPreRenderingEnabled)
-    private function prepareDrawOfElement( element as EvccBlock, x as Number, y as Number, byTasks as Boolean, exceptionHandler as EvccExceptionHandler? ) as Void {
+    private function prepareDrawOfElement( element as DrawingBlockBase, x as Number, y as Number, byTasks as Boolean, exceptionHandler as TaskExceptionState? ) as Void {
         element.prepareDraw( x, y );
     }
     
     // Only if view pre-rendering is enabled, we have an implementation that honors byTasks
-    // and delegates the prepareDraw calls to the EvccTaskQueue
+    // and delegates the prepareDraw calls to the TaskQueue
     // Type check for glance scope is disabled, because EvccPreparedDrawTask is not available
     // in glance scope. Therefore, this function must never be called from a glance.
     (:exclForViewPreRenderingDisabled :typecheck(disableGlanceCheck))
-    private function prepareDrawOfElement( element as EvccBlock, x as Number, y as Number, byTasks as Boolean, exceptionHandler as EvccExceptionHandler? ) as Void {
+    private function prepareDrawOfElement( element as DrawingBlockBase, x as Number, y as Number, byTasks as Boolean, exceptionHandler as TaskExceptionState? ) as Void {
         if( byTasks ) {
-            // EvccHelperBase.debug("VerticalBlock: adding prepareDraw for element" );
-            EvccTaskQueue.getInstance().addToFront( new EvccPrepareDrawTask( element, x, y, exceptionHandler as EvccExceptionHandler ) );
+            // HelperBase.debug("VerticalBlock: adding prepareDraw for element" );
+            TaskQueue.getInstance().addToFront( new PrepareDrawTask( element, x, y, exceptionHandler as TaskExceptionState ) );
         } else {
             element.prepareDraw( x, y );
         }
@@ -108,7 +108,7 @@ class EvccVerticalBlock extends EvccContainerBlock {
             if( spreadToHeight > heightWithSpace ) {
                 // Last element will also get spacing in the bottom, therefore we
                 // spread the space to number of elements + 1
-                // EvccHelperBase.debug( "Spreading content!");
+                // HelperBase.debug( "Spreading content!");
                 var spacing = Math.round( ( spreadToHeight - heightWithSpace ) / _elements.size() ).toNumber() + 1;
                 for( var i = 0; i < _elements.size(); i++ ) {
                     _elements[i].setOption( :marginTop, spacing );
@@ -123,7 +123,7 @@ class EvccVerticalBlock extends EvccContainerBlock {
     {
         var width = 0;
         for( var i = 0; i < _elements.size(); i++ ) {
-            width = EvccHelperUI.max( width, _elements[i].getWidth() );
+            width = HelperUI.max( width, _elements[i].getWidth() );
         }
         return ( getMarginLeft() + width + getMarginRight() ) as Number;
     }
@@ -141,6 +141,6 @@ class EvccVerticalBlock extends EvccContainerBlock {
     // For the vertical container, new text is always added as new element
     function addTextWithOptions( text as String, options as DbOptions ) as Void {
         options[:parent] = self;
-        _elements.add( new EvccTextBlock( text, options as DbOptions ) );
+        _elements.add( new TextBlock( text, options as DbOptions ) );
     }
 }

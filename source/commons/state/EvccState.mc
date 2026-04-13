@@ -36,18 +36,18 @@ import Toybox.Time;
 
     public function hasBattery() as Boolean { return _hasBattery; }
     public function getBatterySoc() as Number? { return _batterySoc; }
-    public function getBatteryPowerRounded() as Number { return EvccHelperBase.roundPower( _batteryPower ); }
-    public function getGridPowerRounded() as Number { return EvccHelperBase.roundPower( _gridPower ); }
-    public function getHomePowerRounded() as Number { return EvccHelperBase.roundPower( _homePower ); }
-    public function getPvPowerRounded() as Number { return EvccHelperBase.roundPower( _pvPower ); }
+    public function getBatteryPowerRounded() as Number { return HelperBase.roundPower( _batteryPower ); }
+    public function getGridPowerRounded() as Number { return HelperBase.roundPower( _gridPower ); }
+    public function getHomePowerRounded() as Number { return HelperBase.roundPower( _homePower ); }
+    public function getPvPowerRounded() as Number { return HelperBase.roundPower( _pvPower ); }
     public function getSiteTitle() as String { return _siteTitle != null ? _siteTitle : ""; }
 
     // Loadpoints and their accessor
     // Loadpoints are stored in three lists, depending on their type
     // On low-memory devices, only vehicles are supported
-    private var _connectedVehicles as EvccLoadPointList = new EvccLoadPointList();
-    (:exclForMemoryLow) private var _heaters as EvccLoadPointList = new EvccLoadPointList();
-    (:exclForMemoryLow) private var _integratedDevices as EvccLoadPointList = new EvccLoadPointList();
+    private var _connectedVehicles as LoadpointList = new LoadpointList();
+    (:exclForMemoryLow) private var _heaters as LoadpointList = new LoadpointList();
+    (:exclForMemoryLow) private var _integratedDevices as LoadpointList = new LoadpointList();
 
     // Function to access and clear the loadpoints
     // This is used during serialization and frees the memory
@@ -72,9 +72,9 @@ import Toybox.Time;
     }
     
     // Accessor for the loadpoint lists
-    public function getConnectedVehicles() as EvccLoadPointList { return _connectedVehicles; }
-    (:exclForMemoryLow) public function getHeaters() as EvccLoadPointList { return _heaters; }
-    (:exclForMemoryLow) public function getIntegratedDevices() as EvccLoadPointList { return _integratedDevices; }
+    public function getConnectedVehicles() as LoadpointList { return _connectedVehicles; }
+    (:exclForMemoryLow) public function getHeaters() as LoadpointList { return _heaters; }
+    (:exclForMemoryLow) public function getIntegratedDevices() as LoadpointList { return _integratedDevices; }
 
     // Accessor for the count of loadpoints
     // Needed only for the categorized, aggregated display not available
@@ -97,14 +97,14 @@ import Toybox.Time;
 
     (:exclForMemoryLow) 
     public static var NUM_OF_LOADPOINT_CATEGORIES as Number = 3;
-    // EvccIconBlock is not available in the glance scope of tiny glances
+    // IconBlock is not available in the glance scope of tiny glances
     // The icon is not really needed, so we can just disable the typechecker
     (:exclForMemoryLow :typecheck([disableGlanceCheck])) 
     public function getAllLoadPointsCategories() as Array<LoadPointCategory> { 
         var lpCategories = [
-            [ EvccIconBlock.ICON_CAR, _connectedVehicles ],
-            [ EvccIconBlock.ICON_HEATER, _heaters ],
-            [ EvccIconBlock.ICON_DEVICE, _integratedDevices ]
+            [ IconBlock.ICON_CAR, _connectedVehicles ],
+            [ IconBlock.ICON_HEATER, _heaters ],
+            [ IconBlock.ICON_DEVICE, _integratedDevices ]
         ];
         if( lpCategories.size() != NUM_OF_LOADPOINT_CATEGORIES ) {
             throw new InvalidValueException( "EvccState: number of categories does not match NUM_OF_LOADPOINT_CATEGORIES." );
@@ -121,12 +121,12 @@ import Toybox.Time;
         return categories[index];
     }
 
-    (:exclForMemoryLow) private var _forecast as EvccSolarForecast?;
-    (:exclForMemoryLow) public function getForecast() as EvccSolarForecast? { return _forecast; }
+    (:exclForMemoryLow) private var _forecast as SolarForecast?;
+    (:exclForMemoryLow) public function getForecast() as SolarForecast? { return _forecast; }
     (:exclForMemoryLow :typecheck([disableBackgroundCheck,disableGlanceCheck])) public function hasForecast() as Boolean { return _forecast == null ? false : _forecast.hasForecast(); }
 
-    (:exclForMemoryLow) protected var _statistics as EvccStatistics?;
-    (:exclForMemoryLow) public function getStatistics() as EvccStatistics { return _statistics as EvccStatistics; }
+    (:exclForMemoryLow) protected var _statistics as Statistics?;
+    (:exclForMemoryLow) public function getStatistics() as Statistics { return _statistics as Statistics; }
     (:exclForMemoryLow) public function hasStatistics() as Boolean { return _statistics != null; }
 
     // Creating a new state object.
@@ -178,7 +178,7 @@ import Toybox.Time;
         if( loadPoints != null ) {
             for( var i = 0; i < loadPoints.size(); i++ ) {
                 var loadPointData = loadPoints[i] as JsonContainer;
-                var loadPoint = new EvccLoadPoint( loadPointData, result );
+                var loadPoint = new Loadpoint( loadPointData, result );
                 // In addition to the array of all loadpoints, we also
                 // maintain a list of each type, for the display of categories
                 if( loadPoint.isVehicle() ) { 
@@ -193,7 +193,7 @@ import Toybox.Time;
     }
 
     (:exclForMemoryLow :typecheck([disableBackgroundCheck,disableGlanceCheck]))
-    function initOptionalLoadPoint( loadPoint as EvccLoadPoint ) as Void {
+    function initOptionalLoadPoint( loadPoint as Loadpoint ) as Void {
         if( loadPoint.isHeater() ) {
             _heaters.add( loadPoint );
         } else if ( loadPoint.isIntegratedDevice() ) {
@@ -202,7 +202,7 @@ import Toybox.Time;
     }
 
     (:exclForMemoryStandard)
-    function initOptionalLoadPoint( loadPoint as EvccLoadPoint ) as Void {
+    function initOptionalLoadPoint( loadPoint as Loadpoint ) as Void {
     }
 
     // Function for parsing optional elements out of the JSON
@@ -214,11 +214,11 @@ import Toybox.Time;
         // we do not initialize these elements to save memory
         var forecast = result[FORECAST] as JsonContainer?;
         if( forecast != null ) {
-            _forecast = new EvccSolarForecast( forecast );
+            _forecast = new SolarForecast( forecast );
         }
         var statistics = result[STATISTICS] as JsonContainer?;
         if( statistics != null ) {
-            _statistics = new EvccStatistics( statistics );
+            _statistics = new Statistics( statistics );
         }
     }
 

@@ -2,7 +2,8 @@ import Toybox.Lang;
 import Toybox.Graphics;
 
 /* A singleton class providing access to font and icon resources */
-(:glance) class EvccResources {
+(:glance) 
+class EvccResources {
     private static var _instance as EvccResources?;
 
     // To initialize the resources

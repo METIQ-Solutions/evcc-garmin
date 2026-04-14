@@ -84,7 +84,7 @@ import Toybox.Math;
         // We store the active site, so when the widget is reopened, it 
         // starts with the site displayed last. Also the glance is using
         // the active site and is only displaying its data.
-        var activeSite = BreadCrumbSiteReadOnly.getSelectedSite( SiteConfiguration.getSiteCount() );
+        var activeSite = BreadCrumbSiteReadOnly.getSelectedSite( SiteConfigRepository.getSiteCount() );
 
         return [new EvccServiceDelegate( activeSite )];
     }    
@@ -99,7 +99,7 @@ import Toybox.Math;
             // HelperBase.debug( "EvccApp: onStop" );
             hideGlance();
             if( ! isGlance && ! isBackground ) {
-                EvccStateRequestRegistry.stopStateRequests();
+                WebRequestRegistry.stopWebRequests();
             }
         } catch ( ex ) {
             HelperBase.debugException( ex );

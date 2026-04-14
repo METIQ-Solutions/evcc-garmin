@@ -19,7 +19,7 @@ class GetInitialView {
             EvccResources.load();
 
             // Read the site count
-            var siteCount = SiteConfiguration.getSiteCount();
+            var siteCount = SiteConfigRepository.getSiteCount();
 
             // The bread crumbs are used to store which sites/pages have been opened last
             var breadCrumb = new BreadCrumb( null );
@@ -48,9 +48,9 @@ class GetInitialView {
                 // If the device supports pre-rendered views, then this function will start ALL 
                 // state requests. With pre-rendered views state requests for ALL sites are active 
                 // and updating all the views, even if they are not shown
-                // For the other implementations of EvccStateRequestRegistry, the start
+                // For the other implementations of WebRequestRegistry, the start
                 // function is just a dummy
-                EvccStateRequestRegistry.start( activeSite );
+                WebRequestRegistry.start( activeSite );
 
                 var settings = System.getDeviceSettings();
                 // We check if the device supports glances

@@ -14,7 +14,7 @@ class GetGlanceView {
             // HelperBase.debug( "EvccApp: getGlanceView" );
 
             // Read the site count
-            var siteCount = SiteConfiguration.getSiteCount();
+            var siteCount = SiteConfigRepository.getSiteCount();
 
             // We store the active site, so when the widget is reopened, it 
             // starts with the site displayed last. Also the glance is using

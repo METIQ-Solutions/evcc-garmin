@@ -1,0 +1,351 @@
+import Toybox.Graphics;
+import Toybox.Lang;
+import Toybox.WatchUi;
+import Toybox.Timer;
+import Toybox.Application.Properties;
+import Toybox.Math;
+
+// This is the base view for all views using and showing data from the state of a site. 
+
+// It handles:
+// - State request
+// - Same level and lower level views
+// - Preparation and drawing of shell (header, logo, page and select indicator) and content
+
+// There are three sections in the class
+// - It starts with general members and functions, then there are the
+// - Members and functions specific to devices without pre-rendering of views, which is followed by the
+// - Members and function specific to devices with pre-rendering of views
+
+class EvccSiteViewBase extends WatchUi.View {
+
+    // Options for constructor
+    typedef Options as {
+        :views as ArrayOfSiteViews, 
+        :parentView as EvccSiteViewBase?, 
+        :siteIndex as Number,
+        :pageIndex as Number?
+    };
+
+    // Functions to access the index and state request for the site of this view
+    private var _siteIndex as Number;
+    public function getSiteIndex() as Number { return _siteIndex; }
+    (:exclForViewPreRenderingEnabled)
+    protected function setSiteIndex( siteIndex as Number ) as Void { _siteIndex = siteIndex; }
+    // If view pre-rendering is active, we need to immediately redraw
+    // the content in case the site index changes
+    (:exclForViewPreRenderingDisabled) 
+    protected function setSiteIndex( siteIndex as Number ) as Void { 
+        if( _siteIndex != siteIndex ) {
+            _siteIndex = siteIndex;
+            _exceptionHandler.clearException();
+            prepareImmediately();
+        }
+    }
+    
+    public function getWebRequest() as WebRequest { 
+        return WebRequestRegistry.getWebRequest( _siteIndex ); 
+    }
+
+    // Organization of views
+
+    // Parent view
+    private var _parentView as EvccSiteViewBase?;
+    function getParentView() as EvccSiteViewBase? { return _parentView; }
+
+    // Other views on the same level
+    private var _sameLevelViews as ArrayOfSiteViews;
+    private var _pageIndex as Number = 0; // index of this view in the array
+    public function getSameLevelViews() as ArrayOfSiteViews { return _sameLevelViews; }
+    public function getSameLevelViewCount() as Number { return _sameLevelViews.size(); }
+    public function getPageIndex() as Number { return _pageIndex; }
+    public function setPageIndex( pageIndex as Number ) as Void { _pageIndex = pageIndex; }
+
+    // Views on the lower level
+    private var _lowerLevelViews as ArrayOfSiteViews = new ArrayOfSiteViews[0];
+    public function addLowerLevelViews( views as ArrayOfSiteViews ) as Void { _lowerLevelViews.addAll( views ); }
+    public function getLowerLevelViews() as ArrayOfSiteViews { return _lowerLevelViews; }
+    public function getLowerLevelViewCount() as Number { return _lowerLevelViews.size(); }
+
+    // Definition of the content area, see ContentArea further above for details
+    private var _ca as ContentArea = new ContentArea();
+    public function getContentArea() as ContentArea { return _ca; }
+
+    // Below some functions to be overriden by the implementations of this class,
+    // to define the behavior and provide content
+
+    // Function to be overriden to add a page title/icon to the view
+    public function getPageIcon() as IconBlock? { return null; }
+    public function getPageTitle() as TextBlock? { return null; }
+
+    // Decide whether the content shall be limited by
+    // height and/or width. Default is height only
+    // Implementations can decide based on their content
+    public function limitHeight() as Boolean { return true; }
+    public function limitWidth() as Boolean { return false; }
+
+    // To be set to true if the view should act as glance,
+    // i. e. shows a single site for the widget carousel in
+    // watches that do not support glances. See EvccApp for
+    // details
+    public function actsAsGlance() as Boolean { return false; }
+
+    // Function to be overriden to add content to the view
+    public function addContent( block as VerticalBlock, calcDc as EvccDcInterface ) as Void {}
+
+    // Function to allow debug output state the type of view
+    (:debug :exclForMemoryLow) private function getType() as String {
+        if( self instanceof ForecastView ) {
+            return "forecast";
+        } else if( self instanceof MainView ) {
+            return "main";
+        } else if( self instanceof StatisticsView ) {
+            return "statistics";
+        }
+        return "unknown";
+    }
+    (:debug :exclForMemoryStandard) private function getType() as String {
+        return "";
+    }
+    (:release) private function getType() as String {
+        return "";
+    }
+
+    public function addLoading( block as VerticalBlock, calcDc as EvccDcInterface ) as Void {
+        block.addText( "Loading ..." );
+        // Always vertically center the Loading message
+        getContentArea().y = calcDc.getHeight() / 2;        
+    }
+
+    // ****************************************************
+    // Functions for devices without pre-rendering of views
+    
+    // Constructor
+    (:exclForViewPreRenderingEnabled) 
+    protected function initialize( options as Options ) {
+        // HelperBase.debug("WidgetSiteBase: initialize");
+        View.initialize();
+
+        _siteIndex = options[:siteIndex] as Number;
+        _parentView = options[:parentView] as EvccSiteViewBase;
+        _sameLevelViews = options[:views] as ArrayOfSiteViews;
+
+        var pageIndex = options[:pageIndex];
+        if( pageIndex instanceof Number ) {
+            _pageIndex = pageIndex as Number;
+        }
+   }
+
+    // Render the view
+    (:exclForViewPreRenderingEnabled :exclForMemoryLow) 
+    function onUpdate( dc as Dc ) as Void {
+        // HelperBase.debug("WidgetSiteBase: onUpdate for " + getType() + " site=" + _siteIndex );
+        try {
+            HelperWidget.clearDc( dc );
+            var shell = new SiteShell( self );
+            shell.drawHeaderAndLogo( dc, true ); // true to remove header and logo from memory after drawing them
+            new SiteContent( self ).draw( dc );
+            shell.drawIndicators( dc );
+        } catch ( ex ) {
+            HelperBase.debugException( ex );
+            HelperWidget.clearDc( dc );
+            HelperWidget.drawWidgetError( dc, ex );
+        }
+        // HelperBase.debug("WidgetSiteBase: onUpdate completed for " + getType() + " site=" + _siteIndex );
+    }
+
+    (:exclForViewPreRenderingEnabled :exclForMemoryStandard) 
+    function onUpdate( dc as Dc ) as Void {
+        try {
+            HelperWidget.clearDc( dc );
+            new SiteShell( self ).drawHeaderAndLogo( dc, true );
+            new SiteContent( self ).draw( dc );
+        } catch ( ex ) {
+            HelperBase.debugException( ex );
+            HelperWidget.clearDc( dc );
+            HelperWidget.drawWidgetError( ex, dc );
+        }
+    }
+
+    // *************************************************
+    // Functions for devices with pre-rendering of views
+
+    (:exclForViewPreRenderingDisabled) private var _isActiveView as Boolean = false;
+    (:exclForViewPreRenderingDisabled :exclForSitesOne) 
+    function onShow() as Void { 
+        _isActiveView = true; 
+        WebRequestRegistry.setActiveSite( _siteIndex );
+    }
+    (:exclForViewPreRenderingDisabled :exclForSitesMultiple) 
+    function onShow() as Void { 
+        _isActiveView = true; 
+    }
+    (:exclForViewPreRenderingDisabled) function onHide() as Void { _isActiveView = false; }
+
+    (:exclForViewPreRenderingDisabled) private var _content as SiteContentPreRenderer;
+    (:exclForViewPreRenderingDisabled) private var _shell as SiteShellPreRenderer;
+
+    // Constructor
+    // Part of the constructor has to be duplicated, since initialization of non-null members can
+    // only be done in the constructor, not in in another function 
+    (:exclForViewPreRenderingDisabled) 
+    protected function initialize( options as Options ) {
+        // HelperBase.debug("WidgetSiteBase: initialize");
+        View.initialize();
+
+        _siteIndex = options[:siteIndex] as Number;
+        _parentView = options[:parentView] as EvccSiteViewBase;
+        _sameLevelViews = options[:views] as ArrayOfSiteViews;
+
+        var pageIndex = options[:pageIndex];
+        if( pageIndex instanceof Number ) {
+            _pageIndex = pageIndex as Number;
+        }
+
+        // This part is special for pre-rendering
+        // For pre-rendering, the state request should not just call WatchUi.requestUpdate, but
+        // instead should trigger a callback to all views related to the state. Therefore
+        // each view registers a callback with the corresponding state request.
+        // We register with the state request for callbacks
+        getWebRequest().registerCallback( self );
+        
+        // For content and shell, we instantiate the versions
+        // working with tasks. Updating all views needs a lot of resources and
+        // would block user input, if it is not split up in small tasks that
+        // are executed by the task queue (which allows user input to be processed
+        // between each task).
+        _shell = new SiteShellPreRenderer( self );
+        _content = new SiteContentPreRenderer( self );
+    }
+
+
+    // The dispose function must be called when a view is not needed
+    // anymore. It unregisters the callback with the state request,
+    // and switches to the first view in the carousel if disposed
+    // view is currently being displayed.
+    (:exclForViewPreRenderingDisabled) 
+    public function dispose() as Void { 
+        HelperBase.debug( "EvccSiteViewBase.dispose" );
+        getWebRequest().unregisterCallback( self );
+        if( _isActiveView ) {
+            var delegate = ViewStack.getCurrentView()[1];
+            if( delegate instanceof ViewCarouselDelegate ) {
+                HelperBase.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
+                delegate.switchToFirst();
+            }
+        }     
+    }
+
+
+    (:exclForViewPreRenderingDisabled)
+    private function removeTasks() as Void {
+        TaskQueue.getInstance().removeByTaskExceptionState( getTaskExceptionState() );
+    }
+
+    // The callback function for state changes
+    // It is called initially when a current state is loaded from storage,
+    // and after that whenever a new web response is received
+    (:exclForViewPreRenderingDisabled) 
+    public function onStateUpdate() as Void {
+        // HelperBase.debug( "WidgetSiteBase: onStateChange " + getType() + " site=" + _siteIndex );
+        if( _isActiveView && ! _content.alreadyHasRealContent() ) {
+            // In the case that we are active and have not received 
+            // any "real" content yet (in other words: are showing "Loading..."),
+            // we do not want to loose them and prepare the content right away, without
+            // using the task queue
+            try {
+                prepareImmediately();
+            } catch( ex ) {
+                getTaskExceptionState().registerException( ex );
+                WatchUi.requestUpdate();
+            }
+        } else {
+            // If we already had "real" content, we prepare via the task queue,
+            // for better responsiveness to user input
+            try {
+                prepareByTasks();
+            } catch( ex ) {
+                getTaskExceptionState().registerException( ex );
+            }
+        }
+    }
+    // Prepare shell and content without task qeueu
+    (:exclForViewPreRenderingDisabled) function prepareImmediately() as Void {
+        // HelperBase.debug("WidgetSiteBase: prepareImmediately " + getType() + " site=" + _siteIndex );
+        var dcStub = DcStub.getInstance();
+        _shell.prepare( dcStub );
+        _content.assemble( dcStub );
+        _content.prepare();
+        // This function is only called when we are the active view, 
+        // so we can always trigger the update of the screen
+        WatchUi.requestUpdate();
+        // When we have pre-rendered everything here, we can invalidate
+        // any scheduled pre-rendering tasks
+        removeTasks();
+    }
+    // Prepare shell and content via the task queue    
+    (:exclForViewPreRenderingDisabled) function prepareByTasks() as Void {
+        // HelperBase.debug("WidgetSiteBase: prepareByTasks " + getType() + " site=" + _siteIndex );
+        _shell.queueTasks();
+        _content.queueTasks();
+        // Only if we are the active view, we request an update of the screen
+        if( _isActiveView ) {
+            TaskQueue.getInstance().add( new RequestUpdateTask( self ) );
+        }
+    }
+
+    (:exclForViewPreRenderingDisabled) 
+    private var _exceptionHandler as TaskExceptionState = new TaskExceptionState();
+    (:exclForViewPreRenderingDisabled) 
+    public function getTaskExceptionState() as TaskExceptionState { return _exceptionHandler; }
+    
+    // Update the screen
+    (:exclForViewPreRenderingDisabled) function onUpdate( dc as Dc ) as Void {
+        try {
+            // HelperBase.debug("WidgetSiteBase: onUpdate " + getType() + " site=" + _siteIndex );
+            HelperWidget.clearDc( dc );
+            _exceptionHandler.checkForException();
+            _shell.drawHeaderAndLogo( dc, false ); // false to keep the header/logo in memory
+            _content.draw( dc );
+            _shell.drawIndicators( dc );
+
+            // Code for drawing visual alignment grid 
+            /*
+            dc.setPenWidth( 1 );
+            dc.drawCircle( dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 );
+            dc.drawRectangle( _ca.x - _ca.width / 2, _ca.y - _ca.height / 2, _ca.width, _ca.height );
+            dc.drawLine( _ca.x - _ca.width / 2, _ca.y, _ca.x + _ca.width / 2, _ca.y );
+            */
+            
+            /*
+            _updateCounter++;
+            if( _updateCounter > 2 ) {
+                var timer = new Toybox.Timer.Timer();
+                timer.start( method( :testTimer ), 50, false );
+            }
+            // HelperBase.debug("WidgetSiteBase: onUpdate completed for " + getType() + " site=" + _siteIndex );
+            */
+        } catch ( ex ) {
+            try {
+                // First we try to draw the exception with
+                // the shell ...
+                HelperWidget.clearDc( dc );
+                _shell.drawHeaderAndLogo( dc, false );
+                HelperWidget.drawWidgetError( ex, dc );
+                _shell.drawIndicators( dc );
+            } catch ( anotherex ) {
+                // ... and if that causes another exception,
+                // we just draw the (original) exception
+                HelperWidget.clearDc( dc );
+                HelperWidget.drawWidgetError( ex, dc );
+            }
+        }
+    }
+
+    /*
+    private var _updateCounter as Number = 0;
+    public function testTimer() as Void {
+        // HelperBase.debug( "WidgetSiteBase: timer triggered" );
+    }
+    */
+}

@@ -1,0 +1,187 @@
+import Toybox.Lang;
+import Toybox.WatchUi;
+import Toybox.Application.Properties;
+import Toybox.Time;
+import Toybox.PersistedContent;
+
+
+// The interface to be implemented by objects passed in as callbacks
+typedef WebRequestCallback as interface {
+    function onStateUpdate() as Void;
+};
+
+// The state request manages the HTTP request to the evcc instance.
+// This is the base class, holding only the code needed in the background service
+// - It has a makeRequest function for making a request
+// - It makes the result (a state or an error) available.
+//   The result is made available as JSON only, not as EvccState
+// - Once a web response arrives, it calls only the first registered callback,
+//   which is the background service
+(:glance :background) 
+class EvccBackgroundWebRequest {
+    
+    // On older devices, there is not enough memory to process the complete
+    // JSON response from evcc. We therefore use a jq filter to narrow the
+    // response to the fields we need on the server side
+    // In the background we only request basic data, the foreground
+    // class derived from this one will add additional data to the JQ filter
+    // NOTE: in some instances we support newer and older REST API versions,
+    // see for example the access to battery and grid fields.
+    protected const JQ_BASE_OPENING = 
+        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
+
+    // Close the main filter
+    protected const JQ_BASE_CLOSING = 
+        "}" +
+        // The "battery" fields in JQ_BASE_OPENING are used in evcc versions < 0.301.0
+        // From 0.301.0 onwards, they are in the "battery" object
+        // Since < 0.301.0 "battery" was an array, we cannot just access it like we do 
+        // for the old/new version of "grid", instead we need a conditional access
+        // here and merge it into the main object
+        "+if ($data.battery|type)==\"object\" then {battery:{power:$data.battery.power,soc:$data.battery.soc}} else {} end" +
+        // Add function to remove all null values and empty objects or arrays
+        "|walk(if type==\"object\"then with_entries(select(.value!=null and .value!={} and .value!=[]))elif type==\"array\"then map(select(.!=null and .!={} and .!=[]))else . end)";
+
+    // Builds the base JQ filter for background scope.
+    // Intended to be overridden by subclasses to add fields or structures.
+    // Effectively constant, but declared as a variable to allow subclass overrides.
+    public var JQ as String = JQ_BASE_OPENING + JQ_BASE_CLOSING;
+
+    // If callbacks are enabled, other classes can register
+    // callback methods that will be called whenever a new web
+    // response is received
+    (:exclForWebResponseCallbacksDisabled) 
+    protected var _callbacks as Array<WebRequestCallback> = [];
+
+    protected var _error as Boolean = false;
+    protected var _errorMessage as String = "";
+    protected var _errorCode as String = "";
+
+    protected var _hasCurrentState as Boolean = false;
+
+    private var _json as JsonObject?;
+
+    protected var _siteIndex as Number;
+
+    // Constructor
+    function initialize( siteIndex as Number ) {
+        // HelperBase.debug("WebRequest: initialize");
+        _siteIndex = siteIndex;
+    }
+
+    // The JSON can be accessed once and is then nulled, to conserve memory
+    public function consumeJson() as JsonObject? {
+        var json = _json;
+        _json = null;
+        return json;
+    }
+
+    // Accessor for error case
+    public function getErrorMessage() as String { return _errorMessage; }
+    public function getErrorCode() as String { return _errorCode; }
+    public function hasError() as Boolean { return _error; }
+
+    // Can be overriden by subclasses to indicate that a previous valid
+    // state is available and errors do not yet need to be reported
+    public function hasPreviousValidState() as Boolean { return false; }
+    
+    // For the background we only invoke the first callback, because
+    // there should always be only one, the background service
+    (:exclForWebResponseCallbacksDisabled) 
+    protected function invokeCallbacks() as Void {
+        // HelperBase.debug( "EvccBackgroundWebRequest: invoking first callback" );
+        _callbacks[0].onStateUpdate();
+    }
+
+    // For the background we only invoke the first callback, because
+    // there should always be only one, the background service
+    (:exclForWebResponseCallbacksEnabled) 
+    protected function invokeCallbacks() as Void {}
+
+    // Make the web request
+    // For some reason this function shows scope errors when compiling
+    // with SDK >= 8.2. Therefore we disable the scope check.
+    (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
+    public function makeRequest() as Void {
+        // HelperBase.debug( "WebRequest: makeRequest site=" + _siteIndex );
+        var siteConfig = new SiteConfig( _siteIndex );
+
+        var url = siteConfig.getUrl() + "/api/state";
+        var parameters = { "jq" => JQ };
+
+        // HelperBase.debug( JQ );
+        
+        var options = {
+            :method => Communications.HTTP_REQUEST_METHOD_GET,
+            :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+        };
+
+        // Add basic authentication
+        if( siteConfig.needsBasicAuth() ) {
+            options[:headers] = { 
+                "Authorization" => "Basic " + StringUtil.encodeBase64( Lang.format( "$1$:$2$", [siteConfig.getUser(), siteConfig.getPassword() ] ) )
+            };
+        }
+
+        Communications.makeWebRequest( url, parameters, options, method(:onReceive) );
+        // HelperBase.debug("WebRequest: makeRequest done" );
+    }
+
+    // Callback that can be overriden by subclasses to trigger
+    // processing when a valid JSON was received
+    public function onJsonReceive() as Void;
+
+    // Receive the data from the web request
+    // For some reason this function shows scope errors when compiling
+    // with SDK >= 8.2. Therefore we disable the scope check.
+    (:typecheck([disableBackgroundCheck, disableGlanceCheck]))
+    public function onReceive( responseCode as Number, data as Dictionary<String,Object?> or String or PersistedContent.Iterator or Null ) as Void {
+        // HelperBase.debug("WebRequest: onReceive site=" + _siteIndex );
+        _hasCurrentState = true;
+        _error = false; _errorMessage = ""; _errorCode = "";
+        
+        if( responseCode == 200 ) {
+            if( data instanceof Dictionary ) {
+                _json = data as JsonObject;
+                onJsonReceive();
+            } else {
+                _errorMessage = "Unexpected response: " + data;
+                _error = true;
+            }
+        // To mask temporary errors because of instable connections, we report
+        // errors only if the data we have now has expired, otherwise we continue
+        // to display the existing data
+        } else if( ! hasPreviousValidState() ) {
+            _error = true;
+            if ( responseCode == -104 ) {
+                _errorMessage = "No phone"; _errorCode = "";
+            } else {
+                _errorMessage = "Request failed"; _errorCode = responseCode.toString();
+                // HelperBase.debug("WebRequest: request failed" );
+            }
+        }
+
+        // Trigger the callback logic, see below
+        invokeCallbacks();
+        // HelperBase.debug("WebRequest: onReceive done" );
+    }
+
+    // Persists the state 
+    // In the background we persist the JSON directly,
+    // without parsing it into the EvccState
+    // This conserves memory, because the EvccState and all
+    // related classes can be omitted from the background
+    // scope
+    public function persistState() as Void { 
+        if( _json != null ) {
+            StateStoreBackground.persistJson( _json, Time.now(), _siteIndex );
+            _json = null;
+        }
+    }
+
+    // Register a callback
+    (:exclForWebResponseCallbacksDisabled) 
+    public function registerCallback( callback as WebRequestCallback ) as Void {
+        _callbacks.add( callback );
+    }
+}

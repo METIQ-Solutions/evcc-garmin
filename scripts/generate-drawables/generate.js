@@ -10,6 +10,11 @@
    */
 WScript.Echo( "Reading configuration ...");
 
+var FOLDER_ROOT = "..\\..\\";
+var FOLDER_GENERATED = FOLDER_ROOT + "resources\\drawables\\generated\\";
+var FOLDER_SRC_XML = FOLDER_ROOT + "resources\\drawables\\src\\xml\\"
+var FOLDER_SRC_SVG = FOLDER_ROOT + "resources\\drawables\\src\\svg\\"
+
 // Read the JSON configuration
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var jsonFile = fso.OpenTextFile("generate.json", 1);
@@ -59,14 +64,7 @@ function generateFamily( family, device_families, files, xmlOnly ) {
     
     // Generate the device family/drawables folder names
     // and create them if they are not there yet
-    // var resourceFolder = "..\\" + family 
-    var drawableFolder = "..\\resources-drawables\\" + family;
-    /*
-	if( ! fso.FolderExists( resourceFolder ) ) {
-        WScript.Echo( "    Creating " + resourceFolder );
-        fso.CreateFolder( resourceFolder );
-    }
-    */
+    var drawableFolder = FOLDER_GENERATED + family;
 	if( ! fso.FolderExists( drawableFolder ) ) {
         WScript.Echo( "    Creating " + drawableFolder );
         fso.CreateFolder( drawableFolder );
@@ -94,7 +92,7 @@ function generateFamily( family, device_families, files, xmlOnly ) {
 
 	var deviceType = device_families[family]["deviceType"];
 
-	var drawables = "drawables";
+	var drawables = FOLDER_SRC_XML + "drawables";
 	if( deviceType != undefined ) {
 		drawables += "-" + deviceType;
 	}
@@ -138,7 +136,7 @@ function generateFamily( family, device_families, files, xmlOnly ) {
 						cmd += " --export-background-opacity=1";
 					}
 
-					cmd += " " + file;
+					cmd += " " + FOLDER_SRC_SVG + file;
 						
 						// Make the call to inkscape and wait until it finishes
 	                var shell = new ActiveXObject("WScript.Shell");

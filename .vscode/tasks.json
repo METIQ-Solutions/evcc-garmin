@@ -4,7 +4,7 @@
       {
         "label": "evccg: Generate Source for Tiny Glance",
         "type": "shell",
-        "command": "cd .\\source-annot-tinyglance-gen;.\\generate-annot-tinyglance-source-files.bat",
+        "command": "cd .\\scripts\\generate-tiny-glance-source;.\\generate-tiny-glance-source.bat",
         "group": {
           "kind": "build",
           "isDefault": false
@@ -14,7 +14,7 @@
       {
         "label": "evccg: Generate Icons for All Devices",
         "type": "shell",
-        "command": "cd .\\resources-drawables-gen;.\\generate.bat",
+        "command": "cd .\\scripts\\generate-drawables;.\\generate.bat",
         "group": {
           "kind": "build",
           "isDefault": false
@@ -24,7 +24,7 @@
       {
         "label": "evccg: Copy drawables.xml for All Devices",
         "type": "shell",
-        "command": "cd .\\resources-drawables-gen;.\\generate.bat drawables.xml",
+        "command": "cd .\\scripts\\generate-drawables;.\\generate.bat drawables.xml",
         "group": {
           "kind": "build",
           "isDefault": false
@@ -34,7 +34,7 @@
       {
         "label": "evccg: Generate Icons for epix2pro47mm",
         "type": "shell",
-        "command": "cd .\\resources-drawables-gen;.\\generate.bat epix2pro47mm",
+        "command": "cd .\\scripts\\generate-drawables;.\\generate.bat epix2pro47mm",
         "group": {
           "kind": "build",
           "isDefault": false

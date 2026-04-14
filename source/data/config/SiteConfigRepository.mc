@@ -1,0 +1,21 @@
+import Toybox.Lang;
+import Toybox.Application.Properties;
+
+// This class provides access to the evcc site settings
+// In its current implementation, each site has setting fields
+// with an index (e.g. site_0_url ). Unfortunately array settings
+// do not work (Garmin bugs), so we had to revert to this solution
+(:glance) class SiteConfigRepository {
+    private static var _siteCount as Number = 0;
+    static function getSiteCount() as Number { 
+        if( _siteCount == 0 ) {
+            for( var i = 0; i < Constants.MAX_SITES; i++ ) {
+               var url = Properties.getValue( Constants.PROPERTY_SITE_PREFIX + i + Constants.PROPERTY_SITE_URL_SUFFIX ) as String;
+                if( ! url.equals( "" ) ) {
+                   _siteCount++;
+                }
+            }
+        }
+        return _siteCount;
+    }
+}

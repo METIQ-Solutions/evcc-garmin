@@ -92,7 +92,7 @@ import Toybox.Application.Storage;
                     line2X += bmp.getWidth() * 0.21;
                     line1 += HelperUI.formatSoc( siteData.getBatterySoc() ) + "  ";
                 }
-                var loadpoints = siteData.getLoadpoints();
+                var loadpoints = siteData.getConnectedVehicles().getLoadpoints();
                 if( loadpoints.size() > 0 && loadpoints[0].getVehicle() != null ) {
                     var vehicle = loadpoints[0].getVehicle() as ConnectedVehicle;
                     line1 += vehicle.getTitle().substring( 0, 8 );

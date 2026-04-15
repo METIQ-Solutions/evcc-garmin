@@ -10,16 +10,16 @@ class SiteContentPreRenderer extends SiteContent {
 
     // Each step needs its own function
     public function taskAssemble() as Void {
-        // HelperBase.debug( "SiteContentPreRenderer: taskAssemble" );
+        // Logger.debug( "SiteContentPreRenderer: taskAssemble" );
         _contentUnderPreparation = assembleInternal( DcStub.getInstance() );
     }
     public function taskPrepare() as Void {
-        // HelperBase.debug( "SiteContentPreRenderer: taskPrepare" );
+        // Logger.debug( "SiteContentPreRenderer: taskPrepare" );
         var ca = _view.getContentArea();
         ( _contentUnderPreparation as VerticalBlock).prepareDrawByTasks( ca.x, ca.y, _view.getTaskExceptionState() );
     }
     public function taskFinalize() as Void {
-        // HelperBase.debug( "SiteContentPreRenderer: taskFinalize" );
+        // Logger.debug( "SiteContentPreRenderer: taskFinalize" );
         _content = _contentUnderPreparation;
         _contentUnderPreparation = null;
     }

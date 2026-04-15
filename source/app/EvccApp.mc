@@ -13,10 +13,10 @@ import Toybox.Math;
     
     function initialize() {
         try {
-            // HelperBase.debug( "EvccApp: initialize" );
+            // Logger.debug( "EvccApp: initialize" );
             AppBase.initialize();
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
         }
     }
 
@@ -46,10 +46,10 @@ import Toybox.Math;
     // data
     (:release) function onAppUpdate() as Void {
         try {
-            // HelperBase.debug( "EvccApp: onAppUpdate" );
+            // Logger.debug( "EvccApp: onAppUpdate" );
             Storage.clearValues();
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
        }
     }
     
@@ -60,20 +60,20 @@ import Toybox.Math;
     (:typecheck([disableGlanceCheck]))
     function onStop( state as Lang.Dictionary or Null ) as Void {
         try {
-            // HelperBase.debug( "EvccApp: onStop" );
+            // Logger.debug( "EvccApp: onStop" );
             hideGlance();
             if( ! isGlance ) {
-                WebRequestRegistry.stopWebRequests();
+                WebRequestRegistry.stop();
             }
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
        }
     }
 
     (:typecheck([disableGlanceCheck]))
     private function hideGlance() as Void {
         if( _glanceView != null ) {
-            // HelperBase.debug( "EvccApp: onStop: glance mode, calling onHide" );
+            // Logger.debug( "EvccApp: onStop: glance mode, calling onHide" );
             _glanceView.onHide();
         }
     }

@@ -1,8 +1,7 @@
 import Toybox.Lang;
 
 // In widget mode, this registry singleton centrally manages all WebRequest instances
-// This implementation is for devices with multiple sites and pre-rendering of views.
-// In this case the WebRequest instances for all sites are kept in memory and active.
+// The WebRequest instances for all sites are kept in memory and active.
 
 public class WebRequestRegistry {
     private static var _stateRequests as Array<WebRequest> = [];
@@ -10,12 +9,10 @@ public class WebRequestRegistry {
 
     // Sets the active site (information is only passed on to the handler, not needed in this class)
     public static function setActiveSite( activeSite as Number ) as Void { 
-        // HelperBase.debug( "WebRequestRegistry: setting activeSite=" + activeSite );
+        // Logger.debug( "WebRequestRegistry: setting activeSite=" + activeSite );
         ( _stateRequestTimer as MultiWebRequestsHandler ).setActiveSite( activeSite );
     }
 
-    // For this instance, we need an initialization function to be called by
-    // EvccApp when it is started in widget mode
     // This functions instantiates all state requests and hands them over to 
     // the MultiWebRequestsHandler for the initial loading of data and then 
     // regular request of new data
@@ -33,7 +30,7 @@ public class WebRequestRegistry {
     }
 
     // Stop all state requests
-    public static function stopWebRequests() as Void {
+    public static function stop() as Void {
         if( _stateRequests.size() > 0 ) {
             for( var i = 0; i < _stateRequests.size(); i++ ) {
                 _stateRequests[i].persistState();

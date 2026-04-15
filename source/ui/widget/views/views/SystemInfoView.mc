@@ -14,9 +14,9 @@ class SystemInfoView extends WatchUi.View {
 
     // Draw the content
     function onUpdate( dc as Dc ) as Void {
-            HelperWidget.clearDc( dc );
+            WidgetUiHelper.clearDc( dc );
             var block = new VerticalBlock( { :font => WidgetResourceSet.FONT_XTINY } );
-            block.addText( "evccg " + HelperUI.getVersion() );
+            block.addText( "evccg " + TextProvider.getVersion() );
 
             _spacing = EvccResources.getFontHeight( WidgetResourceSet.FONT_XTINY ) / 2;
 
@@ -42,7 +42,7 @@ class SystemInfoView extends WatchUi.View {
     (:debug) private var _debugDone as Boolean = false;
     // For full-glance devices we also check the glance icons
     (:debug) function checkFonts( block as VerticalBlock, dc as Dc ) as Void {
-        if( ! _debugDone ) { HelperBase.info( "Icon sizes:" ); }
+        if( ! _debugDone ) { Logger.info( "Icon sizes:" ); }
         block.addTextWithOptions( "fonts: " + fontMode(), { :marginTop => _spacing } );
         checkFontsDeviceSpecific( block, dc );
         _debugDone = true;
@@ -75,7 +75,7 @@ class SystemInfoView extends WatchUi.View {
             prefix = "w";
             // For widget, we also derive a recommendation for the logo size from the xtiny font size
             if( ! _debugDone ) { 
-                HelperBase.info( "logo_evcc=" + Math.round( dc.getFontHeight( fonts[3]) * 0.60 ).toNumber() + " (recommendation only)" );
+                Logger.info( "logo_evcc=" + Math.round( dc.getFontHeight( fonts[3]) * 0.60 ).toNumber() + " (recommendation only)" );
             }
         } else {
             fontSizeNames = [ "glance" ];
@@ -104,7 +104,7 @@ class SystemInfoView extends WatchUi.View {
             } else {
                 text = "icons: icon missing";
             }
-            if( ! _debugDone ) { HelperBase.info( debug ); }
+            if( ! _debugDone ) { Logger.info( debug ); }
         } 
         block.addText( prefix + "-" + text );
     }

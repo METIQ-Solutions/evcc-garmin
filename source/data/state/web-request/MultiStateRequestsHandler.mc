@@ -21,23 +21,23 @@ public class MultiWebRequestsHandler {
     // Loads the initial state of the active site and starts the timer for loading initial states of other sites.
     // If there is only one site, it immediately starts the timer for regularly making web requests.
     public function initialize( stateRequests as Array<WebRequest>, activeSite as Number ) {
-        // HelperBase.debug( "MultiWebRequestsHandler: initializing with " + stateRequests.size() + " state requests" );
+        // Logger.debug( "MultiWebRequestsHandler: initializing with " + stateRequests.size() + " state requests" );
         _stateRequests = stateRequests;
         _activeSite = activeSite;
         _initialActiveSite = activeSite;
 
-        // HelperBase.debug( "MultiWebRequestsHandler: initiating state request for site " + activeSite );
+        // Logger.debug( "MultiWebRequestsHandler: initiating state request for site " + activeSite );
         var stateRequest = stateRequests[activeSite];
         // We load the initial state of the first state request
         stateRequest.loadInitialState();
         if( stateRequest.hasCurrentState() ) {
             // If current data is available in storage, trigger the callbacks
             // The first callback of the active site is the initial view, so we do not need to invoke its callback
-            // HelperBase.debug("MultiWebRequestsTimer: adding invokeAllCallbacksButFirst" );
+            // Logger.debug("MultiWebRequestsTimer: adding invokeAllCallbacksButFirst" );
             TaskQueue.getInstance().addToFront( new InvokeAllCallbacksButFirstTask( stateRequest ) );
         }
         if( _stateRequests.size() > 1 ) {
-            // HelperBase.debug( "MultiWebRequestsHandler: starting delayed initiation" );
+            // Logger.debug( "MultiWebRequestsHandler: starting delayed initiation" );
             _timer.start( method( :loadInitialStates ), 1000, true );
         } else {
             startRequestTimer();
@@ -52,7 +52,7 @@ public class MultiWebRequestsHandler {
     // site and use this one. In other words, if another site becomes active while thie loading procedure
     // is still going on, the loading process is not affected.
     public function loadInitialStates() as Void {
-        // HelperBase.debug( "MultiWebRequestsTimer: initiating state request for site " + _stateRequests[_i].getSiteIndex() );
+        // Logger.debug( "MultiWebRequestsTimer: initiating state request for site " + _stateRequests[_i].getSiteIndex() );
         
         // We skip the initially active site, which was already loaded during startup
         if( _i == _initialActiveSite ) { _i++; }
@@ -81,8 +81,8 @@ public class MultiWebRequestsHandler {
     
     // Start the timer that makes regular web requests
     public function startRequestTimer() as Void {
-        // HelperBase.debug( "MultiWebRequestsTimer: all sites initiated (pre-rendering may still be in progress)" );
-        // HelperBase.debug( "MultiWebRequestsTimer: startRequestTimer" );
+        // Logger.debug( "MultiWebRequestsTimer: all sites initiated (pre-rendering may still be in progress)" );
+        // Logger.debug( "MultiWebRequestsTimer: startRequestTimer" );
         // We set the timer interval at half the configured interval
         var refreshInterval = Properties.getValue( Constants.PROPERTY_REFRESH_INTERVAL ) as Number;
         var timerInterval = ( refreshInterval / 2 ).toNumber();
@@ -107,7 +107,7 @@ public class MultiWebRequestsHandler {
             
             if( _isActiveSitesTurn ) {
                 // If it is the active site's turn, we make that request
-                // HelperBase.debug( "MultiWebRequestsTimer: makeRequest for active site=" + _activeSite );
+                // Logger.debug( "MultiWebRequestsTimer: makeRequest for active site=" + _activeSite );
                 _stateRequests[_activeSite].makeRequest();
             } else {
                 // Otherwise we make a request to the next inactive site
@@ -120,13 +120,13 @@ public class MultiWebRequestsHandler {
                 } while( _i == _activeSite );
                 
                 // And skip the active site
-                // HelperBase.debug( "MultiWebRequestsTimer: makeRequest for inactive site=" + _i );
+                // Logger.debug( "MultiWebRequestsTimer: makeRequest for inactive site=" + _i );
                 _stateRequests[_i].makeRequest();
             }
             // Alternate between active site and inactive sites
             _isActiveSitesTurn = ! _isActiveSitesTurn;
         } else {
-            // HelperBase.debug( "MultiWebRequestsTimer: skipping makeRequest" );
+            // Logger.debug( "MultiWebRequestsTimer: skipping makeRequest" );
         }
     }
     

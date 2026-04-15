@@ -11,7 +11,7 @@ class PreRenderContentTask extends Task {
         _method = method;
     }
     public function invoke() as Void {
-        // HelperBase.debug( "PrepareDrawTask: executing prepareDraw" );
+        // Logger.debug( "PrepareDrawTask: executing prepareDraw" );
         if( _method == :taskAssemble ) {
             _preRenderer.taskAssemble();
         } else if ( _method == :taskPrepare ) {

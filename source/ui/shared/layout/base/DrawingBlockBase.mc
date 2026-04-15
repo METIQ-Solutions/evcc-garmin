@@ -91,7 +91,7 @@ import Toybox.WatchUi;
             // and shift the font accordingly. E.g. parent font WidgetResourceSet.FONT_MEDIUM (=0) and :relativeFont=3
             // results in using WidgetResourceSet.FONT_XTINY (=3)
             if( option == :font && _options[:relativeFont] != null ) {
-                value = HelperUI.min( ( value as Number ) + ( _options[:relativeFont] as Number ), EvccResources.getGarminFonts().size() - 1 );
+                value = ExtendedMath.min( ( value as Number ) + ( _options[:relativeFont] as Number ), EvccResources.getGarminFonts().size() - 1 );
             }
             return value;
         } else {
@@ -135,9 +135,7 @@ import Toybox.WatchUi;
                 ? value as Boolean
                 : false;
     }
-    
-    (:exclForMemoryLow)
-    public function getFloatOption( option as Symbol ) as Float {
+public function getFloatOption( option as Symbol ) as Float {
         var value = getOption( option );
         if( value instanceof Float ) {
             return value as Float;

@@ -1,7 +1,5 @@
 import Toybox.Lang;
 import Toybox.Math;
-
-(:exclForMemoryLow)
 class LoadpointView extends EvccSiteViewBase {
 
 
@@ -185,9 +183,9 @@ class LoadpointView extends EvccSiteViewBase {
         block.addBlock( titleLine );
 
         if( controllable instanceof ConnectedVehicle ) {
-            titleLine.addText( ": " + HelperUI.formatSoc( controllable.getSoc() ) );
+            titleLine.addText( ": " + WidgetUiHelper.formatSoc( controllable.getSoc() ) );
         } else if( controllable instanceof Heater ) {
-            titleLine.addText( ": " + HelperWidget.formatTemp( controllable.getTemperature() ) );
+            titleLine.addText( ": " + WidgetUiHelper.formatTemp( controllable.getTemperature() ) );
         } 
         
         var stateLine = new HorizontalBlock( { :relativeFont => 3 } );
@@ -204,8 +202,8 @@ class LoadpointView extends EvccSiteViewBase {
         }
 
         stateLine.addText( 
-            HelperWidget.formatPower( loadpoint.getChargePowerRounded() )
-            + " (" + HelperWidget.formatMode( loadpoint ) + ")"
+            WidgetUiHelper.formatPower( loadpoint.getChargePowerRounded() )
+            + " (" + WidgetUiHelper.formatMode( loadpoint ) + ")"
         );
 
         block.addBlock( stateLine );
@@ -213,7 +211,7 @@ class LoadpointView extends EvccSiteViewBase {
         if( controllable instanceof ConnectedVehicle && loadpoint.getChargeRemainingDuration() > 0 ) {
             var timeLine = new HorizontalBlock( { :relativeFont => 3 } );
             timeLine.addIcon( IconBlock.ICON_DURATION, {} as DbOptions );
-            timeLine.addText( " " + HelperWidget.formatDuration( loadpoint.getChargeRemainingDuration() ) );
+            timeLine.addText( " " + WidgetUiHelper.formatDuration( loadpoint.getChargeRemainingDuration() ) );
             block.addBlock( timeLine );
         }
     }

@@ -57,10 +57,10 @@ class TaskQueue {
             _tasks.add( task );
             // If there were no tasks in the queue, start the timer
             if( _tasks.size() == 1 ) {
-                // HelperBase.debug( "TaskQueue: Starting timer" );
+                // Logger.debug( "TaskQueue: Starting timer" );
                 startTimer();
             }
-            // HelperBase.debug( "TaskQueue: add " + _tasks.size() );
+            // Logger.debug( "TaskQueue: add " + _tasks.size() );
         }
     }
 
@@ -75,18 +75,18 @@ class TaskQueue {
             if( _tasks.size() > 0 ) {
                 tasks.addAll( _tasks );
             } else {
-                // HelperBase.debug( "TaskQueue: Starting timer" );
+                // Logger.debug( "TaskQueue: Starting timer" );
                 startTimer();
             }
             _tasks = tasks;
-            // HelperBase.debug( "TaskQueue: addToFront 1/" + _tasks.size() );
+            // Logger.debug( "TaskQueue: addToFront 1/" + _tasks.size() );
         }
     }
 
     // Executes the task next in the queue and then
     // if there are remaining tasks, start the timer again
     public function executeTask() as Void {
-        // HelperBase.debug( "TaskQueue: executing task 1/" + _tasks.size() + " ..." );
+        // Logger.debug( "TaskQueue: executing task 1/" + _tasks.size() + " ..." );
         var task = _tasks[0];
         // If the exception handler associated with the task
         // already has an exception, the task will not be executed
@@ -96,27 +96,27 @@ class TaskQueue {
             } catch ( ex ) {
                 // Any exception occuring will be registered with the
                 // exception handler associated with this task
-                // HelperBase.debug( "TaskQueue: registering exception" );
+                // Logger.debug( "TaskQueue: registering exception" );
                 task.getTaskExceptionState().registerException( ex );
             }
         }
         _tasks.remove( task );
         if( _tasks.size() > 0 ) {
-            // HelperBase.debug( "TaskQueue: starting timer" );
+            // Logger.debug( "TaskQueue: starting timer" );
             startTimer();
         }
     }
     
     // Function to remove all tasks associated with an exception handler
     public function removeByTaskExceptionState( eh as TaskExceptionState ) as Void {
-        // HelperBase.debug( "TaskQueue: removing tasks by error handler" );
+        // Logger.debug( "TaskQueue: removing tasks by error handler" );
         for( var i = 0; i < _tasks.size(); i++ ) {
             if( _tasks[i].getTaskExceptionState() == eh ) {
                 _tasks.remove( _tasks[i] );
             }            
         }
         if( _tasks.size() == 0 ) {
-            // HelperBase.debug( "TaskQueue: stopping timer" );
+            // Logger.debug( "TaskQueue: stopping timer" );
             _timer.stop();
         }
     }

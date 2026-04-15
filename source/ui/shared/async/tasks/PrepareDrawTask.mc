@@ -12,7 +12,7 @@ class PrepareDrawTask extends Task {
         _element = element; _x = x; _y = y;
     }
     public function invoke() as Void {
-        // HelperBase.debug( "PrepareDrawTask: executing prepareDraw" );
+        // Logger.debug( "PrepareDrawTask: executing prepareDraw" );
         _element.prepareDraw( _x, _y );
     }
 }

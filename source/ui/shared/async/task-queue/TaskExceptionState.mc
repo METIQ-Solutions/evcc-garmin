@@ -13,7 +13,7 @@ class TaskExceptionState {
     // and stored
     public function registerException( ex as Exception ) as Void {
         _exception = ex;
-        HelperBase.debugException( ex );
+        Logger.debugException( ex );
     }
     
     // Returns whether there is an exception

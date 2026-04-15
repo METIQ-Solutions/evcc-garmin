@@ -3,7 +3,6 @@ import Toybox.Lang;
 using Toybox.Time.Gregorian;
 
 // View showing statistics data
-(:exclForMemoryLow)
 class StatisticsView extends EvccSiteViewBase {
     private var LABELS as Array<String> = [ "30 days", 
                                             "this year", 

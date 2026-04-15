@@ -3,7 +3,6 @@ import Toybox.Lang;
 using Toybox.Time.Gregorian;
 
 // View showing forecast data
-(:exclForMemoryLow)
 class ForecastView extends EvccSiteViewBase {
     private var _label as Array<String>;
     private var _indicator as Array<String?>;

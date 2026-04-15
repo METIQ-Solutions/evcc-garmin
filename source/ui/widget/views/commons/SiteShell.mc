@@ -20,8 +20,6 @@ import Toybox.Graphics;
 
 // For low memory devices, only the logo is needed, and there is a simpler
 // implementation for a logo-only shell at the end of this file
-
-(:exclForMemoryLow)
 class SiteShell {
     protected var _view as EvccSiteViewBase;
     private var _prepared as Boolean = false;

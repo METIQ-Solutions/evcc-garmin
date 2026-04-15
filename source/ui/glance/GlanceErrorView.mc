@@ -17,7 +17,25 @@ import Toybox.WatchUi;
 
     // Update the view
     function onUpdate(dc as Dc) as Void {
-        HelperUI.drawGlanceError( _ex, dc );
+        GlanceErrorView.drawGlanceError( _ex, dc );
+    }
+
+    // Function to draw an error on a glance Dc
+    // For the glance, the error is aligned to the left
+    // and centered vertically, with a slight offset to the top which
+    // makes the text align better with the logo
+    public static function drawGlanceError( ex as Exception, dc as Dc ) as Void {
+        new WatchUi.TextArea( {
+                :text => ExceptionHelper.getErrorMessage( ex ),
+                :color => EvccColors.ERROR,
+                :backgroundColor => Graphics.COLOR_TRANSPARENT,
+                :font => [Graphics.FONT_GLANCE, Graphics.FONT_XTINY],
+                :locX => WatchUi.LAYOUT_HALIGN_LEFT,
+                :locY => 0,
+                :justification => Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER,
+                :width => dc.getWidth(),
+                :height => dc.getHeight() * 0.9 
+            } ).draw( dc );
     }
 
 }

@@ -18,7 +18,7 @@ class StateStore {
 
     // Constructor
     public function initialize( siteIndex as Number ) {
-        // HelperBase.debug("StateStore: initialize");
+        // Logger.debug("StateStore: initialize");
         _siteIndex = siteIndex;
     }
 
@@ -26,7 +26,7 @@ class StateStore {
     // Delete site indexes from storage that are not in use anymore
     public static function clearUnusedSites( totalSites as Number ) as Void {
         for( var i = totalSites; i < Constants.MAX_SITES; i++ ) {
-            // HelperBase.debug( "StateStore: clearing site " + i );
+            // Logger.debug( "StateStore: clearing site " + i );
             Storage.deleteValue( Constants.STORAGE_SITE_PREFIX + i );
         }
     }
@@ -47,7 +47,7 @@ class StateStore {
     // this is used in situations where the data is put in storage by
     // the background service (e.g. the tiny glance)
     function getStateFromStorage() as EvccState? {
-        // HelperBase.debug( "StateStore: reading site " + _siteIndex );
+        // Logger.debug( "StateStore: reading site " + _siteIndex );
         var siteData = Storage.getValue( Constants.STORAGE_SITE_PREFIX + _siteIndex ) as Dictionary<String,Object>;
         var state = null;
 
@@ -75,7 +75,7 @@ class StateStore {
     public function persist() as Void {
         var state = _state;
         if( state != null ) {
-            // HelperBase.debug( "StateStore: persisting site " + _siteIndex );
+            // Logger.debug( "StateStore: persisting site " + _siteIndex );
             var stateData = state.serialize();
             var stateTimestamp = state.getTimestamp();
             state = null;
@@ -91,7 +91,7 @@ class StateStore {
 
 
     public function setState( result as JsonObject ) as Void {
-        // HelperBase.debug( "StateStore: storing site " + _siteIndex );
+        // Logger.debug( "StateStore: storing site " + _siteIndex );
         _state = new EvccState( result, Time.now() );
     }
 }

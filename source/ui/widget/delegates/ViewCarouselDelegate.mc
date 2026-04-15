@@ -18,7 +18,7 @@ import Toybox.Application;
         ViewCarouselDelegateBase.initialize( views, breadCrumb );
     }
     public function onSwipe( swipeEvent ) as Boolean {
-        // HelperBase.debug("ViewCarouselDelegate: onSwipe");
+        // Logger.debug("ViewCarouselDelegate: onSwipe");
         if( swipeEvent.getDirection() == SWIPE_LEFT ) {
             return onSelect();
         }
@@ -42,7 +42,7 @@ import Toybox.Application;
     // We call onNextPage again if it was the original behavior,
     // or hand over to our base class
     public function onKey( keyEvent ) as Boolean {
-        // HelperBase.debug("ViewCarouselDelegate (override): onKey");
+        // Logger.debug("ViewCarouselDelegate (override): onKey");
         if( _onNextPage ) {
             return onNextPage();
         } else {
@@ -54,7 +54,7 @@ import Toybox.Application;
     // again if it was the original behavior,
     // or hand over to our base class
     public function onSwipe( swipeEvent ) as Boolean {
-        // HelperBase.debug("ViewCarouselDelegate (override): onSwipe");
+        // Logger.debug("ViewCarouselDelegate (override): onSwipe");
         if( swipeEvent.getDirection() == SWIPE_LEFT ) {
             _onNextPage = false;
             return onSelect();
@@ -94,7 +94,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // behavior. In some gesture-based devices the keys are not
     // associated with that behavior (Venu, Vivoactive)
     (:exclForHasSelect) public function onKey( keyEvent ) as Boolean {
-        // HelperBase.debug("ViewCarouselDelegate: onKey");
+        // Logger.debug("ViewCarouselDelegate: onKey");
         if( keyEvent.getKey() == KEY_ENTER ) {
             return onSelect();
         }
@@ -104,7 +104,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // When the select action is triggered, we open the active sub view
     public function onSelect() as Boolean {
         try {
-            // HelperBase.debug("ViewCarouselDelegate: onSelect");
+            // Logger.debug("ViewCarouselDelegate: onSelect");
 
             // For devices that do not have glances, this view
             // acts as glance, displaying only the selected site
@@ -138,7 +138,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
             }
             return true;
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
             return false;
         }
     }
@@ -147,7 +147,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // on the current level. This methods implement wrapping,
     // i.e. the last view goes to the first and vice versa.
     public function onNextPage() as Boolean {
-        // HelperBase.debug("ViewCarouselDelegate: onNextPage");
+        // Logger.debug("ViewCarouselDelegate: onNextPage");
         try {
             // In case of errors, there may be only one view
             // present and we do not need to execute tha page change
@@ -159,12 +159,12 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
             }
             return true;
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
             return false;
         }
     }
     public function onPreviousPage() as Boolean {
-        // HelperBase.debug("ViewCarouselDelegate: onPreviousPage");
+        // Logger.debug("ViewCarouselDelegate: onPreviousPage");
         try {
             // In case of errors, there may be only one view
             // present and we do not need to execute tha page change
@@ -176,13 +176,13 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
             }
             return true;
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
             return false;
         }
     }
 
     public function switchToFirst() as Void {
-        HelperBase.debug("ViewCarouselDelegate: switchToFirst");
+        Logger.debug("ViewCarouselDelegate: switchToFirst");
         if( _views.size() == 0 ) {
             throw new OperationNotAllowedException( "ViewCarouselDelegate: attempted switch to first on an empty view array." );
         }

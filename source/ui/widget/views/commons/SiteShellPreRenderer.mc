@@ -9,7 +9,7 @@ class SiteShellPreRenderer extends SiteShell {
 
     // Only one task here
     public function taskPrepare() as Void {
-        // HelperBase.debug( "SiteShellPreRenderer: taskPrepare" );
+        // Logger.debug( "SiteShellPreRenderer: taskPrepare" );
         prepare( DcStub.getInstance() );
     }
 

@@ -3,7 +3,6 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 //! Draws a graphic indicating which page the user is currently on
-(:exclForMemoryLow)
 class PageIndicator {
     private var _centerAngle as Number = 0;
     private var _dotDistanceAngle as Number = 0;

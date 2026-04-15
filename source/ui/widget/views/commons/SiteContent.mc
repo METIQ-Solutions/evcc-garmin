@@ -34,7 +34,7 @@ class SiteContent {
     }
 
     protected function assembleInternal( calcDc as EvccDcInterface ) as VerticalBlock {
-        // HelperBase.debug("WidgetSiteBase: prepareContent");
+        // Logger.debug("WidgetSiteBase: prepareContent");
         var stateRequest = _view.getWebRequest();
         var ca = _view.getContentArea();
 
@@ -78,8 +78,8 @@ class SiteContent {
                 break;
             }
         }
-        // HelperBase.debug( "Content height=" + content.getHeight() + ", CA height=" + ca.height );
-        // HelperBase.debug( "Using font " + content.getOption( :font ) );
+        // Logger.debug( "Content height=" + content.getHeight() + ", CA height=" + ca.height );
+        // Logger.debug( "Using font " + content.getOption( :font ) );
 
         return content;
     }

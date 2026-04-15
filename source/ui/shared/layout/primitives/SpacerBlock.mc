@@ -16,7 +16,7 @@ import Toybox.Graphics;
  * If both :relativeToScreenHeight and :relativeToFontHeight are set,
  * :relativeToScreenHeight takes precedence.
  */
- (:glance :exclForMemoryLow) class SpacerBlock extends DrawingBlockBase {
+ (:glance) class SpacerBlock extends DrawingBlockBase {
 
     private var _relativeToScreenWidth as Float;
     private var _relativeToScreenHeight as Float;

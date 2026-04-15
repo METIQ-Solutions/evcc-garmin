@@ -139,7 +139,7 @@ class WebRequest {
 
 
     public function invokeCallbacks() as Void {
-        // HelperBase.debug( "WebRequest: invoking callbacks" );
+        // Logger.debug( "WebRequest: invoking callbacks" );
         if( _callbacks.size() == 0 ) {
             // If not callbacks are registered, we request a screen update from WatchUi
             // Note that the background task has to register a callback, otherwise
@@ -147,7 +147,7 @@ class WebRequest {
             WatchUi.requestUpdate();
         } else {
             for( var i = 0; i < _callbacks.size(); i++ ) {
-                // HelperBase.debug( "WebRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
+                // Logger.debug( "WebRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
                 _callbacks[i].onStateUpdate();
             }
         }
@@ -159,13 +159,13 @@ class WebRequest {
     // with SDK >= 8.2. Therefore we disable the scope check.
     (:typecheck([disableGlanceCheck]))
     public function makeRequest() as Void {
-        // HelperBase.debug( "WebRequest: makeRequest site=" + _siteIndex );
+        // Logger.debug( "WebRequest: makeRequest site=" + _siteIndex );
         var siteConfig = new SiteConfig( _siteIndex );
 
         var url = siteConfig.getUrl() + "/api/state";
         var parameters = { "jq" => JQ };
 
-        // HelperBase.debug( JQ );
+        // Logger.debug( JQ );
         
         var options = {
             :method => Communications.HTTP_REQUEST_METHOD_GET,
@@ -180,7 +180,7 @@ class WebRequest {
         }
 
         Communications.makeWebRequest( url, parameters, options, method(:onReceive) );
-        // HelperBase.debug("WebRequest: makeRequest done" );
+        // Logger.debug("WebRequest: makeRequest done" );
     }
 
 
@@ -198,7 +198,7 @@ class WebRequest {
     // with SDK >= 8.2. Therefore we disable the scope check.
     (:typecheck([disableGlanceCheck]))
     public function onReceive( responseCode as Number, data as Dictionary<String,Object?> or String or PersistedContent.Iterator or Null ) as Void {
-        // HelperBase.debug("WebRequest: onReceive site=" + _siteIndex );
+        // Logger.debug("WebRequest: onReceive site=" + _siteIndex );
         _hasCurrentState = true;
         _error = false; _errorMessage = ""; _errorCode = "";
         
@@ -219,13 +219,13 @@ class WebRequest {
                 _errorMessage = "No phone"; _errorCode = "";
             } else {
                 _errorMessage = "Request failed"; _errorCode = responseCode.toString();
-                // HelperBase.debug("WebRequest: request failed" );
+                // Logger.debug("WebRequest: request failed" );
             }
         }
 
         // Trigger the callback logic, see below
         invokeCallbacks();
-        // HelperBase.debug("WebRequest: onReceive done" );
+        // Logger.debug("WebRequest: onReceive done" );
     }
 
 
@@ -240,7 +240,7 @@ class WebRequest {
     // active site the pre-rendering is anyway then done in the
     // first onUpdate
     public function invokeAllCallbacksButFirst() as Void {
-        // HelperBase.debug( "WebRequest: invoking callbacks except first" );
+        // Logger.debug( "WebRequest: invoking callbacks except first" );
         for( var i = 1; i < _callbacks.size(); i++ ) {
             _callbacks[i].onStateUpdate();
         }
@@ -250,7 +250,7 @@ class WebRequest {
     // Loads the initial state from storage
     // If none is available or it is outdated, makes an immediate web request
     public function loadInitialState() as Void {
-        // HelperBase.debug("WebRequest: loadInitialState site=" + _siteIndex );
+        // Logger.debug("WebRequest: loadInitialState site=" + _siteIndex );
 
         // Only when this state request is started we load the state data
         // We cannot load the state in initialize, because on some devices,
@@ -259,19 +259,19 @@ class WebRequest {
         
         // If no stored data is found a request is made immediately
         if( state == null ) {
-            // HelperBase.debug( "WebRequest: no stored data found");
+            // Logger.debug( "WebRequest: no stored data found");
             makeRequest(); 
         } else { 
             var dataAge = Time.now().compare( state.getTimestamp() );
             // If the persisted data is older than the expiry time it is not used and a request is made immediately
             if( dataAge > _dataExpiry ) {
-                // HelperBase.debug( "WebRequest: stored data too old!" ); 
+                // Logger.debug( "WebRequest: stored data too old!" ); 
                 makeRequest(); 
             } else { 
                 // otherwise the data is used, but if it is older than refreshInterval, a request is made immediately^
                 // if the device is using tiny glance, then also a request is made immediately, because the data obtained by
                 // the tiny glance may be incomplete due to memory restrictions in the tiny glance's background service. 
-                // HelperBase.debug( "WebRequest: using stored data" );
+                // Logger.debug( "WebRequest: using stored data" );
                 _hasCurrentState = true;
                 if( dataAge > _refreshInterval ) {
                     makeRequest(); 
@@ -290,7 +290,7 @@ class WebRequest {
 
     // Unregister a callback
     public function unregisterCallback( callback as WebRequestCallback ) as Void {
-        HelperBase.debug( "WebRequest: unregistering callback" );
+        Logger.debug( "WebRequest: unregistering callback" );
         if( ! _callbacks.remove( callback ) ) {
             throw new InvalidValueException( "WebRequest: unregistering callback failed." );
         }

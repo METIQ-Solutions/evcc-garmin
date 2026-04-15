@@ -86,7 +86,7 @@ import Toybox.WatchUi;
     {
         var height = 0;
         for( var i = 0; i < _elements.size(); i++ ) {
-            height = HelperUI.max( height, _elements[i].getHeight() );
+            height = ExtendedMath.max( height, _elements[i].getHeight() );
         }
         return getMarginTop() + height as Number + getMarginBottom();
     }

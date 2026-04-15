@@ -6,7 +6,6 @@ import Toybox.Lang;
  * (single site) or as child views (multiple sites).
  * Also initializes the detail views and updates them on each state update.
  */
- (:exclForMemoryLow)
 class DetailViewManager {
 
 
@@ -146,7 +145,7 @@ class DetailViewManager {
     // This is called when the main view is initialized and
     // after that everytime a state update is received.
     public function initOrUpdateDetailViews( calledDuringAppStartup as Boolean ) as Void {
-        // HelperBase.debug("WidgetSiteMain: initOrUpdateDetailViews" );
+        // Logger.debug("WidgetSiteMain: initOrUpdateDetailViews" );
         var stateRequest = _mainView.getWebRequest();
 
         // Note that we DO NOT check for stateRequest.hasCurrentState(). In this instance we are not interested

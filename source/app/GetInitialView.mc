@@ -12,7 +12,7 @@ class GetInitialView {
     
     // Called if the app runs in widget mode
     public static function getInitialView() as [Views, InputDelegates] {
-        // HelperBase.debug( "EvccApp: getInitialView" );
+        // Logger.debug( "EvccApp: getInitialView" );
         try {
             // Initialize the resources here, to save computing time
             // in the view (reduce chance to trip the watchdog)
@@ -52,39 +52,18 @@ class GetInitialView {
                 // function is just a dummy
                 WebRequestRegistry.start( activeSite );
 
-                var settings = System.getDeviceSettings();
-                // We check if the device supports glances
-                // If not, we initially present a widget view that acts as glance, i.e. displays
-                // only the active site and has all the other sites as sub views
-                if ( ! ( settings has :isGlanceModeEnabled ) || ! settings.isGlanceModeEnabled ) {
-                    // HelperBase.debug( "EvccApp: no glance, starting with active site only" );
-                    var views = new ArrayOfSiteViews[0];
-                    // The main view adds itself to views
-                    var view = new MainView( {
-                        :views => views,
-                        :siteIndex => activeSite,
-                        :actAsGlance => true
-                    } );
-                    var delegate = new ViewCarouselDelegate( views, breadCrumb );
-                    return [view, delegate];
-                // If glances are supported, we present the full list of sites or menu entries right away
-                } else {
-                    var views = MainView.getAllSiteViews();
-                    // We use the number of views to determine the maximum number of children
-                    // since it can be either multiple sites, or one site with detailed views
-                    // (such as forecast) presented on the same level
-                    var activeView = breadCrumb.getSelectedChild( views.size() );
-                    var delegate = new ViewCarouselDelegate( views, breadCrumb );
-                    
-                    HelperBase.debug( "GetInitialView: views.size()=" + views.size() );
-                    HelperBase.debug( "GetInitialView: activeView=" + activeView );
-                    
-                    // Start with the active page
-                    return [views[activeView], delegate];
-                }
+                var views = MainView.getAllSiteViews();
+                // We use the number of views to determine the maximum number of children
+                // since it can be either multiple sites, or one site with detailed views
+                // (such as forecast) presented on the same level
+                var activeView = breadCrumb.getSelectedChild( views.size() );
+                var delegate = new ViewCarouselDelegate( views, breadCrumb );
+                
+                // Start with the active page
+                return [views[activeView], delegate];
             }
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
             return [new ErrorView( ex ), new ViewSimpleDelegate()];
         }
     }

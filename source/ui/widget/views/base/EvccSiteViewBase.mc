@@ -91,7 +91,7 @@ class EvccSiteViewBase extends WatchUi.View {
     public function addContent( block as VerticalBlock, calcDc as EvccDcInterface ) as Void {}
 
     // Function to allow debug output state the type of view
-    (:debug :exclForMemoryLow) private function getType() as String {
+    (:debug) private function getType() as String {
         if( self instanceof ForecastView ) {
             return "forecast";
         } else if( self instanceof MainView ) {
@@ -125,7 +125,7 @@ class EvccSiteViewBase extends WatchUi.View {
     // Part of the constructor has to be duplicated, since initialization of non-null members can
     // only be done in the constructor, not in in another function 
     protected function initialize( options as Options ) {
-        // HelperBase.debug("WidgetSiteBase: initialize");
+        // Logger.debug("WidgetSiteBase: initialize");
         View.initialize();
 
         _siteIndex = options[:siteIndex] as Number;
@@ -159,12 +159,12 @@ class EvccSiteViewBase extends WatchUi.View {
     // and switches to the first view in the carousel if disposed
     // view is currently being displayed.
     public function dispose() as Void { 
-        HelperBase.debug( "EvccSiteViewBase.dispose" );
+        Logger.debug( "EvccSiteViewBase.dispose" );
         getWebRequest().unregisterCallback( self );
         if( _isActiveView ) {
             var delegate = ViewStack.getCurrentView()[1];
             if( delegate instanceof ViewCarouselDelegate ) {
-                HelperBase.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
+                Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
                 delegate.switchToFirst();
             }
         }     
@@ -179,7 +179,7 @@ class EvccSiteViewBase extends WatchUi.View {
     // It is called initially when a current state is loaded from storage,
     // and after that whenever a new web response is received
     public function onStateUpdate() as Void {
-        // HelperBase.debug( "WidgetSiteBase: onStateChange " + getType() + " site=" + _siteIndex );
+        // Logger.debug( "WidgetSiteBase: onStateChange " + getType() + " site=" + _siteIndex );
         if( _isActiveView && ! _content.alreadyHasRealContent() ) {
             // In the case that we are active and have not received 
             // any "real" content yet (in other words: are showing "Loading..."),
@@ -203,7 +203,7 @@ class EvccSiteViewBase extends WatchUi.View {
     }
     // Prepare shell and content without task qeueu
     function prepareImmediately() as Void {
-        // HelperBase.debug("WidgetSiteBase: prepareImmediately " + getType() + " site=" + _siteIndex );
+        // Logger.debug("WidgetSiteBase: prepareImmediately " + getType() + " site=" + _siteIndex );
         var dcStub = DcStub.getInstance();
         _shell.prepare( dcStub );
         _content.assemble( dcStub );
@@ -217,7 +217,7 @@ class EvccSiteViewBase extends WatchUi.View {
     }
     // Prepare shell and content via the task queue    
     function prepareByTasks() as Void {
-        // HelperBase.debug("WidgetSiteBase: prepareByTasks " + getType() + " site=" + _siteIndex );
+        // Logger.debug("WidgetSiteBase: prepareByTasks " + getType() + " site=" + _siteIndex );
         _shell.queueTasks();
         _content.queueTasks();
         // Only if we are the active view, we request an update of the screen
@@ -232,8 +232,8 @@ class EvccSiteViewBase extends WatchUi.View {
     // Update the screen
     function onUpdate( dc as Dc ) as Void {
         try {
-            // HelperBase.debug("WidgetSiteBase: onUpdate " + getType() + " site=" + _siteIndex );
-            HelperWidget.clearDc( dc );
+            // Logger.debug("WidgetSiteBase: onUpdate " + getType() + " site=" + _siteIndex );
+            WidgetUiHelper.clearDc( dc );
             _exceptionHandler.checkForException();
             _shell.drawHeaderAndLogo( dc, false ); // false to keep the header/logo in memory
             _content.draw( dc );
@@ -253,21 +253,21 @@ class EvccSiteViewBase extends WatchUi.View {
                 var timer = new Toybox.Timer.Timer();
                 timer.start( method( :testTimer ), 50, false );
             }
-            // HelperBase.debug("WidgetSiteBase: onUpdate completed for " + getType() + " site=" + _siteIndex );
+            // Logger.debug("WidgetSiteBase: onUpdate completed for " + getType() + " site=" + _siteIndex );
             */
         } catch ( ex ) {
             try {
                 // First we try to draw the exception with
                 // the shell ...
-                HelperWidget.clearDc( dc );
+                WidgetUiHelper.clearDc( dc );
                 _shell.drawHeaderAndLogo( dc, false );
-                HelperWidget.drawWidgetError( ex, dc );
+                ErrorView.drawWidgetError( ex, dc );
                 _shell.drawIndicators( dc );
             } catch ( anotherex ) {
                 // ... and if that causes another exception,
                 // we just draw the (original) exception
-                HelperWidget.clearDc( dc );
-                HelperWidget.drawWidgetError( ex, dc );
+                WidgetUiHelper.clearDc( dc );
+                ErrorView.drawWidgetError( ex, dc );
             }
         }
     }
@@ -275,7 +275,7 @@ class EvccSiteViewBase extends WatchUi.View {
     /*
     private var _updateCounter as Number = 0;
     public function testTimer() as Void {
-        // HelperBase.debug( "WidgetSiteBase: timer triggered" );
+        // Logger.debug( "WidgetSiteBase: timer triggered" );
     }
     */
 }

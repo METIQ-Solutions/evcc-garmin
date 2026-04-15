@@ -28,12 +28,8 @@ import Toybox.Lang;
         var views = new ArrayOfSiteViews[0];
         var siteCount = SiteConfigRepository.getSiteCount();
         for( var i = 0; i < siteCount; i++ ) {
-            // The view adds itself to views
-            new MainView( {
-                :actAsGlance => false, 
-                :views => views,
-                :siteIndex => i
-            } );
+            // The main view adds itself to views
+            new MainView( { :views => views, :siteIndex => i } );
         }
         return views;
     }
@@ -42,23 +38,13 @@ import Toybox.Lang;
     /******** INSTANCE ********/
 
 
-    // Indicates that we act as glance and present only one site
-    // If a device does not support glances, then in the initial
-    // widget view only one site can be presented, which is the active
-    // site (_actsAsGlance=true). Only if that one site is selected, the 
-    // other sites will be presented as sub view and can be cycled through.
-    var _actsAsGlance as Boolean;
-
-
     // The detail view manager initializes detail views and updates
     // the list of detail views with every state update
-    (:exclForMemoryLow)
-    var _detailViewManager as DetailViewManager?;
+    private var _detailViewManager as DetailViewManager;
 
 
     // Constructor
-    // Standard version, with detail views and multi-site support
-    function initialize( options as Options ) {
+    public function initialize( options as Options ) {
 
         var views = options[:views] as ArrayOfSiteViews;
         options[:pageIndex] = views.size();
@@ -66,29 +52,15 @@ import Toybox.Lang;
 
         EvccSiteViewBase.initialize( options );
 
-        _actsAsGlance = options[:actAsGlance] as Boolean;
-
-        // We add the sites as lower level views if the current view
-        // acts as glance in the widget carousel and there are more
-        // than one sites. In this case there are no detail views.
-        if( _actsAsGlance && SiteConfigRepository.getSiteCount() > 1 ) {
-            addLowerLevelViews( MainView.getAllSiteViews() );
-        } else {
-            // In all other cases we instantiate a detail view manager.
-            _detailViewManager = new DetailViewManager( self );
-        }
+        _detailViewManager = new DetailViewManager( self );
     }
-
-
-    // See _actsAsGlance
-    public function actsAsGlance() as Boolean { return _actsAsGlance; }
 
 
     // Helper function to add the charge power of a loadpoint to a line
     private function addChargePower( line as HorizontalBlock, loadpoint as Loadpoint ) as Void {
         line.addText( " " );
         line.addIcon( IconBlock.ICON_ACTIVE_PHASES, { :charging => true, :activePhases => loadpoint.getActivePhases() } );
-        line.addText( " " + HelperWidget.formatPower( loadpoint.getChargePowerRounded() ) );
+        line.addText( " " + WidgetUiHelper.formatPower( loadpoint.getChargePowerRounded() ) );
     }
 
 
@@ -112,7 +84,7 @@ import Toybox.Lang;
         block.addBlock( renderBasicElement( IconBlock.ICON_GRID, null, state.getGridPowerRounded(), IconBlock.ICON_POWER_FLOW ) );
         // Battery
         if( state.hasBattery() ) {
-            block.addBlock( renderBasicElement( IconBlock.ICON_BATTERY, HelperUI.formatSoc( state.getBatterySoc() ), state.getBatteryPowerRounded(), IconBlock.ICON_POWER_FLOW ) );
+            block.addBlock( renderBasicElement( IconBlock.ICON_BATTERY, WidgetUiHelper.formatSoc( state.getBatterySoc() ), state.getBatteryPowerRounded(), IconBlock.ICON_POWER_FLOW ) );
             variableLineCount++;
         }
 
@@ -171,8 +143,7 @@ import Toybox.Lang;
     // Returns true if the loadpoint was added, otherwise false.
     // Ignored are loadpoints without a vehicle that are neither heaters
     // nor integrated devices.
-    (:exclForMemoryLow)
-    private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Boolean {
+private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Boolean {
         // Route to different rendering functions for each
         // type of loadpoint (connected vehicle, heater, integrated device)
         if( loadpoint.isHeater() ) {
@@ -199,7 +170,7 @@ import Toybox.Lang;
 
     // Helper function to add the charging mode of a loadpoint to a line
     private function addMode( line as HorizontalBlock, loadpoint as Loadpoint ) as Void {
-        line.addTextWithOptions( " (" + HelperWidget.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
+        line.addTextWithOptions( " (" + WidgetUiHelper.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
     }
 
 
@@ -213,8 +184,7 @@ import Toybox.Lang;
     // If we act as glance (see above) and there is more than
     // one site, there are no detail views and this function
     // will return null.
-    (:exclForMemoryLow)
-    public function getDetailViewManager() as DetailViewManager? { return _detailViewManager; }
+public function getDetailViewManager() as DetailViewManager? { return _detailViewManager; }
 
 
     // Only with view pre-rendering there is an exception
@@ -222,37 +192,6 @@ import Toybox.Lang;
     // for it to be displayed in onUpdate.
     private function handleOnShowException( ex as Exception ) as Void {
         getTaskExceptionState().registerException( ex );
-    }
-
-
-    // Called when the view is shown first, or returned to
-    // If we act as glance, we update the current site
-    function onShow() as Void {
-        try {
-            // HelperBase.debug( "Widget: onShow" );
-            // If we are in glance view, it may happen that we are
-            // returning from the sub views showing multiple sites,
-            // and we have to switch the glance view to the 
-            // site last selected
-            if( _actsAsGlance ) {
-                var siteCount = SiteConfigRepository.getSiteCount();
-                // Only if there is more than one site, we set the site
-                // index to the currently active, in case the currently
-                // active was changed in the lower level views
-                if( siteCount > 1 ) {
-                    // setSiteIndex will also update the content
-                    // if the site index has changed
-                    setSiteIndex( BreadCrumbSiteReadOnly.getSelectedSite( siteCount ) );
-                }
-            }
-            EvccSiteViewBase.onShow();
-        } catch ( ex ) {
-            // setSiteIndex pre-renders the content in case the
-            // index changed, and we need to log any exceptions
-            // coming from that
-            handleOnShowException( ex );
-            HelperBase.debugException( ex );
-        }
     }
 
 
@@ -270,14 +209,14 @@ import Toybox.Lang;
     // of the page and select indicator is already is based on the adapted 
     // detail views.
     function prepareImmediately() as Void {
-        // HelperBase.debug( "WidgetSiteMain: prepareImmediately site=" + getSiteIndex() );
+        // Logger.debug( "WidgetSiteMain: prepareImmediately site=" + getSiteIndex() );
         if( _detailViewManager != null ) {
             _detailViewManager.initOrUpdateDetailViews( false );
         }
         EvccSiteViewBase.prepareImmediately();
     }
     function prepareByTasks() as Void {
-        // HelperBase.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
+        // Logger.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
         if( _detailViewManager != null ) {
             TaskQueue.getInstance().add( new InitOrUpdateDetailViewsTask( self ) );
         }
@@ -314,7 +253,7 @@ import Toybox.Lang;
             ) 
             || power != 0 
         ) {
-            line.addText( " " + HelperWidget.formatPower( power.abs() ) );
+            line.addText( " " + WidgetUiHelper.formatPower( power.abs() ) );
         }
         return line;
     }
@@ -330,14 +269,14 @@ import Toybox.Lang;
         
         // For guest vehicles there is no SoC
         if( ! vehicle.isGuest() ) {
-            line.addText( " " + HelperUI.formatSoc( vehicle.getSoc() ) );
+            line.addText( " " + WidgetUiHelper.formatSoc( vehicle.getSoc() ) );
         }
 
         // If the vehicle is charging, we show the power
         if( loadpoint.isCharging() ) {
             addChargePower( line, loadpoint );
             if( ! showChargingDetails ) {
-                line.addTextWithOptions( " (" +  HelperWidget.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
+                line.addTextWithOptions( " (" +  WidgetUiHelper.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
             }
         }
 
@@ -352,25 +291,24 @@ import Toybox.Lang;
     // Function to generate the charging info line below main vehicle line
     private function renderVehicleChargingDetails( loadpoint as Loadpoint, marginLeft as Number ) as HorizontalBlock {
         var lineCharging = new HorizontalBlock( { :relativeFont => 3, :marginLeft => marginLeft } );
-        lineCharging.addText( HelperWidget.formatMode( loadpoint ) );
+        lineCharging.addText( WidgetUiHelper.formatMode( loadpoint ) );
         if( loadpoint.getChargeRemainingDuration() > 0 ) {
             lineCharging.addText( " - " );
             lineCharging.addIcon( IconBlock.ICON_DURATION, {} as DbOptions );
-            lineCharging.addText( " " + HelperWidget.formatDuration( loadpoint.getChargeRemainingDuration() ) );
+            lineCharging.addText( " " + WidgetUiHelper.formatDuration( loadpoint.getChargeRemainingDuration() ) );
         }
         return lineCharging;
     }
 
 
     // Function to generate the line for heater loadpoints
-    (:exclForMemoryLow)
-    private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
+private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
         var heater = loadpoint.getHeater() as Heater;
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
         
         addTitle( line, heater );
 
-        line.addText( " " + HelperWidget.formatTemp( heater.getTemperature() ) );
+        line.addText( " " + WidgetUiHelper.formatTemp( heater.getTemperature() ) );
         
         // If the heater is operating, we show the power
         if( loadpoint.getChargePowerRounded() > 0 ) {
@@ -384,8 +322,7 @@ import Toybox.Lang;
 
 
     // Function to generate the line for integrated device loadpoints
-    (:exclForMemoryLow)
-    private function renderIntegratedDevice( loadpoint as Loadpoint ) as HorizontalBlock {
+private function renderIntegratedDevice( loadpoint as Loadpoint ) as HorizontalBlock {
         var integratedDevice = loadpoint.getIntegratedDevice() as IntegratedDevice;
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
         

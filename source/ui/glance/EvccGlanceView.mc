@@ -20,7 +20,7 @@ import Toybox.Application.Properties;
 
     // Constructor
     public function initialize( index as Number ) {
-        // HelperBase.debug("Glance: initialize");
+        // Logger.debug("Glance: initialize");
         GlanceView.initialize();
         _stateRequest = new TimedWebRequest( index );
     }
@@ -36,7 +36,7 @@ import Toybox.Application.Properties;
 
             try {
 
-                // HelperBase.debug("Glance: onUpdate");
+                // Logger.debug("Glance: onUpdate");
                 var line = new HorizontalBlock( { 
                     :dc => dc, 
                     :font => GlanceResourceSet.FONT_GLANCE, 
@@ -54,7 +54,7 @@ import Toybox.Application.Properties;
                         column.addIcon( IconBlock.ICON_BATTERY, { :batterySoc => state.getBatterySoc() } );
 
                         var batteryState = new HorizontalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
-                        batteryState.addText( HelperUI.formatSoc( state.getBatterySoc() ) );
+                        batteryState.addText( GlanceUiHelper.formatSoc( state.getBatterySoc() ) );
                         
                         batteryState.addIcon( IconBlock.ICON_POWER_FLOW, { :power => state.getBatteryPowerRounded() } );
 
@@ -85,7 +85,7 @@ import Toybox.Application.Properties;
                             if( vehicle.isGuest() ) {
                                 vehicleState.addBitmap( Rez.Drawables.car_glance, {} as DbOptions );
                             } else {
-                                vehicleState.addText( HelperUI.formatSoc( vehicle.getSoc() ) );
+                                vehicleState.addText( GlanceUiHelper.formatSoc( vehicle.getSoc() ) );
                             }
                             vehicleState.addIcon( IconBlock.ICON_ACTIVE_PHASES, { :charging => loadpoint.isCharging(), :activePhases => loadpoint.getActivePhases() } );
                             column.addBlock( vehicleState );
@@ -125,12 +125,12 @@ import Toybox.Application.Properties;
                 // dc.drawRectangle( 0, 0, dc.getWidth(), dc.getHeight() );
                 //throw new InvalidOptionsException( "This is a test exception. Not sure where it happend. Beware!" );
             } catch ( ex ) {
-                HelperBase.debugException( ex );
+                Logger.debugException( ex );
                 // clear Dc with transparent background color does
                 // not work a second time within an onUpdate call
                 // See issue #108
-                // HelperWidget.clearDc( dc );
-                HelperUI.drawGlanceError( ex, dc );
+                // WidgetUiHelper.clearDc( dc );
+                GlanceErrorView.drawGlanceError( ex, dc );
             }
         }
         //System.println( "drawGlance: e " + System.getSystemStats().usedMemory );
@@ -140,10 +140,10 @@ import Toybox.Application.Properties;
     // instead we do it manually in the EvccApp.onStop() function
     function onHide() as Void {
         try {
-            // HelperBase.debug("Glance: onHide");
+            // Logger.debug("Glance: onHide");
             _stateRequest.stop();
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
         }
     }
 
@@ -151,7 +151,7 @@ import Toybox.Application.Properties;
     // the Dc becomes available.
     public function onLayout( dc as Dc ) as Void {
         try {
-            // HelperBase.debug("Glance: onLayout");
+            // Logger.debug("Glance: onLayout");
             _stateRequest.registerCallback( self );
             _stateRequest.start();
 
@@ -163,7 +163,7 @@ import Toybox.Application.Properties;
             drawGlance();
 
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
         }
     }
 
@@ -181,7 +181,7 @@ import Toybox.Application.Properties;
         if( _buffer != null ) {
             dc.drawBitmap( 0, 0, _buffer );
         } else {
-            HelperUI.drawGlanceError( new GlanceBufferException(), dc );
+            GlanceErrorView.drawGlanceError( new GlanceBufferException(), dc );
         }
     }
 }

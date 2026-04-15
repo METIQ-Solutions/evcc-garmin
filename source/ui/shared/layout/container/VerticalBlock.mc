@@ -84,7 +84,7 @@ import Toybox.WatchUi;
     (:typecheck(disableGlanceCheck))
     private function prepareDrawOfElement( element as DrawingBlockBase, x as Number, y as Number, byTasks as Boolean, exceptionHandler as TaskExceptionState? ) as Void {
         if( byTasks ) {
-            // HelperBase.debug("VerticalBlock: adding prepareDraw for element" );
+            // Logger.debug("VerticalBlock: adding prepareDraw for element" );
             TaskQueue.getInstance().addToFront( new PrepareDrawTask( element, x, y, exceptionHandler as TaskExceptionState ) );
         } else {
             element.prepareDraw( x, y );
@@ -101,7 +101,7 @@ import Toybox.WatchUi;
             if( spreadToHeight > heightWithSpace ) {
                 // Last element will also get spacing in the bottom, therefore we
                 // spread the space to number of elements + 1
-                // HelperBase.debug( "Spreading content!");
+                // Logger.debug( "Spreading content!");
                 var spacing = Math.round( ( spreadToHeight - heightWithSpace ) / _elements.size() ).toNumber() + 1;
                 for( var i = 0; i < _elements.size(); i++ ) {
                     _elements[i].setOption( :marginTop, spacing );
@@ -116,7 +116,7 @@ import Toybox.WatchUi;
     {
         var width = 0;
         for( var i = 0; i < _elements.size(); i++ ) {
-            width = HelperUI.max( width, _elements[i].getWidth() );
+            width = ExtendedMath.max( width, _elements[i].getWidth() );
         }
         return ( getMarginLeft() + width + getMarginRight() ) as Number;
     }

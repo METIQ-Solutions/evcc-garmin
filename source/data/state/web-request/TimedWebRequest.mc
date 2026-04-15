@@ -39,7 +39,7 @@ class TimedWebRequest extends WebRequest {
     // start/stop will not be called in background, therefore we disable the
     // scope check for these two functions, to avoid error about the Timer
     public function stop() as Void {
-        // HelperBase.debug("WebRequest: stop");
+        // Logger.debug("WebRequest: stop");
         if( _timer != null ) {
             _timer.stop();
         }

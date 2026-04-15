@@ -11,7 +11,7 @@ class GetGlanceView {
     // Returns the GlanceView
     public static function getGlanceView() as [ GlanceView ] or [ GlanceView, GlanceViewDelegate ] or Null {
         try {
-            // HelperBase.debug( "EvccApp: getGlanceView" );
+            // Logger.debug( "EvccApp: getGlanceView" );
 
             // Read the site count
             var siteCount = SiteConfigRepository.getSiteCount();
@@ -33,7 +33,7 @@ class GetGlanceView {
                 return [new GlanceErrorView( new NoSiteException() )];
             }
         } catch ( ex ) {
-            HelperBase.debugException( ex );
+            Logger.debugException( ex );
             return [new GlanceErrorView( ex )];
         }
     }

@@ -26,10 +26,10 @@ import Toybox.Application.Properties;
 
         var heights = new Array<Float>[fonts.size()];
         // We take either 13 % of the screen height or the size of the medium font, whichever is smaller
-        heights[0] = HelperUI.min( Graphics.getFontHeight( fonts[0] ).toFloat(), System.getDeviceSettings().screenHeight * 0.13 ).toFloat();
+        heights[0] = ExtendedMath.min( Graphics.getFontHeight( fonts[0] ).toFloat(), System.getDeviceSettings().screenHeight * 0.13 ).toFloat();
         
         // We take either 56 % of the medium font or the height of the xtiny font, whichever is smaller
-        heights[heights.size()-1] = HelperUI.min( Graphics.getFontHeight( fonts[fonts.size()-1] ).toFloat(), heights[0] * 0.56 ).toFloat();
+        heights[heights.size()-1] = ExtendedMath.min( Graphics.getFontHeight( fonts[fonts.size()-1] ).toFloat(), heights[0] * 0.56 ).toFloat();
         
         var step = ( heights[0] - heights[heights.size()-1] ) / ( heights.size()-1 );
         
@@ -58,9 +58,9 @@ import Toybox.Application.Properties;
             
             // Code for testing creating a vector font with :font and :scale from a standard font
             // This does not work on epix2pro47mm, but does work on fr165            
-            //// HelperBase.debug( "Testing vector font ... " );
+            //// Logger.debug( "Testing vector font ... " );
             //var vectorFont = Graphics.getVectorFont( { :font => Graphics.FONT_MEDIUM, :scale => 1.0 } );
-            //// HelperBase.debug( "... done" );
+            //// Logger.debug( "... done" );
 
             if( vectorFont == null ) {
                 throw new InvalidValueException( "FFNTFND" );

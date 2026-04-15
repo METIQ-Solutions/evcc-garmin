@@ -6,14 +6,93 @@ project.typecheck = 3
 # with different options/functionality for each device.
 #
 # For each device, it defines:
-# - Source directories
+# - Source path
+# - Resource path
 # - Exclude annotiations
-# - Resource directories
 
-# Exclude annotiations
+
+# SOURCE PATH
+
+# Currently all devices use the same source directory.
+base.sourcePath = source
+
+
+# RESOURCE PATH
+
+# The resource path is specified individually per device.
+# Some devices share a resource path, in which case it is specified in the first, and refered to
+# by the others. The resource path needs to include:
+# $(resourcesBase):                       the global resource directories
+# resources/drawables/generated/<device>: the folder with device specific drawables
+# resources/properties/<device>:          the folder with device specific properties, optional and only used for some devices
+
+resourcesBase = resources/settings;resources/strings
+
+approachs50.resourcePath = $(resourcesBase);resources/drawables/generated/approachs50
+approachs7042mm.resourcePath = $(resourcesBase);resources/drawables/generated/approachs7042mm
+approachs7047mm.resourcePath = $(resourcesBase);resources/drawables/generated/approachs7047mm
+
+d2airx10.resourcePath = $(resourcesBase);resources/drawables/generated/d2airx10
+d2mach1.resourcePath = $(resourcesBase);resources/drawables/generated/d2mach1
+d2mach2.resourcePath = $(resourcesBase);resources/drawables/generated/d2mach2
+
+descentg2.resourcePath = $(resourcesBase);resources/drawables/generated/descentg2
+descentmk343mm.resourcePath = $(resourcesBase);resources/drawables/generated/descentmk343mm
+descentmk351mm.resourcePath = $(resourcesBase);resources/drawables/generated/descentmk351mm
+
+enduro3.resourcePath = $(resourcesBase);resources/drawables/generated/enduro3;resources/properties/enduro3
+
+epix2.resourcePath = $(resourcesBase);resources/drawables/generated/epix2
+epix2pro42mm.resourcePath = $(resourcesBase);resources/drawables/generated/epix2pro42mm
+epix2pro47mm.resourcePath = $(resourcesBase);resources/drawables/generated/epix2pro47mm
+epix2pro51mm.resourcePath = $(resourcesBase);resources/drawables/generated/epix2pro51mm
+
+fenix7.resourcePath = $(resourcesBase);resources/drawables/generated/fenix7
+fenix7s.resourcePath = $(resourcesBase);resources/drawables/generated/fenix7s
+fenix7x.resourcePath = $(resourcesBase);resources/drawables/generated/fenix7x
+fenix7pro.resourcePath = $(fenix7.resourcePath)
+fenix7pronowifi.resourcePath = $(fenix7.resourcePath)
+fenix7spro.resourcePath = $(fenix7s.resourcePath)
+fenix7xpro.resourcePath = $(fenix7x.resourcePath)
+fenix7xpronowifi.resourcePath = $(fenix7x.resourcePath)
+fenixe.resourcePath = $(resourcesBase);resources/drawables/generated/fenixe;resources/properties/fenixe
+fenix843mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix843mm;resources/properties/fenix843mm
+fenix847mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix847mm;resources/properties/fenix847mm
+fenix8solar47mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix8solar47mm;resources/properties/fenix8solar47mm
+fenix8solar51mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix8solar51mm;resources/properties/fenix8solar51mm
+fenix8pro47mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix8pro47mm;resources/properties/fenix8pro47mm
+
+fr165.resourcePath = $(resourcesBase);resources/drawables/generated/fr165
+fr165m.resourcePath = $(fr165.resourcePath)
+fr255.resourcePath = $(resourcesBase);resources/drawables/generated/fr255
+fr255m.resourcePath = $(resourcesBase);resources/drawables/generated/fr255
+fr255s.resourcePath = $(resourcesBase);resources/drawables/generated/fr255s
+fr255sm.resourcePath = $(resourcesBase);resources/drawables/generated/fr255s
+fr265.resourcePath = $(resourcesBase);resources/drawables/generated/fr265
+fr265s.resourcePath = $(resourcesBase);resources/drawables/generated/fr265s
+fr57042mm.resourcePath = $(resourcesBase);resources/drawables/generated/fr57042mm
+fr57047mm.resourcePath = $(resourcesBase);resources/drawables/generated/fr57047mm
+fr955.resourcePath = $(resourcesBase);resources/drawables/generated/fr955;resources/properties/fr955
+fr965.resourcePath = $(resourcesBase);resources/drawables/generated/fr965
+fr970.resourcePath = $(resourcesBase);resources/drawables/generated/fr970
+
+venu2.resourcePath = $(resourcesBase);resources/drawables/generated/venu2
+venu2plus.resourcePath = $(venu2.resourcePath)
+venu2s.resourcePath = $(resourcesBase);resources/drawables/generated/venu2s
+venu3.resourcePath = $(resourcesBase);resources/drawables/generated/venu3
+venu3s.resourcePath = $(resourcesBase);resources/drawables/generated/venu3s
+venux1.resourcePath = $(resourcesBase);resources/drawables/generated/venux1
+venu441mm.resourcePath = $(resourcesBase);resources/drawables/generated/venu441mm;resources/properties/venu441mm
+venu445mm.resourcePath = $(resourcesBase);resources/drawables/generated/venu445mm;resources/properties/venu445mm
+
+vivoactive5.resourcePath = $(resourcesBase);resources/drawables/generated/vivoactive5
+vivoactive6.resourcePath = $(resourcesBase);resources/drawables/generated/vivoactive6
+
+
+# EXCLUDE ANNOTATIONS
+
 # The variables below are to be combined into the excludeAnnotations property of each
 # device, to define the functionality of the device
-
 
 # Different font types
 fontsStatic = exclForFontsStatic
@@ -48,70 +127,36 @@ hasSelect = exclForHasSelect
 swipeLeftDefault = exclForSwipeLeftDefault
 swipeLeftOverride = exclForSwipeLeftOverride
 
-
-# The resource path is specified individually per device.
-# Some devices share a resource path, in which case it is specified in the first, and refered to
-# by the others. The resource path needs to include:
-# resources-site-settings:       either site1 or site5 subdirectory, depending on the number of sites supported
-#                                This directory should come first in the path, because that will put the site
-#                                settings first in the settings screen.
-# resources:                     the general resource directory
-# resources-drawables\<device>:  the folder with device specific drawables
-# resources-properties\<device>: the folder with device specific properties, optional and only used for some devices
-fenix7.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix7
-fenix7s.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix7s
-fenix7x.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix7x
-epix2pro42mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/epix2pro42mm
-epix2pro47mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/epix2pro47mm
-epix2pro51mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/epix2pro51mm
-fenix7pro.resourcePath=$(fenix7.resourcePath)
-fenix7pronowifi.resourcePath=$(fenix7.resourcePath)
-fenix7spro.resourcePath=$(fenix7s.resourcePath)
-fenix7xpro.resourcePath=$(fenix7x.resourcePath)
-fenix7xpronowifi.resourcePath=$(fenix7x.resourcePath)
-fenix843mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix843mm;resources/properties/fenix843mm
-fenix847mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix847mm;resources/properties/fenix847mm
-fenix8solar47mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix8solar47mm;resources/properties/fenix8solar47mm
-fenix8solar51mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix8solar51mm;resources/properties/fenix8solar51mm
-fenix8pro47mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fenix8pro47mm;resources/properties/fenix8pro47mm
-fr955.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fr955;resources/properties/fr955
-fr165.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fr165
-fr165m.resourcePath=$(fr165.resourcePath)
-fr265.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fr265
-fr265s.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fr265s
-fr965.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fr965
-fr970.resourcePath=resources/settings;resources/strings;resources/drawables/generated/fr970
-venu2.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venu2
-venu2plus.resourcePath=$(venu2.resourcePath)
-venu2s.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venu2s
-venu3.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venu3
-venu3s.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venu3s
-venux1.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venux1
-venu441mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venu441mm;resources/properties/venu441mm
-venu445mm.resourcePath=resources/settings;resources/strings;resources/drawables/generated/venu445mm;resources/properties/venu445mm
-vivoactive5.resourcePath=resources/settings;resources/strings;resources/drawables/generated/vivoactive5
-vivoactive6.resourcePath=resources/settings;resources/strings;resources/drawables/generated/vivoactive6
-
-# Below the sourcePath and excludeAnnotiations for each device
-
-# Default
-# This is applied to all devices that do not have build instructions
-# Full glance, complex code, vector fonts, multiple sites, select indicator at 30° and having onSelect behavior
-base.sourcePath = source
+# This default is applied to all devices that do not have build instructions
+# Vector fonts, select indicator at 30° and having onSelect behavior
 base.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftDefault)
 
-# Full glance devices, but with static/optimized fonts
-venu2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
-venu2plus.excludeAnnotations = $(venu2.excludeAnnotations)
-venu2s.excludeAnnotations = $(venu2.excludeAnnotations)
-vivoactive5.excludeAnnotations = $(venu2.excludeAnnotations)
-# Full glance devices, but with select button at 27°
+# Below the excludeAnnotiations for each device
+
+approachs50.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+approachs7042mm.excludeAnnotations = $(fontsVector);$(select27);$(swipeLeftDefault)
+approachs7047mm.excludeAnnotations = $(approachs7042mm.excludeAnnotations)
+
+d2airx10.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+
+descentg2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+
+epix2pro47mm.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftOverride)
+epix2pro42mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
+epix2pro51mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
+
+fr255.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr255m.excludeAnnotations = $(fr255.excludeAnnotations)
+fr255s.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr255sm.excludeAnnotations = $(fr255.excludeAnnotations)
 fr265.excludeAnnotations = $(fontsVector);$(select27);$(hasSelect);$(swipeLeftDefault)
 fr265s.excludeAnnotations = $(fr265.excludeAnnotations)
 fr165.excludeAnnotations = $(fr265.excludeAnnotations)
 fr165m.excludeAnnotations = $(fr265.excludeAnnotations)
 fr965.excludeAnnotations = $(fr265.excludeAnnotations)
-# Full glance devices, but with swipe left override
-epix2pro47mm.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftOverride)
-epix2pro42mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
-epix2pro51mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
+
+venu2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+venu2plus.excludeAnnotations = $(venu2.excludeAnnotations)
+venu2s.excludeAnnotations = $(venu2.excludeAnnotations)
+
+vivoactive5.excludeAnnotations = $(venu2.excludeAnnotations)

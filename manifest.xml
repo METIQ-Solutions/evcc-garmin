@@ -59,6 +59,11 @@
             <iq:product id="fr955"/>
             <iq:product id="fr965"/>
             <iq:product id="fr970"/>
+            <iq:product id="instinct3amoled45mm"/>
+            <iq:product id="instinct3amoled50mm"/>
+            <iq:product id="instinctcrossoveramoled"/>
+            <iq:product id="marq2"/>
+            <iq:product id="marq2aviator"/>
             <iq:product id="venu2"/>
             <iq:product id="venu2plus"/>
             <iq:product id="venu2s"/>
@@ -66,6 +71,8 @@
             <iq:product id="venu3s"/>
             <iq:product id="venu441mm"/>
             <iq:product id="venu445mm"/>
+            <iq:product id="venusq2"/>
+            <iq:product id="venusq2m"/>
             <iq:product id="venux1"/>
             <iq:product id="vivoactive5"/>
             <iq:product id="vivoactive6"/>

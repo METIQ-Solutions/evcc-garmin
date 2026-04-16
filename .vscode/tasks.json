@@ -2,16 +2,6 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "evccg: Generate Source for Tiny Glance",
-        "type": "shell",
-        "command": "cd .\\scripts\\generate-tiny-glance-source;.\\generate-tiny-glance-source.bat",
-        "group": {
-          "kind": "build",
-          "isDefault": false
-        },
-        "problemMatcher": []
-      },
-      {
         "label": "evccg: Generate Icons for All Devices",
         "type": "shell",
         "command": "cd .\\scripts\\generate-drawables;.\\generate.bat",
@@ -34,7 +24,7 @@
       {
         "label": "evccg: Generate Icons for epix2pro47mm",
         "type": "shell",
-        "command": "cd .\\scripts\\generate-drawables;.\\generate.bat epix2pro47mm",
+        "command": "cd .\\scripts\\generate-drawables;.\\generate.bat epix2",
         "group": {
           "kind": "build",
           "isDefault": false

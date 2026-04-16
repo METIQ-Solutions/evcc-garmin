@@ -1,98 +1,32 @@
+####################################################################
+# This build file defines global options and rules for building the
+# app for different devices, each with specific functionality.
+#
+# For each device, it specifies:
+# - source paths
+# - resource paths
+# - excluded annotations
+
+
+####################################################################
+# GLOBAL OPTIONS
+
 project.manifest = manifest.xml
 project.optimization = 2
 project.typecheck = 3
 
-# This build file sets the rules for building the app for different devices,
-# with different options/functionality for each device.
-#
-# For each device, it defines:
-# - Source path
-# - Resource path
-# - Exclude annotiations
 
+####################################################################
+# GLOBAL PATHS
 
-# SOURCE PATH
-
-# Currently all devices use the same source directory.
 base.sourcePath = source
+base.resourcePath = resources/settings;resources/strings
 
 
-# RESOURCE PATH
-
-# The resource path is specified individually per device.
-# Some devices share a resource path, in which case it is specified in the first, and refered to
-# by the others. The resource path needs to include:
-# $(resourcesBase):                       the global resource directories
-# resources/drawables/generated/<device>: the folder with device specific drawables
-# resources/properties/<device>:          the folder with device specific properties, optional and only used for some devices
-
-resourcesBase = resources/settings;resources/strings
-
-approachs50.resourcePath = $(resourcesBase);resources/drawables/generated/approachs50
-approachs7042mm.resourcePath = $(resourcesBase);resources/drawables/generated/approachs7042mm
-approachs7047mm.resourcePath = $(resourcesBase);resources/drawables/generated/approachs7047mm
-
-d2airx10.resourcePath = $(resourcesBase);resources/drawables/generated/d2airx10
-d2mach1.resourcePath = $(resourcesBase);resources/drawables/generated/d2mach1
-d2mach2.resourcePath = $(resourcesBase);resources/drawables/generated/d2mach2
-
-descentg2.resourcePath = $(resourcesBase);resources/drawables/generated/descentg2
-descentmk343mm.resourcePath = $(resourcesBase);resources/drawables/generated/descentmk343mm
-descentmk351mm.resourcePath = $(resourcesBase);resources/drawables/generated/descentmk351mm
-
-enduro3.resourcePath = $(resourcesBase);resources/drawables/generated/enduro3;resources/properties/enduro3
-
-epix2.resourcePath = $(resourcesBase);resources/drawables/generated/epix2
-epix2pro42mm.resourcePath = $(resourcesBase);resources/drawables/generated/epix2pro42mm
-epix2pro47mm.resourcePath = $(resourcesBase);resources/drawables/generated/epix2pro47mm
-epix2pro51mm.resourcePath = $(resourcesBase);resources/drawables/generated/epix2pro51mm
-
-fenix7.resourcePath = $(resourcesBase);resources/drawables/generated/fenix7
-fenix7s.resourcePath = $(resourcesBase);resources/drawables/generated/fenix7s
-fenix7x.resourcePath = $(resourcesBase);resources/drawables/generated/fenix7x
-fenix7pro.resourcePath = $(fenix7.resourcePath)
-fenix7pronowifi.resourcePath = $(fenix7.resourcePath)
-fenix7spro.resourcePath = $(fenix7s.resourcePath)
-fenix7xpro.resourcePath = $(fenix7x.resourcePath)
-fenix7xpronowifi.resourcePath = $(fenix7x.resourcePath)
-fenixe.resourcePath = $(resourcesBase);resources/drawables/generated/fenixe;resources/properties/fenixe
-fenix843mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix843mm;resources/properties/fenix843mm
-fenix847mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix847mm;resources/properties/fenix847mm
-fenix8solar47mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix8solar47mm;resources/properties/fenix8solar47mm
-fenix8solar51mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix8solar51mm;resources/properties/fenix8solar51mm
-fenix8pro47mm.resourcePath = $(resourcesBase);resources/drawables/generated/fenix8pro47mm;resources/properties/fenix8pro47mm
-
-fr165.resourcePath = $(resourcesBase);resources/drawables/generated/fr165
-fr165m.resourcePath = $(fr165.resourcePath)
-fr255.resourcePath = $(resourcesBase);resources/drawables/generated/fr255
-fr255m.resourcePath = $(resourcesBase);resources/drawables/generated/fr255
-fr255s.resourcePath = $(resourcesBase);resources/drawables/generated/fr255s
-fr255sm.resourcePath = $(resourcesBase);resources/drawables/generated/fr255s
-fr265.resourcePath = $(resourcesBase);resources/drawables/generated/fr265
-fr265s.resourcePath = $(resourcesBase);resources/drawables/generated/fr265s
-fr57042mm.resourcePath = $(resourcesBase);resources/drawables/generated/fr57042mm
-fr57047mm.resourcePath = $(resourcesBase);resources/drawables/generated/fr57047mm
-fr955.resourcePath = $(resourcesBase);resources/drawables/generated/fr955;resources/properties/fr955
-fr965.resourcePath = $(resourcesBase);resources/drawables/generated/fr965
-fr970.resourcePath = $(resourcesBase);resources/drawables/generated/fr970
-
-venu2.resourcePath = $(resourcesBase);resources/drawables/generated/venu2
-venu2plus.resourcePath = $(venu2.resourcePath)
-venu2s.resourcePath = $(resourcesBase);resources/drawables/generated/venu2s
-venu3.resourcePath = $(resourcesBase);resources/drawables/generated/venu3
-venu3s.resourcePath = $(resourcesBase);resources/drawables/generated/venu3s
-venux1.resourcePath = $(resourcesBase);resources/drawables/generated/venux1
-venu441mm.resourcePath = $(resourcesBase);resources/drawables/generated/venu441mm;resources/properties/venu441mm
-venu445mm.resourcePath = $(resourcesBase);resources/drawables/generated/venu445mm;resources/properties/venu445mm
-
-vivoactive5.resourcePath = $(resourcesBase);resources/drawables/generated/vivoactive5
-vivoactive6.resourcePath = $(resourcesBase);resources/drawables/generated/vivoactive6
-
-
-# EXCLUDE ANNOTATIONS
-
-# The variables below are to be combined into the excludeAnnotations property of each
-# device, to define the functionality of the device
+####################################################################
+# VARIABLES FOR EXCLUDED ANNOTATIONS
+# The variables below are combined into the excludeAnnotations property
+# for each device to control its functionality.
 
 # Different font types
 fontsStatic = exclForFontsStatic
@@ -127,36 +61,127 @@ hasSelect = exclForHasSelect
 swipeLeftDefault = exclForSwipeLeftDefault
 swipeLeftOverride = exclForSwipeLeftOverride
 
-# This default is applied to all devices that do not have build instructions
-# Vector fonts, select indicator at 30° and having onSelect behavior
+
+####################################################################
+# DEVICE CONFIGURATION
+# Sets the resource path and excluded annotations for each device,
+# based on the variables defined above.
+#
+# Some devices share a resource path. In this case, it is defined for
+# the first device and referenced by the others.
+#
+# The resource path must include:
+# - $(base.resourcePath): global resource directories
+# - resources/drawables/generated/<device>: device-specific drawables
+# - resources/properties/<device>: device-specific properties (optional, used only for some devices)
+
+# This default set of excluded annotations is applied to all devices
+# that do not specify them explicitly.
+# It includes vector fonts, a 30° select indicator, and onSelect behavior.
 base.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftDefault)
 
-# Below the excludeAnnotiations for each device
-
+# Approach series
+approachs50.resourcePath = $(base.resourcePath);resources/drawables/generated/approachs50
 approachs50.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+approachs7042mm.resourcePath = $(epix2pro42mm.resourcePath)
 approachs7042mm.excludeAnnotations = $(fontsVector);$(select27);$(swipeLeftDefault)
+approachs7047mm.resourcePath = $(base.resourcePath);resources/drawables/generated/approachs7047mm
 approachs7047mm.excludeAnnotations = $(approachs7042mm.excludeAnnotations)
 
+# D2 series
+d2airx10.resourcePath = $(base.resourcePath);resources/drawables/generated/d2airx10
 d2airx10.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+d2mach1.resourcePath = $(epix2.resourcePath)
+d2mach2.resourcePath = $(fr57047mm.resourcePath)
 
+# Descent series
+descentg2.resourcePath = $(base.resourcePath);resources/drawables/generated/descentg2
 descentg2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+descentmk343mm.resourcePath = $(epix2pro42mm.resourcePath)
+descentmk351mm.resourcePath = $(epix2pro51mm.resourcePath)
 
-epix2pro47mm.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftOverride)
+# Enduro series
+enduro3.resourcePath = $(base.resourcePath);resources/drawables/generated/enduro3;resources/properties/enduro3
+
+# Epix series
+epix2.resourcePath = $(base.resourcePath);resources/drawables/generated/epix2
+epix2pro42mm.resourcePath = $(base.resourcePath);resources/drawables/generated/epix2pro42mm
 epix2pro42mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
+epix2pro47mm.resourcePath = $(epix2.resourcePath)
+epix2pro47mm.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftOverride)
+epix2pro51mm.resourcePath = $(base.resourcePath);resources/drawables/generated/epix2pro51mm
 epix2pro51mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
 
-fr255.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
-fr255m.excludeAnnotations = $(fr255.excludeAnnotations)
-fr255s.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
-fr255sm.excludeAnnotations = $(fr255.excludeAnnotations)
-fr265.excludeAnnotations = $(fontsVector);$(select27);$(hasSelect);$(swipeLeftDefault)
-fr265s.excludeAnnotations = $(fr265.excludeAnnotations)
+# Fenix series
+fenix7.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix7
+fenix7s.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix7s
+fenix7x.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix7x
+fenix7pro.resourcePath = $(fenix7.resourcePath)
+fenix7pronowifi.resourcePath = $(fenix7.resourcePath)
+fenix7spro.resourcePath = $(fenix7s.resourcePath)
+fenix7xpro.resourcePath = $(fenix7x.resourcePath)
+fenix7xpronowifi.resourcePath = $(fenix7x.resourcePath)
+fenixe.resourcePath = $(base.resourcePath);resources/drawables/generated/fenixe;resources/properties/fenixe
+fenix843mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix843mm;resources/properties/fenix843mm
+fenix847mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix847mm;resources/properties/fenix847mm
+fenix8solar47mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix8solar47mm;resources/properties/fenix8solar47mm
+fenix8solar51mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix8solar51mm;resources/properties/fenix8solar51mm
+fenix8pro47mm.resourcePath = $(fenix847mm.resourcePath)
+
+# Forerunner series
+fr165.resourcePath = $(base.resourcePath);resources/drawables/generated/fr165
 fr165.excludeAnnotations = $(fr265.excludeAnnotations)
+fr165m.resourcePath = $(fr165.resourcePath)
 fr165m.excludeAnnotations = $(fr265.excludeAnnotations)
+fr255.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255
+fr255.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr255m.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255
+fr255m.excludeAnnotations = $(fr255.excludeAnnotations)
+fr255s.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255s
+fr255s.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr255sm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255s
+fr255sm.excludeAnnotations = $(fr255.excludeAnnotations)
+fr265.resourcePath = $(fenix843mm.resourcePath)
+fr265.excludeAnnotations = $(fontsVector);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr265s.resourcePath = $(base.resourcePath);resources/drawables/generated/fr265s
+fr265s.excludeAnnotations = $(fr265.excludeAnnotations)
+fr57042mm.resourcePath = $(fr165.resourcePath)
+fr57047mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr57047mm
+fr955.resourcePath = $(base.resourcePath);resources/drawables/generated/fenix8solar47mm;resources/properties/fr955
+fr965.resourcePath = $(fenix847mm.resourcePath)
 fr965.excludeAnnotations = $(fr265.excludeAnnotations)
+fr970.resourcePath = $(fenix847mm.resourcePath)
 
+# Instinct series
+instinct3amoled45mm.resourcePath = $(base.resourcePath);resources/drawables/generated/instinct3amoled45mm
+instinct3amoled45mm.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(hasSelect);$(swipeLeftDefault)
+instinct3amoled50mm.resourcePath = $(base.resourcePath);resources/drawables/generated/instinct3amoled50mm
+instinct3amoled50mm.excludeAnnotations = $(instinct3amoled45mm.excludeAnnotations)
+instinctcrossoveramoled.resourcePath = $(base.resourcePath);resources/drawables/generated/instinctcrossoveramoled
+instinctcrossoveramoled.excludeAnnotations = $(instinct3amoled45mm.excludeAnnotations)
+
+# MARQ series
+marq2.resourcePath = $(epix2pro42mm.resourcePath)
+marq2aviator.resourcePath = $(epix2pro42mm.resourcePath)
+
+# Venu series
+venu2.resourcePath = $(base.resourcePath);resources/drawables/generated/venu2
 venu2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+venu2plus.resourcePath = $(venu2.resourcePath)
 venu2plus.excludeAnnotations = $(venu2.excludeAnnotations)
+venu2s.resourcePath = $(base.resourcePath);resources/drawables/generated/venu2s
 venu2s.excludeAnnotations = $(venu2.excludeAnnotations)
+venusq2.resourcePath = $(base.resourcePath);resources/drawables/generated/venusq2
+venusq2.excludeAnnotations = $(venu2.excludeAnnotations)
+venusq2m.resourcePath = $(venusq2.resourcePath)
+venusq2m.excludeAnnotations = $(venu2.excludeAnnotations)
+venu3.resourcePath = $(base.resourcePath);resources/drawables/generated/venu3
+venu3s.resourcePath = $(base.resourcePath);resources/drawables/generated/venu3s
+venux1.resourcePath = $(base.resourcePath);resources/drawables/generated/venux1;resources/properties/venux1
+venu441mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr165;resources/properties/venu441mm
+venu445mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr57047mm;resources/properties/venu445mm
 
+# Vivoactive series
+vivoactive5.resourcePath = $(base.resourcePath);resources/drawables/generated/vivoactive5
 vivoactive5.excludeAnnotations = $(venu2.excludeAnnotations)
+vivoactive6.resourcePath = $(fr165.resourcePath)

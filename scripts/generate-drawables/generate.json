@@ -11,17 +11,6 @@
             "icon_micro":"29",
             "icon_glance":"39"
         },
-        "approachs7042mm":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "logo_evcc":"20",
-            "icon_medium":"51",
-            "icon_small":"45",
-            "icon_tiny":"40",
-            "icon_xtiny":"34",
-            "icon_micro":"28",
-            "icon_glance":"33"
-        },
         "approachs7047mm":{
             "fontMode":"vector",
             "logo_flash":"70",
@@ -44,28 +33,6 @@
             "icon_micro":"32",
             "icon_glance":"43"
         },
-        "d2mach1":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "logo_evcc":"22",
-            "icon_glance":"35",
-            "icon_medium":"54",
-            "icon_small":"48",
-            "icon_tiny":"42",
-            "icon_xtiny":"36",
-            "icon_micro":"30"
-        },
-        "d2mach2":{
-            "fontMode":"vector",
-            "logo_flash":"65",
-            "logo_evcc":"24",
-            "icon_medium":"59",
-            "icon_small":"53",
-            "icon_tiny":"46",
-            "icon_xtiny":"40",
-            "icon_micro":"33",
-            "icon_glance":"42"
-        },
         "descentg2":{
             "fontMode":"vector",
             "logo_flash":"60",
@@ -76,28 +43,6 @@
             "icon_xtiny":"33",
             "icon_micro":"29",
             "icon_glance":"33"
-        },
-        "descentmk343mm":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "logo_evcc":"20",
-            "icon_medium":"51",
-            "icon_small":"45",
-            "icon_tiny":"40",
-            "icon_xtiny":"34",
-            "icon_micro":"28",
-            "icon_glance":"33"
-        },
-        "descentmk351mm":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "logo_evcc":"24",
-            "icon_medium":"59",
-            "icon_small":"53",
-            "icon_tiny":"46",
-            "icon_xtiny":"40",
-            "icon_micro":"33",
-            "icon_glance":"39"
         },
         "enduro3":{
             "fontMode":"vector",
@@ -125,129 +70,61 @@
             "fontMode":"vector",
             "logo_flash":"60",
             "logo_evcc":"20",
-            "icon_glance":"33",
-            "icon_micro":"28",
-            "icon_xtiny":"34",
-            "icon_tiny":"40",
+            "icon_medium":"51",
             "icon_small":"45",
-            "icon_medium":"51"
-        },
-        "epix2pro47mm":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "icon_glance":"35",
-            "logo_evcc":"22",
-            "icon_micro":"30",
-            "icon_xtiny":"36",
-            "icon_tiny":"42",
-            "icon_small":"48",
-            "icon_medium":"54"
+            "icon_tiny":"40",
+            "icon_xtiny":"34",
+            "icon_micro":"28",
+            "icon_glance":"33"
         },
         "epix2pro51mm":{
             "fontMode":"vector",
             "logo_flash":"60",
             "logo_evcc":"23",
-            "icon_glance":"39",
-            "icon_micro":"33",
-            "icon_xtiny":"40",
-            "icon_tiny":"46",
+            "icon_medium":"59",
             "icon_small":"53",
-            "icon_medium":"59"
+            "icon_tiny":"46",
+            "icon_xtiny":"40",
+            "icon_micro":"33",
+            "icon_glance":"39"
         },
         "fenix7x":{
-            "devices":"fenix7x, fenix7xpro, fenix7xpronowifi",
             "fontMode":"vector",
             "logo_flash":"40",
-            "icon_glance":"22",
             "logo_evcc":"13",
-            "icon_micro":"19",
-            "icon_xtiny":"23",
-            "icon_tiny":"28",
+            "icon_medium":"36",
             "icon_small":"32",
-            "icon_medium":"36"
+            "icon_tiny":"28",
+            "icon_xtiny":"23",
+            "icon_micro":"19",
+            "icon_glance":"22"
         },
         "fenix7s":{
             "fontMode":"vector",
             "logo_flash":"40",
             "logo_evcc":"13",
-            "icon_glance":"22",
-            "icon_micro":"17",
-            "icon_xtiny":"21",
-            "icon_tiny":"24",
+            "icon_medium":"31",
             "icon_small":"28",
-            "icon_medium":"31"
+            "icon_tiny":"24",
+            "icon_xtiny":"21",
+            "icon_micro":"17",
+            "icon_glance":"22"
         },
         "fenix7":{
-            "devices":"fenix7, fenix7pro, fenix7pronowifi, fenixe",
             "fontMode":"vector",
             "logo_flash":"40",
             "logo_evcc":"13",
-            "icon_glance":"22",
-            "icon_micro":"19",
-            "icon_xtiny":"23",
-            "icon_tiny":"26",
+            "icon_medium":"34",
             "icon_small":"30",
-            "icon_medium":"34"
+            "icon_tiny":"26",
+            "icon_xtiny":"23",
+            "icon_micro":"19",
+            "icon_glance":"22"
         },
         "fenix843mm":{
             "fontMode":"vector",
             "logo_flash":"60",
             "logo_evcc":"24",
-            "icon_glance":"39",
-            "icon_micro":"30",
-            "icon_xtiny":"36",
-            "icon_tiny":"42",
-            "icon_small":"48",
-            "icon_medium":"54"
-        },
-        "fenix847mm":{
-            "fontMode":"vector",
-            "logo_flash":"65",
-            "logo_evcc":"26",
-            "icon_glance":"42",
-            "icon_micro":"33",
-            "icon_xtiny":"40",
-            "icon_tiny":"46",
-            "icon_small":"53",
-            "icon_medium":"59"
-        },
-        "fenix8solar47mm":{
-            "fontMode":"vector",
-            "logo_flash":"40",
-            "logo_evcc":"15",
-            "icon_glance":"24",
-            "icon_micro":"19",
-            "icon_xtiny":"23",
-            "icon_tiny":"26",
-            "icon_small":"30",
-            "icon_medium":"34"
-        },
-        "fenix8solar51mm":{
-            "fontMode":"vector",
-            "logo_flash":"40",
-            "logo_evcc":"15",
-            "icon_glance":"26",
-            "icon_micro":"20",
-            "icon_xtiny":"24",
-            "icon_tiny":"28",
-            "icon_small":"32",
-            "icon_medium":"36"
-       },
-        "fenix8pro47mm":{
-            "fontMode":"vector",
-            "logo_flash":"65",
-            "logo_evcc":"26",
-            "icon_glance":"42",
-            "icon_micro":"33",
-            "icon_xtiny":"40",
-            "icon_tiny":"46",
-            "icon_small":"53",
-            "icon_medium":"59"
-        },
-        "fenixe":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "logo_evcc":"22",
             "icon_medium":"54",
             "icon_small":"48",
             "icon_tiny":"42",
@@ -255,19 +132,51 @@
             "icon_micro":"30",
             "icon_glance":"39"
         },
+        "fenix847mm":{
+            "fontMode":"vector",
+            "logo_flash":"65",
+            "logo_evcc":"26",
+            "icon_medium":"59",
+            "icon_small":"53",
+            "icon_tiny":"46",
+            "icon_xtiny":"40",
+            "icon_micro":"33",
+            "icon_glance":"42"
+        },
+        "fenix8solar47mm":{
+            "fontMode":"vector",
+            "logo_flash":"40",
+            "logo_evcc":"15",
+            "icon_medium":"34",
+            "icon_small":"30",
+            "icon_tiny":"26",
+            "icon_xtiny":"23",
+            "icon_micro":"19",
+            "icon_glance":"24"
+        },
+        "fenix8solar51mm":{
+            "fontMode":"vector",
+            "logo_flash":"40",
+            "logo_evcc":"15",
+            "icon_medium":"36",
+            "icon_small":"32",
+            "icon_tiny":"28",
+            "icon_xtiny":"24",
+            "icon_micro":"20",
+            "icon_glance":"26"
+       },
         "fr165":{
             "fontMode":"vector",
             "logo_flash":"54",
             "logo_evcc":"20",
-            "icon_glance":"35",
-            "icon_micro":"28",
-            "icon_xtiny":"34",
-            "icon_tiny":"40",
+            "icon_medium":"51",
             "icon_small":"45",
-            "icon_medium":"51"
+            "icon_tiny":"40",
+            "icon_xtiny":"34",
+            "icon_micro":"28",
+            "icon_glance":"35"
         },
         "fr255":{
-            "devices":"fr255,fr255m",
             "fontMode":"vector",
             "logo_flash":"40",
             "logo_evcc":"14",
@@ -279,7 +188,6 @@
             "icon_glance":"23"
         },
         "fr255s":{
-            "devices":"fr255s,fr255sm",
             "fontMode":"vector",
             "logo_flash":"40",
             "logo_evcc":"11",
@@ -290,38 +198,16 @@
             "icon_micro":"19",
             "icon_glance":"19"
         },
-        "fr265":{
-            "fontMode":"vector",
-            "logo_flash":"60",
-            "logo_evcc":"24",
-            "icon_glance":"39",
-            "icon_micro":"30",
-            "icon_xtiny":"36",
-            "icon_tiny":"42",
-            "icon_small":"48",
-            "icon_medium":"54"
-        },
         "fr265s":{
             "fontMode":"vector",
             "logo_flash":"60",
             "logo_evcc":"20",
-            "icon_glance":"34",
-            "icon_micro":"26",
-            "icon_xtiny":"31",
-            "icon_tiny":"37",
+            "icon_medium":"47",
             "icon_small":"42",
-            "icon_medium":"47"
-        },
-        "fr57042mm":{
-            "fontMode":"vector",
-            "logo_flash":"54",
-            "logo_evcc":"20",
-            "icon_medium":"51",
-            "icon_small":"45",
-            "icon_tiny":"40",
-            "icon_xtiny":"34",
-            "icon_micro":"28",
-            "icon_glance":"35"
+            "icon_tiny":"37",
+            "icon_xtiny":"31",
+            "icon_micro":"26",
+            "icon_glance":"34"
         },
         "fr57047mm":{
             "fontMode":"vector",
@@ -334,137 +220,126 @@
             "icon_micro":"33",
             "icon_glance":"42"
         },
-        "fr955":{
+        "instinct3amoled45mm":{
             "fontMode":"vector",
-            "logo_flash":"40",
-            "logo_evcc":"15",
-            "icon_glance":"24",
-            "icon_micro":"19",
-            "icon_xtiny":"23",
-            "icon_tiny":"26",
-            "icon_small":"30",
-            "icon_medium":"34"
+            "logo_flash":"60",
+            "logo_evcc":"16",
+            "icon_medium":"48",
+            "icon_small":"39",
+            "icon_tiny":"33",
+            "icon_xtiny":"26",
+            "icon_micro":"26",
+            "icon_glance":"37"
         },
-        "fr965":{
+        "instinct3amoled50mm":{
             "fontMode":"vector",
-            "logo_flash":"65",
-            "logo_evcc":"26",
-            "icon_glance":"42",
-            "icon_micro":"33",
-            "icon_xtiny":"40",
-            "icon_tiny":"46",
-            "icon_small":"53",
-            "icon_medium":"59"
+            "logo_flash":"60",
+            "logo_evcc":"17",
+            "icon_medium":"52",
+            "icon_small":"42",
+            "icon_tiny":"36",
+            "icon_xtiny":"28",
+            "icon_micro":"28",
+            "icon_glance":"40"
         },
-        "fr970":{
+        "instinct3solar45mm":{
             "fontMode":"vector",
-            "logo_flash":"65",
-            "logo_evcc":"26",
-            "icon_glance":"42",
-            "icon_micro":"33",
-            "icon_xtiny":"40",
-            "icon_tiny":"46",
-            "icon_small":"53",
-            "icon_medium":"59"
+            "logo_flash":"62",
+            "logo_evcc":"17",
+            "icon_medium":"52",
+            "icon_small":"42",
+            "icon_tiny":"36",
+            "icon_xtiny":"28",
+            "icon_micro":"28",
+            "icon_glance":"40"
+        },
+        "instinctcrossoveramoled":{
+            "fontMode":"vector",
+            "logo_flash":"38",
+            "logo_evcc":"16",
+            "icon_medium":"48",
+            "icon_small":"43",
+            "icon_tiny":"33",
+            "icon_xtiny":"26",
+            "icon_micro":"26",
+            "icon_glance":"37"
         },
         "venu2":{
             "fontMode":"static-opt",
             "logo_flash":"70",
             "logo_evcc":"22",
-            "icon_glance":"43",
-            "icon_micro":"32",
-            "icon_xtiny":"32",
-            "icon_tiny":"43",
+            "icon_medium":"58",
             "icon_small":"49",
-            "icon_medium":"58"
+            "icon_tiny":"43",
+            "icon_xtiny":"32",
+            "icon_micro":"32",
+            "icon_glance":"43"
         },
         "venu2s":{
             "fontMode":"static-opt",
             "logo_flash":"61",
             "logo_evcc":"20",
-            "icon_glance":"37",
-            "icon_micro":"29",
-            "icon_xtiny":"29",
-            "icon_tiny":"37",
+            "icon_medium":"52",
             "icon_small":"43",
-            "icon_medium":"52"
+            "icon_tiny":"37",
+            "icon_xtiny":"29",
+            "icon_micro":"29",
+            "icon_glance":"37"
+        },
+        "venusq2":{
+            "fontMode":"static-opt",
+            "logo_flash":"40",
+            "logo_evcc":"23",
+            "icon_medium":"59",
+            "icon_small":"51",
+            "icon_tiny":"44",
+            "icon_xtiny":"39",
+            "icon_micro":"39",
+            "icon_glance":"44"
         },
         "venu3":{
             "fontMode":"vector",
             "logo_flash":"70",
             "logo_evcc":"25",
-            "icon_glance":"45",
-            "icon_micro":"32",
-            "icon_xtiny":"39",
-            "icon_tiny":"45",
+            "icon_medium":"58",
             "icon_small":"52",
-            "icon_medium":"58"
+            "icon_tiny":"45",
+            "icon_xtiny":"39",
+            "icon_micro":"32",
+            "icon_glance":"45"
         },
         "venu3s":{
             "fontMode":"vector",
             "logo_flash":"70",
             "logo_evcc":"22",
-            "icon_glance":"40",
-            "icon_micro":"28",
-            "icon_xtiny":"34",
-            "icon_tiny":"40",
+            "icon_medium":"51",
             "icon_small":"45",
-            "icon_medium":"51"
+            "icon_tiny":"40",
+            "icon_xtiny":"34",
+            "icon_micro":"28",
+            "icon_glance":"40"
         },
         "venux1":{
             "fontMode":"vector",
             "logo_flash":"65",
             "logo_evcc":"25",
-            "icon_glance":"37",
-            "icon_micro":"34",
-            "icon_xtiny":"41",
-            "icon_tiny":"48",
+            "icon_medium":"61",
             "icon_small":"54",
-            "icon_medium":"61"
-        },
-        "venu441mm":{
-            "fontMode":"vector",
-            "logo_flash":"54",
-            "logo_evcc":"20",
-            "icon_glance":"35",
-            "icon_micro":"28",
-            "icon_xtiny":"34",
-            "icon_tiny":"40",
-            "icon_small":"45",
-            "icon_medium":"51"
-        },
-        "venu445mm":{
-            "fontMode":"vector",
-            "logo_flash":"65",
-            "logo_evcc":"24",
-            "icon_glance":"42",
-            "icon_micro":"33",
-            "icon_xtiny":"40",
-            "icon_tiny":"46",
-            "icon_small":"53",
-            "icon_medium":"59"
+            "icon_tiny":"48",
+            "icon_xtiny":"41",
+            "icon_micro":"34",
+            "icon_glance":"37"
         },
         "vivoactive5":{
             "fontMode":"static-opt",
             "logo_flash":"56",
             "logo_evcc":"22",
-            "icon_glance":"41",
-            "icon_micro":"32",
-            "icon_xtiny":"32",
-            "icon_tiny":"41",
+            "icon_medium":"54",
             "icon_small":"48",
-            "icon_medium":"54"
-        },
-        "vivoactive6":{
-            "fontMode":"vector",
-            "logo_flash":"54",
-            "logo_evcc":"20",
-            "icon_glance":"35",
-            "icon_micro":"28",
-            "icon_xtiny":"34",
-            "icon_tiny":"40",
-            "icon_small":"45",
-            "icon_medium":"51"
+            "icon_tiny":"41",
+            "icon_xtiny":"32",
+            "icon_micro":"32",
+            "icon_glance":"41"
         }
     },
     "files":{

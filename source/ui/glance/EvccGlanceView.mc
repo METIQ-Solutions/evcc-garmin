@@ -9,6 +9,16 @@ import Toybox.Application.Properties;
 // 64kB or more memory for the glance
 (:glance) class EvccGlanceView extends WatchUi.GlanceView {
     
+    /******** STATIC ********/
+
+    // Defines the spacing between elements
+    // This is used both by EvccGlanceView and GlanceErrorView
+    public static function getBaseSpacingInPixel( dc as Dc ) as Number {
+        return dc.getTextWidthInPixels( "  ", Graphics.FONT_GLANCE );
+    }
+
+    /******** INSTANCE ********/
+
     // On devices that support scrolling glances, onUpdate() is called frequently during scrolling.
     // Re-rendering the entire content each time causes noticeable lag.
     // To optimize performance, the glance content is rendered to a BufferedBitmap only when it changes.
@@ -64,7 +74,7 @@ import Toybox.Application.Properties;
 
                     var loadpoints = state.getLoadpoints() as ArrayOfLoadpoints;
                     var hasVehicle = false;
-                    // We use the height of the font as spacing between the columns
+                    // We use the height of the font as effectiveSpacing between the columns
                     // This gives us a space that is suitable for each screen size/resolution
 
                     var displayedLPs = new ArrayOfLoadpoints[0];
@@ -101,24 +111,24 @@ import Toybox.Application.Properties;
 
                 var elements = line.getElements();
                 // If there is less than 3 elements, we use
-                // three times the width of a space character as spacing,
+                // three times the width of a space character as effectiveSpacing,
                 // otherwise only one time 
-                var spacing = dc.getTextWidthInPixels( "  ", Graphics.FONT_GLANCE );
-                if( elements.size() < 3 ) {
-                    spacing = spacing * 2;
-                }
-                // Add spacing to the right of each element, except the last one
+                var baseSpacing = getBaseSpacingInPixel( dc );
+                var effectiveSpacing = elements.size() < 3 
+                                        ? baseSpacing * 2
+                                        : baseSpacing;
+
+                // Add effectiveSpacing to the right of each element, except the last one
                 for( var i = 0; i < elements.size() - 1; i++ ) {
-                    elements[i].setOption( :marginRight, spacing );
+                    elements[i].setOption( :marginRight, effectiveSpacing );
                 }
 
-                // We do this in the end, because spacing may be modified based on the number of loadpoints
-                try {
-                    var glanceMarginLeft = Properties.getValue( Constants.PROPERTY_GLANCE_MARGIN_LEFT ) as Boolean;
-                    if( glanceMarginLeft) {
-                        line.setOption( :marginLeft, spacing );
-                    }
-                } catch ( ex ) {}
+                // On some devices, effectiveSpacing is also applied to the left,
+                // as they have a separator between the logo and the content
+                // that directly borders the content.
+                if( PropertyHelper.getBoolean( Constants.PROPERTY_GLANCE_MARGIN_LEFT ) ) {
+                    line.setOption( :marginLeft, baseSpacing );
+                }
 
                 dc.setColor( EvccColors.FOREGROUND, Graphics.COLOR_TRANSPARENT );
                 line.draw( dc, 0, dc.getHeight() / 2 );

@@ -38,10 +38,11 @@ fontsStaticOptimized = exclForFontsStaticOptimized
 # 27°  = 2 o'clock + 0.5 minutes
 # None = do not show the indicator
 # Touch = show a tap (touch) indicator at 2 o'clock
-select30 = exclForSelect30
-select27 = exclForSelect27
+selectRound30 = exclForSelectRound30
+selectRound27 = exclForSelectRound27
 selectNone = exclForSelectNone;exclForHasSelect
-selectTouch = exclForSelectTouch;exclForHasSelect
+selectRoundTouch = exclForSelectRoundTouch;exclForHasSelect
+selectRectangular = exclForSelectRectangular
 
 # Not all devices natively have a key that triggers the onSelect behavior
 # For those, the enter key will be used
@@ -78,25 +79,25 @@ swipeLeftOverride = exclForSwipeLeftOverride
 # This default set of excluded annotations is applied to all devices
 # that do not specify them explicitly.
 # It includes vector fonts, a 30° select indicator, and onSelect behavior.
-base.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftDefault)
+base.excludeAnnotations = $(fontsVector);$(selectRound30);$(hasSelect);$(swipeLeftDefault)
 
 # Approach series
 approachs50.resourcePath = $(base.resourcePath);resources/drawables/generated/approachs50
-approachs50.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+approachs50.excludeAnnotations = $(fontsStaticOptimized);$(selectRound30);$(swipeLeftDefault)
 approachs7042mm.resourcePath = $(epix2pro42mm.resourcePath)
-approachs7042mm.excludeAnnotations = $(fontsVector);$(select27);$(swipeLeftDefault)
+approachs7042mm.excludeAnnotations = $(fontsVector);$(selectRound27);$(swipeLeftDefault)
 approachs7047mm.resourcePath = $(base.resourcePath);resources/drawables/generated/approachs7047mm
 approachs7047mm.excludeAnnotations = $(approachs7042mm.excludeAnnotations)
 
 # D2 series
 d2airx10.resourcePath = $(base.resourcePath);resources/drawables/generated/d2airx10
-d2airx10.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+d2airx10.excludeAnnotations = $(fontsStaticOptimized);$(selectRound30);$(swipeLeftDefault)
 d2mach1.resourcePath = $(epix2.resourcePath)
 d2mach2.resourcePath = $(fr57047mm.resourcePath)
 
 # Descent series
 descentg2.resourcePath = $(base.resourcePath);resources/drawables/generated/descentg2
-descentg2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+descentg2.excludeAnnotations = $(fontsStaticOptimized);$(selectRound30);$(swipeLeftDefault)
 descentmk343mm.resourcePath = $(epix2pro42mm.resourcePath)
 descentmk351mm.resourcePath = $(epix2pro51mm.resourcePath)
 
@@ -108,7 +109,7 @@ epix2.resourcePath = $(base.resourcePath);resources/drawables/generated/epix2
 epix2pro42mm.resourcePath = $(base.resourcePath);resources/drawables/generated/epix2pro42mm
 epix2pro42mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
 epix2pro47mm.resourcePath = $(epix2.resourcePath)
-epix2pro47mm.excludeAnnotations = $(fontsVector);$(select30);$(hasSelect);$(swipeLeftOverride)
+epix2pro47mm.excludeAnnotations = $(fontsVector);$(selectRound30);$(hasSelect);$(swipeLeftOverride)
 epix2pro51mm.resourcePath = $(base.resourcePath);resources/drawables/generated/epix2pro51mm
 epix2pro51mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
 
@@ -134,15 +135,15 @@ fr165.excludeAnnotations = $(fr265.excludeAnnotations)
 fr165m.resourcePath = $(fr165.resourcePath)
 fr165m.excludeAnnotations = $(fr265.excludeAnnotations)
 fr255.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255
-fr255.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr255.excludeAnnotations = $(fontsStaticOptimized);$(selectRound27);$(hasSelect);$(swipeLeftDefault)
 fr255m.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255
 fr255m.excludeAnnotations = $(fr255.excludeAnnotations)
 fr255s.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255s
-fr255s.excludeAnnotations = $(fontsStaticOptimized);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr255s.excludeAnnotations = $(fontsStaticOptimized);$(selectRound27);$(hasSelect);$(swipeLeftDefault)
 fr255sm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr255s
 fr255sm.excludeAnnotations = $(fr255.excludeAnnotations)
 fr265.resourcePath = $(fenix843mm.resourcePath)
-fr265.excludeAnnotations = $(fontsVector);$(select27);$(hasSelect);$(swipeLeftDefault)
+fr265.excludeAnnotations = $(fontsVector);$(selectRound27);$(hasSelect);$(swipeLeftDefault)
 fr265s.resourcePath = $(base.resourcePath);resources/drawables/generated/fr265s
 fr265s.excludeAnnotations = $(fr265.excludeAnnotations)
 fr57042mm.resourcePath = $(fr165.resourcePath)
@@ -154,7 +155,7 @@ fr970.resourcePath = $(fenix847mm.resourcePath)
 
 # Instinct series
 instinct3amoled45mm.resourcePath = $(base.resourcePath);resources/drawables/generated/instinct3amoled45mm
-instinct3amoled45mm.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(hasSelect);$(swipeLeftDefault)
+instinct3amoled45mm.excludeAnnotations = $(fontsStaticOptimized);$(selectRound30);$(hasSelect);$(swipeLeftDefault)
 instinct3amoled50mm.resourcePath = $(base.resourcePath);resources/drawables/generated/instinct3amoled50mm
 instinct3amoled50mm.excludeAnnotations = $(instinct3amoled45mm.excludeAnnotations)
 instinctcrossoveramoled.resourcePath = $(base.resourcePath);resources/drawables/generated/instinctcrossoveramoled
@@ -166,7 +167,7 @@ marq2aviator.resourcePath = $(epix2pro42mm.resourcePath)
 
 # Venu series
 venu2.resourcePath = $(base.resourcePath);resources/drawables/generated/venu2
-venu2.excludeAnnotations = $(fontsStaticOptimized);$(select30);$(swipeLeftDefault)
+venu2.excludeAnnotations = $(fontsStaticOptimized);$(selectRound30);$(swipeLeftDefault)
 venu2plus.resourcePath = $(venu2.resourcePath)
 venu2plus.excludeAnnotations = $(venu2.excludeAnnotations)
 venu2s.resourcePath = $(base.resourcePath);resources/drawables/generated/venu2s
@@ -178,6 +179,7 @@ venusq2m.excludeAnnotations = $(venu2.excludeAnnotations)
 venu3.resourcePath = $(base.resourcePath);resources/drawables/generated/venu3
 venu3s.resourcePath = $(base.resourcePath);resources/drawables/generated/venu3s
 venux1.resourcePath = $(base.resourcePath);resources/drawables/generated/venux1;resources/properties/venux1
+venux1.excludeAnnotations = $(fontsVector);$(selectRectangular);$(hasSelect);$(swipeLeftDefault)
 venu441mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr165;resources/properties/venu441mm
 venu445mm.resourcePath = $(base.resourcePath);resources/drawables/generated/fr57047mm;resources/properties/venu445mm
 

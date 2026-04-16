@@ -30,7 +30,8 @@ class SiteShell {
     private var _logo as BitmapBlock?;
     private var _pageIndicator as PageIndicator?;
     (:exclForSelectNone) private var _selectIndicator as SelectIndicator?;
-    (:exclForSelectTouch :exclForSelect27 :exclForSelect30) private var _selectIndicator as Object?;
+    (:exclForSelectRoundTouch :exclForSelectRound27 :exclForSelectRound30 :exclForSelectRectangular) 
+    private var _selectIndicator as Object?;
 
     public function initialize( view as EvccSiteViewBase ) {
         _view = view;

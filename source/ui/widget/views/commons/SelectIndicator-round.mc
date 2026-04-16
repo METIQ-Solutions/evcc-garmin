@@ -13,15 +13,15 @@ import Toybox.Lang;
 //   there never can be a select action (devices with glance supporting only one-site)
 // To save memory, the members of the class is annotated. The monkey.jungle build
 // script decides which option shall be used for a device, and all other code is excluded.
-(:exclForSelectNone) class SelectIndicator {
+(:exclForSelectNone :exclForSelectRectangular) class SelectIndicator {
     // Draw function for arc
     // Angle can be either 27° or 30°
-    (:exclForSelect30 :exclForSelectTouch) private const SELECT_CENTER_ANGLE = 27;
-    (:exclForSelect27 :exclForSelectTouch) private const SELECT_CENTER_ANGLE = 30;
-    (:exclForSelectTouch) private var SELECT_RADIUS_FACTOR as Float = 0.49; // factor applied to dc width to calculate the radius of the arc
-    (:exclForSelectTouch) private var SELECT_LINE_WIDTH_FACTOR as Float = 0.01; // factor applied to dc width to calculate the width of the arc
-    (:exclForSelectTouch) private var SELECT_LENGTH as Number = 18; // total length of the arc in degree
-    (:exclForSelectTouch) public function draw( dc as Dc ) as Void {
+    (:exclForSelectRound30 :exclForSelectRoundTouch) private const SELECT_CENTER_ANGLE = 27;
+    (:exclForSelectRound27 :exclForSelectRoundTouch) private const SELECT_CENTER_ANGLE = 30;
+    (:exclForSelectRoundTouch) private var SELECT_RADIUS_FACTOR as Float = 0.49; // factor applied to dc width to calculate the radius of the arc
+    (:exclForSelectRoundTouch) private var SELECT_LINE_WIDTH_FACTOR as Float = 0.01; // factor applied to dc width to calculate the width of the arc
+    (:exclForSelectRoundTouch) private var SELECT_LENGTH as Number = 18; // total length of the arc in degree
+    (:exclForSelectRoundTouch) public function draw( dc as Dc ) as Void {
         // Constants are put inside the function, otherwise they'd need the annotations
         
         // Anti-alias is only available in newer SDK versions
@@ -49,14 +49,14 @@ import Toybox.Lang;
         dc.setPenWidth( lineWidth );
         dc.drawArc( x, y, r, Graphics.ARC_COUNTER_CLOCKWISE, from, to );
     }
-    (:exclForSelectTouch) public function getSpacing( calcDc as EvccDcInterface ) as Number { return Math.round( calcDc.getWidth() * SELECT_LINE_WIDTH_FACTOR ).toNumber(); }
+    (:exclForSelectRoundTouch) public function getSpacing( calcDc as EvccDcInterface ) as Number { return Math.round( calcDc.getWidth() * SELECT_LINE_WIDTH_FACTOR ).toNumber(); }
     
     // Draw function for tap hint
-    (:exclForSelect30 :exclForSelect27) private var TOUCH_RADIUS_INNER_FACTOR as Float = 0.02;
-    (:exclForSelect30 :exclForSelect27) private var TOUCH_RADIUS_OUTER_FACTOR as Float = 0.04;
-    (:exclForSelect30 :exclForSelect27) private var TOUCH_LINE_WIDTH_FACTOR as Float = 0.01;
-    (:exclForSelect30 :exclForSelect27) private var TOUCH_ANGLE as Number = 30;
-    (:exclForSelect30 :exclForSelect27) public function draw( dc as Dc ) as Void {
+    (:exclForSelectRound30 :exclForSelectRound27) private var TOUCH_RADIUS_INNER_FACTOR as Float = 0.02;
+    (:exclForSelectRound30 :exclForSelectRound27) private var TOUCH_RADIUS_OUTER_FACTOR as Float = 0.04;
+    (:exclForSelectRound30 :exclForSelectRound27) private var TOUCH_LINE_WIDTH_FACTOR as Float = 0.01;
+    (:exclForSelectRound30 :exclForSelectRound27) private var TOUCH_ANGLE as Number = 30;
+    (:exclForSelectRound30 :exclForSelectRound27) public function draw( dc as Dc ) as Void {
 
         // Anti-alias is only available in newer SDK versions
         if( dc has :setAntiAlias ) {
@@ -99,7 +99,7 @@ import Toybox.Lang;
         dc.setPenWidth( penWidth );
         dc.drawArc( x, y, radiusOuter, Graphics.ARC_COUNTER_CLOCKWISE, 0, 180 );
     }
-    (:exclForSelect30 :exclForSelect27) public function getSpacing( calcDc as EvccDcInterface ) as Number { 
+    (:exclForSelectRound30 :exclForSelectRound27) public function getSpacing( calcDc as EvccDcInterface ) as Number { 
         // The spacing is based on diameter. However, since the hint sits at
         // the 30° (2 o'clock) position, and wider content usually sits further down,
         // we do not need to keep the full spacing. Testing has shown that 1/4

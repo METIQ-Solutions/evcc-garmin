@@ -164,6 +164,7 @@ class LoadpointView extends EvccSiteViewBase {
         block.setOption( :marginBottom, calcDc.getHeight() * 0.015 );
     }
 
+    // Adds a single loadpoint to display block
     private function addLoadpoint( 
         block as VerticalBlock, 
         loadpoint as Loadpoint, 

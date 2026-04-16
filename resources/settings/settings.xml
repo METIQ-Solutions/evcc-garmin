@@ -7,23 +7,23 @@
         <property id="s0_url" type="string"></property>
         <property id="s0_usr" type="string"></property>
         <property id="s0_pss" type="string"></property>
-        <property id="s0_sfc" type="boolean">true</property>
+        <property id="s0_sfc" type="boolean">false</property>
         <property id="s1_url" type="string"></property>
         <property id="s1_usr" type="string"></property>
         <property id="s1_pss" type="string"></property>
-        <property id="s1_sfc" type="boolean">true</property>
+        <property id="s1_sfc" type="boolean">false</property>
         <property id="s2_url" type="string"></property>
         <property id="s2_usr" type="string"></property>
         <property id="s2_pss" type="string"></property>
-        <property id="s2_sfc" type="boolean">true</property>
+        <property id="s2_sfc" type="boolean">false</property>
         <property id="s3_url" type="string"></property>
         <property id="s3_usr" type="string"></property>
         <property id="s3_pss" type="string"></property>
-        <property id="s3_sfc" type="boolean">true</property>
+        <property id="s3_sfc" type="boolean">false</property>
         <property id="s4_url" type="string"></property>
         <property id="s4_usr" type="string"></property>
         <property id="s4_pss" type="string"></property>
-        <property id="s4_sfc" type="boolean">true</property>
+        <property id="s4_sfc" type="boolean">false</property>
 
         <!-- Global Properties -->
 

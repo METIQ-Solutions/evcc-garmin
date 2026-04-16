@@ -161,7 +161,7 @@ class LoadpointView extends EvccSiteViewBase {
 
         // Add a small margin to the bottom. While the content is centered vertically between title and logo,
         // the spacing in the fonts make it seem a bit off, and this is to compensate for that.
-        block.setOption( :marginBottom, calcDc.getHeight() * 0.01 );
+        block.setOption( :marginBottom, calcDc.getHeight() * 0.015 );
     }
 
     private function addLoadpoint( 

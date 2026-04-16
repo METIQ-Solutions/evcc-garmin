@@ -77,18 +77,6 @@ class SiteShell {
 
         if( pageTitle != null || pageIcon != null ) {
             if( hasSiteTitle ) {
-                /*
-                var block;
-                if( pageTitle != null && pageIcon != null ) {
-                    block = new HorizontalBlock( {} as DbOptions );
-                    block.addBlock( pageIcon );
-                    block.addText( " ");
-                    block.addBlock( pageTitle );
-                } else {
-                    block = pageTitle != null ? pageTitle : pageIcon;
-                }
-                */
-
                 var block = ( pageIcon != null ? pageIcon : pageTitle ) as DrawingBlockBase;
                 block.setOption( :marginTop, spacing * 2 / 3 );
                 header.addBlock( block );
@@ -112,15 +100,18 @@ class SiteShell {
             }
         }
         
-        // If there is no header content, we leave 1 x spacing in marginTop to
-        // counterbalance the logo, but the marginBottom stays 0
-        // If there is a sitle title without page title (icon), then we apply the spacing,
-        // but reduce it by the site title's font descent, to align with the baseline of
-        // the font
-        // If there is a page title (icon) we apply the full spacing
+        // Bottom spacing for the header.
+        // This spacing is applied even if there is no content. In that case,
+        // both top and bottom spacing are used to prevent content from getting
+        // too close to the narrow upper part of the round watch face.
+        //
+        // If there is a site title without a page title (icon), the spacing is
+        // reduced by the font descent of the site title to align with the text baseline.
         if( hasSiteTitle && pageTitle == null ) {
             header.setOption( :marginBottom, spacing - EvccResources.getFontDescent( font ) );
-        } else if ( pageTitle != null ) {
+        //} else if ( pageTitle != null ) {
+        //    header.setOption( :marginBottom, spacing );
+        } else {
             header.setOption( :marginBottom, spacing );
         }
 
@@ -151,7 +142,7 @@ class SiteShell {
 
         // Calculate the dimensions of the content area
 
-        // Height any y are calculated based on header/logo height
+        // Height and y are calculated based on header/logo height
         ca.height = dcHeight - headerHeight - logoHeight;
         ca.y = headerHeight + ca.height / 2; // y is vertically centered between header and logo
 
@@ -161,7 +152,7 @@ class SiteShell {
 
         // AFTER x is calculated, we add some horizontal spacing to the content area
         // Value was fine-tuned during regression testing on different devices
-        ca.width = Math.round( ca.width * 0.90 ).toNumber(); 
+        ca.width = Math.round( ca.width * 0.9 ).toNumber(); 
 
         ca.truncateSpacing = dcWidth - ca.width;
     }

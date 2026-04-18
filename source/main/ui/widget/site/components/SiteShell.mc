@@ -134,7 +134,7 @@ class SiteShell {
 
         // If there are lower level views, draw the select indicator
         var siSpacing = 0;        
-        if( $ has :SelectIndicator && _view.getLowerLevelViewCount() > 0 ) {
+        if( _view.getLowerLevelViewCount() > 0 ) {
             _selectIndicator = new SelectIndicator();
             siSpacing = ( _selectIndicator as SelectIndicator ).getSpacing( calcDc ) as Number;
         }
@@ -185,8 +185,8 @@ class SiteShell {
         if( _pageIndicator != null ) {
             _pageIndicator.draw( dc );
         }
-        if( $ has :SelectIndicator && _selectIndicator != null ) {
-            (_selectIndicator as SelectIndicator).draw( dc );
+        if( _selectIndicator != null ) {
+            _selectIndicator.draw( dc );
         }
     }
 }

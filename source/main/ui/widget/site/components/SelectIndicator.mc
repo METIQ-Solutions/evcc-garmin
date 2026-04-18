@@ -11,8 +11,7 @@ import Toybox.Lang;
 //   positioned at either 27° or 30°
 // - on rectangular screens, a vertical line indicating the button
 //   to be pressed, centered at 25% of the screen height on the right edge
-// - a tap symbol indicating that the screen can be tapped
-// - no hint, for devices where no suitable hint is currently available
+// - a tap symbol indicating that the screen can be tapped (currently not in use)
 //
 // To save memory, the different implementations are controlled by
 // annotations. The monkey.jungle build script selects the variant to
@@ -138,7 +137,6 @@ class SelectIndicator {
 }
 
 // This version implements support for rectangular screens.
-
 (:exclForScreenRound)
 class SelectIndicator {
     private const SELECT_LINE_WIDTH_FACTOR as Float = 0.01; // factor applied to dc width to calculate the width of the indicator

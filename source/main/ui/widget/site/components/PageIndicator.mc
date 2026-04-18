@@ -6,11 +6,11 @@ class BasePageIndicator {
 
     // How large should dots be in relation to the
     // total screen width
-    protected const DOT_SIZE_FACTOR = 0.02;
+    protected const DOT_RADIUS_RATIO = 0.02;
     
     // How thick should the line drawn around the dots
     // be in relation to the total screen width
-    protected const LINE_WIDTH_FACTOR = 0.005;
+    protected const LINE_WIDTH_RATIO = 0.005;
 
     private var _dotSize as Number;
 
@@ -18,8 +18,8 @@ class BasePageIndicator {
 
     protected function initialize( calcDc as EvccDcInterface ) {
         var dcWidth = calcDc.getWidth();
-        _dotSize = Math.round( dcWidth * DOT_SIZE_FACTOR ).toNumber();
-        _lineWidth = Math.round( dcWidth * LINE_WIDTH_FACTOR ).toNumber();
+        _dotSize = Math.round( dcWidth * DOT_RADIUS_RATIO ).toNumber();
+        _lineWidth = Math.round( dcWidth * LINE_WIDTH_RATIO ).toNumber();
     }
 
     // Function to draw a single dot at a certain X/Y location
@@ -42,6 +42,7 @@ class BasePageIndicator {
 }
 
 // Draws a graphic indicating which page the user is currently on
+(:exclForScreenRectangular)
 class PageIndicator extends BasePageIndicator {
     private var _centerAngle as Number = 0;
     private var _dotDistanceAngle as Number = 0;
@@ -59,7 +60,7 @@ class PageIndicator extends BasePageIndicator {
     
     // How large should the orbit radius be in relation to the
     // total width of the screen
-    private const RADIUS_FACTOR = 0.47;
+    private const RADIUS_RATIO = 0.47;
 
     // Dc for calculations only
     private var _calcDc as EvccDcInterface;
@@ -77,7 +78,7 @@ class PageIndicator extends BasePageIndicator {
     // a page indicator dot. This works for all dots, counting from the edge of the screen
     // in their position.
     public function getSpacing() as Number {
-        return Math.round( _calcDc.getWidth() * ( 0.5 - RADIUS_FACTOR + DOT_SIZE_FACTOR + LINE_WIDTH_FACTOR / 2 ) ).toNumber();
+        return Math.round( _calcDc.getWidth() * ( 0.5 - RADIUS_RATIO + DOT_RADIUS_RATIO + LINE_WIDTH_RATIO / 2 ) ).toNumber();
     }
 
     public function setCenterAngle( angle as Number ) as Void {
@@ -108,7 +109,7 @@ class PageIndicator extends BasePageIndicator {
 
     // Function to draw a single dot at an angle
     private function drawDot( dc as Dc, angle as Float, active as Boolean ) as Void {
-        var dotCoordinates = orbitXY( dc.getWidth() / 2, dc.getHeight() / 2, angle, dc.getWidth() * RADIUS_FACTOR );
+        var dotCoordinates = orbitXY( dc.getWidth() / 2, dc.getHeight() / 2, angle, dc.getWidth() * RADIUS_RATIO );
         drawDotXY( dc, dotCoordinates[0], dotCoordinates[1], active );
     }
 
@@ -130,4 +131,67 @@ class PageIndicator extends BasePageIndicator {
 
         return [Math.round(centerX + x).toNumber(), Math.round(centerY + y).toNumber()];
     }
+}
+
+
+// Draws a graphic indicating which page the user is currently on
+(:exclForScreenRound)
+class PageIndicator extends BasePageIndicator {
+    private var _center as Number;
+    private var _dotSpacing as Number;
+    private var _dotHorizontalOffset as Number;
+    private var _activePage as Number;
+    private var _totalPages as Number;
+
+    // Defines the horizontal offset of the dots from the left edge
+    // as a percentage of the screen width.
+    private const DOT_HORIZONTAL_OFFSET_RATIO = 0.05;
+
+    // Defines the spacing between page indicator dots
+    // as a percentage of the screen height.
+    private const DOT_SPACING_RATIO = 0.05;
+    
+    // Defines the vertical center of the page indicator
+    // as a percentage of the screen height (e.g. 50 means
+    // the indicator is centered vertically on the screen).
+    private const VERTICAL_CENTER_RATIO = 0.5;
+    
+    // Dc for calculations only
+    private var _calcDc as EvccDcInterface;
+    
+    public function initialize( activePage as Number, totalPages as Number, calcDc as EvccDcInterface ) {
+        BasePageIndicator.initialize( calcDc );
+
+        var dcHeight = calcDc.getHeight();
+
+        _center = ( dcHeight * VERTICAL_CENTER_RATIO ).toNumber();
+        _dotSpacing = ( dcHeight * DOT_SPACING_RATIO ).toNumber();
+        _dotHorizontalOffset = ( calcDc.getWidth() * DOT_HORIZONTAL_OFFSET_RATIO ).toNumber();
+
+        _activePage = activePage;
+        _totalPages = totalPages;
+        _calcDc = calcDc;
+    }
+
+    // Returns the distance between the left side of the screen and the right-most point of 
+    // a page indicator dot. This works for all dots, counting from the edge of the screen
+    // in their position.
+    public function getSpacing() as Number {
+        return ( _dotHorizontalOffset 
+                 + _calcDc.getWidth() 
+                    * ( DOT_RADIUS_RATIO + LINE_WIDTH_RATIO ) ).toNumber();
+    }
+
+    // Main function to draw the indicator
+    function draw( dc as Dc ) as Void {
+        // From the center, calculate the vertical position of the first dot
+        var y = ( _center - _dotSpacing * ( ( _totalPages - 1 ) / 2.0 ) ).toNumber();
+        
+        // For each page, draw a dot
+        for( var i = 0; i < _totalPages; i++ ) {
+            drawDotXY( dc, _dotHorizontalOffset, y, i == _activePage );
+            y += _dotSpacing;
+        }
+    }
+
 }

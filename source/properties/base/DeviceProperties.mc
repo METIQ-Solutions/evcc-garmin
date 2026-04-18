@@ -50,14 +50,20 @@ class DeviceProperties {
 
     /******** SINGLETON ACCESSOR ********/
 
+    // Instantiating a class based solely on the existence of its symbol
+    // is not allowed with strict type checking. Therefore, type checking
+    // is disabled for the member variable and accessor function.
+
+    (:typecheck(false))
     private static var _instance as DeviceProperties?;
 
     // The singleton accessor returns either an instance of this class
     // or, if available, a device-specific override.
+    (:typecheck(false))
     public static function get() as DeviceProperties {
         if( _instance == null ) {
             if( $ has :DevicePropertiesOverride ) {
-                _instance = new DevicePropertiesOverride();
+                _instance = new DevicePropertiesOverride() as DeviceProperties;
             } else {
                 _instance = new DeviceProperties();
             }

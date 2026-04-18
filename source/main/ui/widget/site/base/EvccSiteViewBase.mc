@@ -17,6 +17,9 @@ import Toybox.Math;
 // - Members and functions specific to devices without pre-rendering of views, which is followed by the
 // - Members and function specific to devices with pre-rendering of views
 
+// Type for arrays of site views
+typedef ArrayOfSiteViews as Array<EvccSiteViewBase>;
+
 class EvccSiteViewBase extends WatchUi.View {
 
     // Options for constructor

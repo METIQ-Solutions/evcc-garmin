@@ -101,6 +101,7 @@ d2airx10.resourcePath = $(resourceBase);$(resourceDrawables)/d2airx10
 d2airx10.excludeAnnotations = $(fontsStaticOptimized);$(screenRound);$(swipeLeftDefault)
 d2mach1.resourcePath = $(epix2.resourcePath)
 d2mach2.resourcePath = $(fr57047mm.resourcePath)
+d2mach2pro.resourcePath = $(fr57047mm.resourcePath)
 
 # Descent series
 descentg2.resourcePath = $(resourceBase);$(resourceDrawables)/descentg2

@@ -92,7 +92,7 @@ base.excludeAnnotations = $(fontsVector);$(screenRound);$(hasSelect);$(swipeLeft
 approachs50.resourcePath = $(resourceBase);$(resourceDrawables)/approachs50
 approachs50.excludeAnnotations = $(fontsStaticOptimized);$(screenRound);$(swipeLeftDefault)
 approachs7042mm.resourcePath = $(epix2pro42mm.resourcePath)
-approachs7042mm.excludeAnnotations = $(fontsVector);$(selectRound27);$(swipeLeftDefault)
+approachs7042mm.excludeAnnotations = $(fontsVector);$(screenRound);$(swipeLeftDefault)
 approachs7047mm.resourcePath = $(resourceBase);$(resourceDrawables)/approachs7047mm
 approachs7047mm.excludeAnnotations = $(approachs7042mm.excludeAnnotations)
 

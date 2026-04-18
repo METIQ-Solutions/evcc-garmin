@@ -3,7 +3,8 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 // An element containing other elements that shall stacked horizontally
-(:glance) class HorizontalBlock extends ContainerBlock {
+(:glance) 
+class HorizontalBlock extends ContainerBlock {
     
     var _truncatableElement as TextBlock?;
 

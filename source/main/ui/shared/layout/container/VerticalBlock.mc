@@ -3,7 +3,8 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 // An element containing other elements that shall be stacked vertically
-(:glance) class VerticalBlock extends ContainerBlock {
+(:glance) 
+class VerticalBlock extends ContainerBlock {
     
     // Just pass on the options
     function initialize( options as DbOptions ) {

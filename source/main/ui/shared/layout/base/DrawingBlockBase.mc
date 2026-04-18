@@ -1,6 +1,7 @@
 import Toybox.Lang;
 import Toybox.Graphics;
 import Toybox.WatchUi;
+import Toybox.System;
 
 // Base class for all drawing elements
 // - It implements an options dictionary that stores various display options (see below)
@@ -209,6 +210,7 @@ public function getFloatOption( option as Symbol ) as Float {
     protected function calculateHeight() as Number { return 0; }
 
     // Calculate the available screen width at a given y coordinate
+    (:exclForScreenRectangular)
     protected function getDcWidthAtY( y as Number ) as Number {
         // Pythagoras: b = sqrt( c*c - a*a )
         // b: distance of screen edge from center
@@ -218,6 +220,12 @@ public function getFloatOption( option as Symbol ) as Float {
         var c = dc.getWidth() / 2;
         var a = ( y - dc.getHeight() / 2 ).abs();
         return Math.round( Math.sqrt( c*c - a*a ) * 2 ).toNumber();
+    }
+    // The variant for rectangular screens is obviously much simpler,
+    // because the screen width is the same for all y coordinates
+    (:exclForScreenRound)
+    protected function getDcWidthAtY( y as Number ) as Number {
+        return getDc().getWidth();
     }
 
     // Get the font height

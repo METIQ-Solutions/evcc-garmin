@@ -1,0 +1,169 @@
+import Toybox.Lang;
+import Toybox.Graphics;
+import Toybox.Application.Properties;
+
+// The ResourceSets contain information on fonts and icons to be used
+// To save memory, there is a reduced set for glances
+// Access to the resource set by other parts of the application always goes via
+// EvccResources, which is defined in /source-annot-glance and /source-annot-tinyglance,
+// because it has a different scope depending on glance type
+
+// For glance, there is one static resource set
+// For widgets, there are three different implementations
+// Vector: devices with scalable fonts use an evenly distributed set of font sizes
+// Static: for devices without scalable fonts a set of standard fonts is used
+// StaticOptimized: sometimes different standard fonts have the same size, in this 
+//                  case this optimized version weeds out the duplicate
+
+// Widget/Vector
+(:exclForFontsStatic :exclForFontsStaticOptimized) class WidgetResourceSet extends WidgetResourceSetBase {
+    function initialize() {
+        WidgetResourceSetBase.initialize();
+        
+        if( !( Graphics has :getVectorFont ) ) {
+            throw new OperationNotAllowedException( "VECNOTSUP" );
+        }
+
+        var heights = new Array<Float>[fonts.size()];
+        // We take either 13 % of the screen height or the size of the medium font, whichever is smaller
+        heights[0] = ExtendedMath.min( Graphics.getFontHeight( fonts[0] ).toFloat(), System.getDeviceSettings().screenHeight * 0.13 ).toFloat();
+        
+        // We take either 56 % of the medium font or the height of the xtiny font, whichever is smaller
+        heights[heights.size()-1] = ExtendedMath.min( Graphics.getFontHeight( fonts[fonts.size()-1] ).toFloat(), heights[0] * 0.56 ).toFloat();
+        
+        var step = ( heights[0] - heights[heights.size()-1] ) / ( heights.size()-1 );
+        
+        for( var i = 1; i < heights.size()-1; i++ ) {
+            heights[i] = heights[i-1] - step;
+        }
+        
+        var fontFaces = DeviceProperties.get().VECTOR_FONT_FACE;
+
+        for( var i = 0; i < fonts.size(); i++ ) {
+            var height = Math.round( heights[i] ).toNumber();
+            
+            var vectorFont = Graphics.getVectorFont( { :face => fontFaces, :size => height } );
+            
+            // Code for testing creating a vector font with :font and :scale from a standard font
+            // This does not work on epix2pro47mm, but does work on fr165            
+            //// Logger.debug( "Testing vector font ... " );
+            //var vectorFont = Graphics.getVectorFont( { :font => Graphics.FONT_MEDIUM, :scale => 1.0 } );
+            //// Logger.debug( "... done" );
+
+            if( vectorFont == null ) {
+                throw new InvalidValueException( "FFNTFND" );
+            } else {
+                fonts[i] = vectorFont;
+            }
+        }
+    }
+}
+
+// Widget/Static
+// This is the most-memory friendly version
+(:exclForFontsVector :exclForFontsStaticOptimized) class WidgetResourceSet extends WidgetResourceSetBase {
+    function initialize() { WidgetResourceSetBase.initialize(); }
+}
+
+// Widget/StaticOptimized
+(:exclForFontsVector :exclForFontsStatic) class WidgetResourceSet extends WidgetResourceSetBase {
+    function initialize() {
+        WidgetResourceSetBase.initialize();
+        // In this function, we optimize the set of preset standard fonts
+        // the fonts array contains a sorted set of standard fonts, from
+        // largest to smallest
+        
+        // On some watches, two different standard fonts may have the same size
+        // As first step, we skip any font that is the same size as its predecessor
+        // and move the remaining fonts up. The vacated positions in the end will
+        // be filled with the smallest font.
+
+        // Fill an array with all the heights, to avoid multiple costly 
+        // requests to Graphics.getFontHeight
+        var heightsPreset = new Array<Number>[0];
+        for( var i = 0; i< fonts.size(); i++ ) { heightsPreset.add( Graphics.getFontHeight( fonts[i] ) ); }
+
+        // Create a new array for the optimized fonts
+        var fontsOptimized = new ArrayOfGarminFonts[0];
+        fontsOptimized.add( fonts[0] ); // the first one stays
+        var ipr = 1;
+        // loop through all font sizes
+        for( var iop = 1; iop < fonts.size(); ) {
+            // If current font from the preset is smaller than the last one, we add it
+            // Also, if there are no more fonts left, we add the current one regardless
+            // of size
+            if( heightsPreset[ipr] < heightsPreset[ipr-1] || ipr + 1 == fonts.size() )
+            {
+                fontsOptimized.add( fonts[ipr] );
+                iop++;
+            }
+            // we move to the next preset, if there is one
+            ipr += ( ipr + 1 < fonts.size() ) ? 1 : 0;
+        }
+
+        fonts = fontsOptimized;
+    }
+}
+
+
+// Below the two classes actually holding fonts and icon resources
+// Each has 
+// - an enum "Font", defining the font types to be used by the app
+// - a member "fonts", mapping the font types from the enum to Garmin fonts
+// - a member "icons", a two dimensional array, with the first dimension being the icons (as defined in IconBlock),
+//                      and the second dimension being the fonts. 
+//                      The following will return the sun icon in size medium from the widget set:
+//                      WidgetResourceSet.icons[IconBlock.ICON_SUN][WidgetResourceSet.FONT_MEDIUM]
+
+// Widget
+// Base class for all three implementations
+class WidgetResourceSetBase {
+    enum Font {
+        FONT_MEDIUM,
+        FONT_SMALL,
+        FONT_TINY,
+        FONT_XTINY,
+        FONT_MICRO
+    }
+    public var fonts as ArrayOfGarminFonts = [ Graphics.FONT_MEDIUM, Graphics.FONT_SMALL, Graphics.FONT_TINY, Graphics.FONT_GLANCE, Graphics.FONT_XTINY ];
+    public var icons as EvccIcons = [
+        [ Rez.Drawables.battery_empty_medium, Rez.Drawables.battery_empty_small, Rez.Drawables.battery_empty_tiny, Rez.Drawables.battery_empty_xtiny, null ],
+        [ Rez.Drawables.battery_onequarter_medium, Rez.Drawables.battery_onequarter_small, Rez.Drawables.battery_onequarter_tiny, Rez.Drawables.battery_onequarter_xtiny, null ],
+        [ Rez.Drawables.battery_half_medium, Rez.Drawables.battery_half_small, Rez.Drawables.battery_half_tiny, Rez.Drawables.battery_half_xtiny, null ],
+        [ Rez.Drawables.battery_threequarters_medium, Rez.Drawables.battery_threequarters_small, Rez.Drawables.battery_threequarters_tiny, Rez.Drawables.battery_threequarters_xtiny, null ],
+        [ Rez.Drawables.battery_full_medium, Rez.Drawables.battery_full_small, Rez.Drawables.battery_full_tiny, Rez.Drawables.battery_full_xtiny, null ],
+        [ Rez.Drawables.arrow_right_medium, Rez.Drawables.arrow_right_small, Rez.Drawables.arrow_right_tiny, Rez.Drawables.arrow_right_xtiny, null ],
+        [ Rez.Drawables.arrow_left_medium, Rez.Drawables.arrow_left_small, Rez.Drawables.arrow_left_tiny, Rez.Drawables.arrow_left_xtiny, Rez.Drawables.arrow_left_micro ],
+        [ Rez.Drawables.arrow_left_three_medium, Rez.Drawables.arrow_left_three_small, Rez.Drawables.arrow_left_three_tiny, Rez.Drawables.arrow_left_three_xtiny, Rez.Drawables.arrow_left_three_micro ],
+        [ Rez.Drawables.sun_medium, Rez.Drawables.sun_small, Rez.Drawables.sun_tiny, Rez.Drawables.sun_xtiny, null ],
+        [ Rez.Drawables.house_medium, Rez.Drawables.house_small, Rez.Drawables.house_tiny, Rez.Drawables.house_xtiny, null ],
+        [ Rez.Drawables.grid_medium, Rez.Drawables.grid_small, Rez.Drawables.grid_tiny, Rez.Drawables.grid_xtiny, null ],
+        [ null, null, null, Rez.Drawables.clock_xtiny, Rez.Drawables.clock_micro ],
+        [ Rez.Drawables.car_medium, Rez.Drawables.car_small, Rez.Drawables.car_tiny, Rez.Drawables.car_xtiny, null ],
+        [ Rez.Drawables.heater_medium, Rez.Drawables.heater_small, Rez.Drawables.heater_tiny, Rez.Drawables.heater_xtiny, null ],
+        [ Rez.Drawables.device_medium, Rez.Drawables.device_small, Rez.Drawables.device_tiny, Rez.Drawables.device_xtiny, null ],
+        [ Rez.Drawables.forecast_medium, null, null, Rez.Drawables.forecast_xtiny, null ],
+        [ Rez.Drawables.statistics_medium, null, null, Rez.Drawables.statistics_xtiny, null ]
+    ];
+}
+
+// Glance
+// Only available for full-featured glance
+// The glance needs only one font size, and a smaller set of icons
+(:glance) 
+class GlanceResourceSet {
+    enum Font {
+        FONT_GLANCE
+    }
+    public var fonts as ArrayOfGarminFonts = [Graphics.FONT_GLANCE];
+    public var icons as EvccIcons = [
+        [ Rez.Drawables.battery_empty_glance ],
+        [ Rez.Drawables.battery_onequarter_glance ],
+        [ Rez.Drawables.battery_half_glance ],
+        [ Rez.Drawables.battery_threequarters_glance ],
+        [ Rez.Drawables.battery_full_glance ],
+        [ Rez.Drawables.arrow_right_glance ],
+        [ Rez.Drawables.arrow_left_glance ],
+        [ Rez.Drawables.arrow_left_three_glance ]
+    ];
+}

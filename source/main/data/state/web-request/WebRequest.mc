@@ -138,6 +138,18 @@ class WebRequest {
     }
 
 
+    // This is used only after the initial loadInitialState for the
+    // active site. The first callback is the main view, and for the
+    // active site the pre-rendering is anyway then done in the
+    // first onUpdate
+    public function invokeAllCallbacksButFirst() as Void {
+        // Logger.debug( "WebRequest: invoking callbacks except first" );
+        for( var i = 1; i < _callbacks.size(); i++ ) {
+            _callbacks[i].onStateUpdate();
+        }
+    }
+
+
     public function invokeCallbacks() as Void {
         // Logger.debug( "WebRequest: invoking callbacks" );
         if( _callbacks.size() == 0 ) {
@@ -149,6 +161,40 @@ class WebRequest {
             for( var i = 0; i < _callbacks.size(); i++ ) {
                 // Logger.debug( "WebRequest: invoking callback " + (i+1) + "/" + _callbacks.size() );
                 _callbacks[i].onStateUpdate();
+            }
+        }
+    }
+
+
+    // Loads the initial state from storage
+    // If none is available or it is outdated, makes an immediate web request
+    public function loadInitialState() as Void {
+        // Logger.debug("WebRequest: loadInitialState site=" + _siteIndex );
+
+        // Only when this state request is started we load the state data
+        // We cannot load the state in initialize, because on some devices,
+        // there is not enough memory for having all the states in memory
+        var state = _stateStore.getState() as EvccState?;
+        
+        // If no stored data is found a request is made immediately
+        if( state == null ) {
+            // Logger.debug( "WebRequest: no stored data found");
+            makeRequest(); 
+        } else { 
+            var dataAge = Time.now().compare( state.getTimestamp() );
+            // If the persisted data is older than the expiry time it is not used and a request is made immediately
+            if( dataAge > _dataExpiry ) {
+                // Logger.debug( "WebRequest: stored data too old!" ); 
+                makeRequest(); 
+            } else { 
+                // otherwise the data is used, but if it is older than refreshInterval, a request is made immediately^
+                // if the device is using tiny glance, then also a request is made immediately, because the data obtained by
+                // the tiny glance may be incomplete due to memory restrictions in the tiny glance's background service. 
+                // Logger.debug( "WebRequest: using stored data" );
+                _hasCurrentState = true;
+                if( dataAge > _refreshInterval ) {
+                    makeRequest(); 
+                }
             }
         }
     }
@@ -229,62 +275,16 @@ class WebRequest {
     }
 
 
-    // Register a callback
-    public function registerCallback( callback as WebRequestCallback ) as Void {
-        _callbacks.add( callback );
-    }
-
-
-    // This is used only after the initial loadInitialState for the
-    // active site. The first callback is the main view, and for the
-    // active site the pre-rendering is anyway then done in the
-    // first onUpdate
-    public function invokeAllCallbacksButFirst() as Void {
-        // Logger.debug( "WebRequest: invoking callbacks except first" );
-        for( var i = 1; i < _callbacks.size(); i++ ) {
-            _callbacks[i].onStateUpdate();
-        }
-    }
-
-
-    // Loads the initial state from storage
-    // If none is available or it is outdated, makes an immediate web request
-    public function loadInitialState() as Void {
-        // Logger.debug("WebRequest: loadInitialState site=" + _siteIndex );
-
-        // Only when this state request is started we load the state data
-        // We cannot load the state in initialize, because on some devices,
-        // there is not enough memory for having all the states in memory
-        var state = _stateStore.getState() as EvccState?;
-        
-        // If no stored data is found a request is made immediately
-        if( state == null ) {
-            // Logger.debug( "WebRequest: no stored data found");
-            makeRequest(); 
-        } else { 
-            var dataAge = Time.now().compare( state.getTimestamp() );
-            // If the persisted data is older than the expiry time it is not used and a request is made immediately
-            if( dataAge > _dataExpiry ) {
-                // Logger.debug( "WebRequest: stored data too old!" ); 
-                makeRequest(); 
-            } else { 
-                // otherwise the data is used, but if it is older than refreshInterval, a request is made immediately^
-                // if the device is using tiny glance, then also a request is made immediately, because the data obtained by
-                // the tiny glance may be incomplete due to memory restrictions in the tiny glance's background service. 
-                // Logger.debug( "WebRequest: using stored data" );
-                _hasCurrentState = true;
-                if( dataAge > _refreshInterval ) {
-                    makeRequest(); 
-                }
-            }
-        }
-    }
-
-
     // Override the parent function to persist the
     // state class in the state store instead of the JSON
     public function persistState() as Void { 
         _stateStore.persist();
+    }
+
+
+    // Register a callback
+    public function registerCallback( callback as WebRequestCallback ) as Void {
+        _callbacks.add( callback );
     }
 
 

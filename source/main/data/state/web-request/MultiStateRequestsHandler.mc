@@ -2,7 +2,7 @@ import Toybox.Lang;
 import Toybox.Timer;
 import Toybox.Application.Properties;
 
-// This handles state requests for multiple sites with view pre-rendering
+// This handles state requests for multiple sites
 // It immediately loads the initial state of the active site
 // Loads initial states of inactive sites in 1 second intervals (do not delay the app startup)
 // After all initial states are loaded, it initiates a timer for regularly requesting states

@@ -182,7 +182,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     }
 
     public function switchToFirst() as Void {
-        Logger.debug("ViewCarouselDelegate: switchToFirst");
+        // Logger.debug("ViewCarouselDelegate: switchToFirst");
         if( _views.size() == 0 ) {
             throw new OperationNotAllowedException( "ViewCarouselDelegate: attempted switch to first on an empty view array." );
         }

@@ -162,12 +162,12 @@ class EvccSiteViewBase extends WatchUi.View {
     // and switches to the first view in the carousel if disposed
     // view is currently being displayed.
     public function dispose() as Void { 
-        Logger.debug( "EvccSiteViewBase.dispose" );
+        // Logger.debug( "EvccSiteViewBase.dispose" );
         getWebRequest().unregisterCallback( self );
         if( _isActiveView ) {
             var delegate = ViewStack.getCurrentView()[1];
             if( delegate instanceof ViewCarouselDelegate ) {
-                Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
+                // Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
                 delegate.switchToFirst();
             }
         }     

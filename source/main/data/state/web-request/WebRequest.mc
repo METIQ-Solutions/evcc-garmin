@@ -290,7 +290,7 @@ class WebRequest {
 
     // Unregister a callback
     public function unregisterCallback( callback as WebRequestCallback ) as Void {
-        Logger.debug( "WebRequest: unregistering callback" );
+        // Logger.debug( "WebRequest: unregistering callback" );
         if( ! _callbacks.remove( callback ) ) {
             throw new InvalidValueException( "WebRequest: unregistering callback failed." );
         }

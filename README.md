@@ -5,7 +5,7 @@ evccg is a Garmin wearable app that displays real-time data from evcc, an open-s
 You can find the app in the Garmin Connect IQ store:
 <br>https://apps.garmin.com/apps/2bc2ba9d-b117-4cdf-8fa7-078c1ac90ab0
 
-The user manual is published via GitHub Pages at:<br>https://evccg.the-ninth.com
+The user manual is published via GitHub Pages at:<br>https://evccg.metiq.com
 
 <br>
 
@@ -48,15 +48,14 @@ This README covers the following topics:
 
 Built using the Garmin Connect IQ SDK, evccg includes the following application types:
 
-- **Glance**: A quick overview of site statistics, available in both full-featured and minimal ("tiny") versions for lower-memory devices.
+- **Glance**: A quick overview of site statistics.
 - **Widget**: The main interface, including detail views for multiple sites.
-- **Background**: Supports HTTP requests for glance functionality on devices with limited memory.
 
 **Further reading**:
 
-- [evccg User Manual](https://evccg.the-ninth.com)
-- [evccg User Manual - Glance](https://evccg.the-ninth.com/#glance)
-- [evccg User Manual - Widget](https://evccg.the-ninth.com/#widget)
+- [evccg User Manual](https://evccg.metiq.com)
+- [evccg User Manual - Glance](https://evccg.metiq.com/#glance)
+- [evccg User Manual - Widget](https://evccg.metiq.com/#widget)
 - [Connect IQ for Developers](https://developer.garmin.com/connect-iq)
 - [Connect IQ SDK](https://developer.garmin.com/connect-iq/sdk/)
 
@@ -78,7 +77,7 @@ The root directory contains essential project files.
 
 **Further reading:**
 
-- [evccg User Manual - Supported Devices](https://evccg.the-ninth.com/#supported-devices): outlines the capabilities of each device
+- [evccg User Manual - Supported Devices](https://evccg.metiq.com/#supported-devices): outlines the capabilities of each device
 - [Connect IQ SDK Core Topics - Manifest and Permissions](https://developer.garmin.com/connect-iq/core-topics/manifest-and-permissions/)  
 - [Connect IQ SDK Core Topics - Build Configuration](https://developer.garmin.com/connect-iq/core-topics/build-configuration/)
 
@@ -91,39 +90,19 @@ Contains VS Code customizations.
 **Key files:**
 
 - `tasks.json`: defines custom build tasks.
-  - evccg: Generate Source for Tiny Glance - see [further below for details](#generate-source-for-tiny-glance)
   - evccg: Generate Icons for All Devices - see [further below for details](#generating-the-device-specific-png-files)
   - evccg: Copy drawables.xml for All Devices - see [further below for details](#generating-the-device-specific-png-files)
   - evccg: Generate Icons for epix2pro47mm - see [further below for details](#generating-the-device-specific-png-files)
 
 ## Folder `/docs`
 
-Contains the user manual, published at <https://evccg.the-ninth.com>.
+Contains the user manual, published at <https://evccg.metiq.com>.
 
 **Key files:**
 
 - `README.md`: The user manual itself
 - `_config.yml`: Theme configuration
 - `assets/css/style.css`: Custom styles to adapt the theme
-
-<br>
-
-## Folder `/resources-drawables-gen`
-
-This folder contains the SVG icon source files and scripts used to generate device-specific PNG icons.
-
-Icons are created in multiple font sizes based on each device's display resolution and are stored in the corresponding [resource folders](#folders-resources-and-settings).
-
-At runtime, the app dynamically selects the appropriate font size based on the displayed content. 
-
-**Key files:**
-
-- `generate.json`: Defines font/icon sizes per device which icons to generate.
-- `drawables*.xml`: Garmin resource definition file that associates icon files with resource identifiers used in the source code. Three versions of this file exist, and one is copied—along with the corresponding generated PNGs—into each device-specific resource folder based on the device type.
-- `generate.bat`: Generates icons.
-- `generate.js`: JavaScript script, run by `generate.bat` using Windows Scripting Host
-
-For more information on these files, see [To Generate the Device-Specific Icons](#to-generate-the-device-specific-icons).
 
 <br>
 
@@ -138,15 +117,33 @@ In the Connect IQ SDK, resources define:
 
 **Folder breakdown:**
 
-- `/resources`: Shared across all devices
-- `/resources-drawables/[devicename]`: Drawables specific to individual devices. However, if multiple devices share the same font sizes, they can also share drawables. In such cases, only one folder is created for the shared drawables, typically named after one of the devices. The other devices then reference this folder in [`monkey.jungle`](#root-folder-). Similarly, in [`generate.json`](#to-generate-the-device-specific-icons), there will be a single entry for the shared drawable set, using the `devices` property to list all applicable devices.
-- `/resources-drawables/[devicename]`: Properties specific to individual devices. Optional and currently only used for a few devices.
-- `/resources-settings/site1`: Settings for devices supporting one site
-- `/resources-settings/site5`: Settings for devices supporting up to five sites
+- `/resources/drawables/generated/[devicename]`: Drawables specific to individual devices. However, if multiple devices share the same font sizes, they can also share drawables. In such cases, only one folder is created for the shared drawables, typically named after one of the devices. The other devices then reference this folder in [`monkey.jungle`](#root-folder-). Similarly, in [`generate.json`](#to-generate-the-device-specific-icons), there will be a single entry for the shared drawable set.
+- `/resources/drawables/src`: The SVG (vector) graphics used to generate the drawables, along with the XML resource definitions. Both are consumed by the [script](#folder-scriptsgenerate-drawables) that generates the device-specific drawable folders.
+- `/resources/settings`: App settings visible to the user
+- `/resources/strings`: Shared across all devices
 
 **Further reading:**
 
 - [Connect IQ SDK Core Topics - Resources](https://developer.garmin.com/connect-iq/core-topics/resources/)
+
+<br>
+
+## Folder `/scripts/generate-drawables`
+
+This folder contains the SVG icon source files and scripts used to generate device-specific PNG icons.
+
+Icons are created in multiple font sizes based on each device's display resolution and are stored in the corresponding [resource folders](#folders-resources-and-settings).
+
+At runtime, the app dynamically selects the appropriate font size based on the displayed content. 
+
+**Key files:**
+
+- `generate.json`: Defines font/icon sizes per device which icons to generate.
+/- `drawables*.xml`: Garmin resource definition file that associates icon files with resource identifiers used in the source code. Three versions of this file exist, and one is copied—along with the corresponding generated PNGs—into each device-specific resource folder based on the device type.
+- `generate.bat`: Generates icons.
+- `generate.js`: JavaScript script, run by `generate.bat` using Windows Scripting Host
+
+For more information on these files, see [To Generate the Device-Specific Icons](#to-generate-the-device-specific-icons).
 
 <br>
 
@@ -156,19 +153,22 @@ The app is written in **Monkey C**, Garmin's programming language, using the Con
 
 **Annotations:**
 
-- `(:glance)` and `(:background)` are used to isolate code for those specific modules.
-- Extensive use of exclude annotations helps the build system tailor the code to each device (see the [root folder](#root-folder-) for details).
+- `(:glance)` is used to isolate code used in the memory-constrained glance.
+- Use of exclude annotations helps the build system tailor the code to each device (see the [root folder](#root-folder-) for details).
 
 **Key files and directories:**
 
-- `/source/app/EvccApp.mc`: Entry point for glance, widget, and background modes
-- `/source/_base`: Shared code
-- `/source/background`: Background data handling, to support the tiny glance
-- `/glance`: Glance versions (full-featured and tiny)
-- `/widget`: Widget app
-- `/source-annot-glance`: Some classes are required in the glance scope for the full-featured glance but not for the tiny glance. Therefore, their source files must be duplicated—once with the `:glance` annotation and once without. The `source-annot-glance` directory contains the master versions of these annotated files, and any modifications to these classes should be made there.
-- `/source-annot-tinyglance`: This folder contains the duplicated source files mentioned above, with the `:glance` annotation removed.
-- `/source-annot-tinyglance/create-source-files.bat`: This script generates the duplicated source files (see [here](#modifcations-in-source-annot-glance) for details).
+- `/source/main`: Main source code
+
+  - `app/EvccApp.mc`: Entry point for glance and widget modes
+  - `data/`: Data layer, including evcc state representation, web request handling, storage, as well as access to app configuration and string resources
+  - `shared/`: Shared components such as constants, exceptions, and helper functions
+  - `ui/`: UI implementation for widget and glance
+
+- `/source/properties`: Device-specific constants
+
+  - `base/DeviceProperties.mc`: Singleton providing property access with default values
+  - `base/devices/[devicename]`: Optional overrides for device-specific properties
 
 **Further reading:**
 
@@ -214,16 +214,6 @@ The following command generates the `.iq` file, which is used for uploading the 
 
 <br>
 
-## Modifcations in `/source-annot-glance`
-
-As explained in [Folders `/source`](#folders-source), the `/source-annot-tinyglance` folder contains duplicates of the files in `/source-annot-glance`, but without the `:glance` annotations. **All changes should be made only in `/source-annot-glance`.**  
-
-After making changes, run `/source-annot-tinyglance/create-source-files.bat` to regenerate the tiny glance source files. This script copies the files and removes the `:glance` annotations. It requires `sed` for Windows to be installed and added to your `PATH` environment variable. You can download it from [here](https://gnuwin32.sourceforge.net/packages/sed.htm).
-
-Alternatively, you can use the custom VS Code task defined in the project. Press `CTRL+SHIFT+B` and choose `evccg: Generate Source for Tiny Glance` to run the batch file from the integrated terminal.
-
-<br>
-
 ## To Add a New Device
 
 To support a new device:
@@ -235,9 +225,8 @@ To support a new device:
 3. Configure device-specific features in the `monkey.jungle` build file (see [Root Folder `/`](#root-folder-)). You need to at least add an entry for the `resourcePath`. For `sourcePath` and `excludeAnnotations`, the default is a good starting point. You can launch the app in the simulator to evaluate whether any adjustments are needed. For example:
 
    - If the app reports that vector fonts are not supported, switch to static fonts—or to static optimized fonts if standard sizes overlap.
-   - If out-of-memory errors occur during testing, consider switching to the tiny glance, limiting support to a single site, and removing the system info view.
-   - If watchdog errors occur (indicating that execution is taking too long), switch from complex to simple calculations.
    - If the select/enter button is not in the standard 30° position, switch to the appropriate option.
+   - Set the appropriate exclude annotation for a round or rectangular screen.
 
 4. Generate the icons for the new device following the steps described in [How to Generate Icons for a New Device](#how-to-generate-icons-for-a-new-device).
 
@@ -526,7 +515,7 @@ To conserve memory, short codes are used for exception messages that result from
 
 # Supported Devices
 
-A table listing supported devices and their features is available in the [user manual](https://evccg.the-ninth.com/#supported-devices).
+A table listing supported devices and their features is available in the [user manual](https://evccg.metiq.com/#supported-devices).
 
 Below is an additional reference for developers, showing the Connect IQ (CIQ) API level supported by each device.
 

@@ -2,9 +2,9 @@ This user manual describes the legacy version of evccg, a Garmin wearable app th
 
 The legacy version is intended for older device generations such as Fenix 6 and 6 Pro, Forerunner 745 and 945, and Vivoactive 3 and 4.
 
-Click [here](https://apps.garmin.com/apps/8bde22e8-7b1a-4b0d-88c7-7fb84baa15f5) to visit the legacy app’s page in the Garmin Connect IQ Store.
-
 > Note: This manual reflects the state before the legacy branch was created. As a result, it may still reference newer devices. The legacy app is no longer available for those devices. For supported devices, refer to the current user manual [here](../).
+
+Click [here](https://apps.garmin.com/apps/8bde22e8-7b1a-4b0d-88c7-7fb84baa15f5) to visit the legacy app’s page in the Garmin Connect IQ Store.
 
 > Note: Before installing the app, refer to the [Connectivity](#connectivity) section below to ensure you have everything required for the app to connect to your evcc instance.
 

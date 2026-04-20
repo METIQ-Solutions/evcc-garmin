@@ -195,19 +195,19 @@ For sites with detail views, an arc indicates the select button to press for acc
 <table class="layoutTable">
   <tr>
     <td width="33.33%" style="padding-bottom: 20px" align="center" valign="top">Main Views</td>
-    <td width="15%"></td>
+    <td></td>
     <td width="33.33%" style="padding-bottom: 20px" align="center" valign="top">Detail Views</td>
   </tr>
   <tr>
     <td><img src="screenshots/widget_2site_1_main_300px.png"/></td>
-    <td><img src="svg/arrow-right.svg"/></td>
+    <td><img width="50%" src="svg/arrow-right.svg"/></td>
     <td><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
   </tr>
   <tr>
     <td></td>
     <td></td>
     <td style="padding-top: 20px; padding-bottom: 20px" valign="center">
-      <td><img src="svg/arrow-down.svg"/></td>
+      <td><img width="50%" src="svg/arrow-down.svg"/></td>
     </td>
   </tr>
   <tr>
@@ -219,14 +219,14 @@ For sites with detail views, an arc indicates the select button to press for acc
   </tr>
   <tr>
     <td><img src="screenshots/widget_2site_2_main_300px.png"/></td>
-    <td><img src="svg/arrow-right.svg"/></td>
+    <td><img width="50%" src="svg/arrow-right.svg"/></td>
     <td><img src="screenshots/widget_2site_2_loadpoint_300px.png"/></td>
   </tr>
   <tr>
     <td></td>
     <td></td>
     <td style="padding-top: 20px; padding-bottom: 20px" valign="center">
-      <td><img src="svg/arrow-down.svg"/></td>
+      <td><img width="50%" src="svg/arrow-down.svg"/></td>
     </td>
   </tr>
   <tr>

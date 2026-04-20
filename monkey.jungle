@@ -105,7 +105,7 @@ d2mach2pro.resourcePath = $(fr57047mm.resourcePath)
 
 # Descent series
 descentg2.resourcePath = $(resourceBase);$(resourceDrawables)/descentg2
-descentg2.excludeAnnotations = $(fontsStaticOptimized);$(screenRound);$(swipeLeftDefault)
+descentg2.excludeAnnotations = $(fontsStatic);$(screenRound);$(swipeLeftDefault)
 descentmk343mm.resourcePath = $(epix2pro42mm.resourcePath)
 descentmk351mm.resourcePath = $(epix2pro51mm.resourcePath)
 
@@ -152,7 +152,7 @@ fr165m.resourcePath = $(fr165.resourcePath)
 fr165m.sourcePath = $(fr165.sourcePath)
 fr165m.excludeAnnotations = $(fr265.excludeAnnotations)
 fr255.resourcePath = $(resourceBase);$(resourceDrawables)/fr255
-fr255.excludeAnnotations = $(fontsStaticOptimized);$(screenRound);$(hasSelect);$(swipeLeftDefault)
+fr255.excludeAnnotations = $(fontsStatic);$(screenRound);$(hasSelect);$(swipeLeftDefault)
 fr255m.resourcePath = $(resourceBase);$(resourceDrawables)/fr255
 fr255m.excludeAnnotations = $(fr255.excludeAnnotations)
 fr255s.resourcePath = $(resourceBase);$(resourceDrawables)/fr255s
@@ -175,11 +175,11 @@ fr970.resourcePath = $(fenix847mm.resourcePath)
 
 # Instinct series
 instinct3amoled45mm.resourcePath = $(resourceBase);$(resourceDrawables)/instinct3amoled45mm
-instinct3amoled45mm.excludeAnnotations = $(fontsStaticOptimized);$(screenRound);$(hasSelect);$(swipeLeftDefault)
+instinct3amoled45mm.excludeAnnotations = $(fontsStatic);$(screenRound);$(hasSelect);$(swipeLeftDefault)
 instinct3amoled50mm.resourcePath = $(resourceBase);$(resourceDrawables)/instinct3amoled50mm
 instinct3amoled50mm.excludeAnnotations = $(instinct3amoled45mm.excludeAnnotations)
 instinctcrossoveramoled.resourcePath = $(resourceBase);$(resourceDrawables)/instinctcrossoveramoled
-instinctcrossoveramoled.excludeAnnotations = $(instinct3amoled45mm.excludeAnnotations)
+instinctcrossoveramoled.excludeAnnotations = $(fontsStaticOptimized);$(screenRound);$(hasSelect);$(swipeLeftDefault)
 
 # MARQ series
 marq2.resourcePath = $(epix2pro42mm.resourcePath)

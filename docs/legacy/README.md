@@ -1,7 +1,3 @@
----
-title: evccg Legacy User Manual
----
-
 This user manual describes the legacy version of evccg, a Garmin wearable app that displays data from [evcc](https://evcc.io), an open-source solution for solar-powered EV charging.
 
 The legacy version is intended for older device generations such as Fenix 6 and 6 Pro, Forerunner 745 and 945, and Vivoactive 3 and 4.

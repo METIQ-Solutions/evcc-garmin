@@ -355,6 +355,7 @@
         "house.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "sun.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "car.svg":{ "anti-aliasing":"3", "types":["icon_glance", "icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
+        "car_disconnected.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "heater.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "device.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "forecast.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_medium"] },

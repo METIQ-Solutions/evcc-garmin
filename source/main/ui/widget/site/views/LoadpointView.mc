@@ -170,24 +170,18 @@ class LoadpointView extends EvccSiteViewBase {
         loadpoint as Loadpoint, 
         isAnyLoadpointCharging as Boolean 
     ) as Void {
-        var controllable = loadpoint.getControllable();
-        if( controllable == null ) {
-            throw new OperationNotAllowedException("LoadpointView.addIntegratedDevice: loadpoint does not have controllable" );
-        }
+        var loadpointItem = loadpoint.getControllable();
 
         var titleLine = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        titleLine.addTextWithOptions( 
-            controllable.getTitle(), 
-            { :isTruncatable => true,
-              :useEllipsis => true } as DbOptions 
-        );
+        var title = loadpointItem instanceof Vehicle ? loadpointItem.getTitle() : loadpoint.getTitle();
+        titleLine.addTextWithOptions( title, { :isTruncatable => true, :useEllipsis => true } );
         block.addBlock( titleLine );
 
-        if( controllable instanceof ConnectedVehicle ) {
-            titleLine.addText( ": " + WidgetUiHelper.formatSoc( controllable.getSoc() ) );
-        } else if( controllable instanceof Heater ) {
-            titleLine.addText( ": " + WidgetUiHelper.formatTemp( controllable.getTemperature() ) );
-        } 
+        if( loadpointItem instanceof Vehicle ) {
+            titleLine.addText( ": " + WidgetUiHelper.formatSoc( loadpointItem.getSoc() ) );
+        } else if( loadpointItem instanceof Heater ) {
+            titleLine.addText( ": " + WidgetUiHelper.formatTemp( loadpointItem.getTemperature() ) );
+        }
         
         var stateLine = new HorizontalBlock( { :relativeFont => 3 } );
 
@@ -209,7 +203,7 @@ class LoadpointView extends EvccSiteViewBase {
 
         block.addBlock( stateLine );
 
-        if( controllable instanceof ConnectedVehicle && loadpoint.getChargeRemainingDuration() > 0 ) {
+        if( loadpointItem instanceof Vehicle && loadpoint.getChargeRemainingDuration() > 0 ) {
             var timeLine = new HorizontalBlock( { :relativeFont => 3 } );
             timeLine.addIcon( IconBlock.ICON_DURATION, {} as DbOptions );
             timeLine.addText( " " + WidgetUiHelper.formatDuration( loadpoint.getChargeRemainingDuration() ) );

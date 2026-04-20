@@ -27,6 +27,7 @@ import Toybox.WatchUi;
         ICON_GRID,
         ICON_DURATION,
         ICON_CAR,
+        ICON_CAR_DISCONNECTED,
         ICON_HEATER,
         ICON_DEVICE,
         ICON_FORECAST,

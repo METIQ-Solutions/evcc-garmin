@@ -7,14 +7,16 @@ import Toybox.Lang;
 
 // This class represents a loadpoint
 (:glance) class Loadpoint {
-    private var _controllable as Controllable?;
+    private var _controllable as LoadpointItem?;
 
+    private var _title as String;
     private var _isCharging as Boolean = false;
     private var _chargePower as Number = 0;
     private var _activePhases as Number = 0;
     private var _mode as String? = null;
     private var _chargeRemainingDuration as Number?;
 
+    private const TITLE = "title";
     private const CHARGING = "charging";
     private const PHASESACTIVE = "phasesActive";
     private const CONNECTED = "connected";
@@ -25,6 +27,7 @@ import Toybox.Lang;
     private const CHARGERFEATUREINTEGRATEDDEVICE = "chargerFeatureIntegratedDevice";
     
     function initialize( dataLp as JsonObject, dataResult as JsonObject ) {
+        _title = dataLp[TITLE] as String;
         _isCharging = dataLp[CHARGING] as Boolean;
         _activePhases = dataLp[PHASESACTIVE] as Number;
         _chargePower = dataLp[CHARGEPOWER] as Number;
@@ -36,13 +39,14 @@ import Toybox.Lang;
         } else if( JsonHelper.readBoolean( dataLp, CHARGERFEATUREINTEGRATEDDEVICE ) ) {
             _controllable = new IntegratedDevice( dataLp );
         } else if( JsonHelper.readBoolean( dataLp, CONNECTED ) ) {
-            _controllable = new ConnectedVehicle( dataLp, dataResult );
+            _controllable = new Vehicle( dataLp, dataResult, _title );
         }
     }
 
     (:typecheck(disableGlanceCheck))
     function serialize() as JsonObject {
         var loadpoint = { 
+            TITLE => _title,
             CHARGING => _isCharging,
             PHASESACTIVE => _activePhases,
             CHARGEPOWER => _chargePower,
@@ -52,7 +56,7 @@ import Toybox.Lang;
 
         if( _controllable != null ) {
             _controllable.serialize( loadpoint );
-            if( _controllable instanceof ConnectedVehicle ) {
+            if( _controllable instanceof Vehicle ) {
                 loadpoint[CONNECTED] = true;
             } else if( _controllable instanceof Heater ) {
                 loadpoint[CONNECTED] = true;
@@ -66,14 +70,16 @@ import Toybox.Lang;
         return loadpoint;
     }
 
+    public function getTitle() as String { return _title; }
+
     public function isCharging() as Boolean { return _isCharging; }
     public function getActivePhases() as Number { return _activePhases; }
     public function getChargePowerRounded() as Number { return ExtendedMath.roundPower( _chargePower ); }
 
-    public function getControllable() as Controllable? { return _controllable; }
+    public function getControllable() as LoadpointItem? { return _controllable; }
 
-    public function isVehicle() as Boolean { return _controllable instanceof ConnectedVehicle; }
-    public function getVehicle() as ConnectedVehicle? { return isVehicle() ? _controllable as ConnectedVehicle : null; }
+    public function isVehicle() as Boolean { return _controllable instanceof Vehicle; }
+    public function getVehicle() as Vehicle? { return isVehicle() ? _controllable as Vehicle : null; }
 
     public function isHeater() as Boolean { return _controllable instanceof Heater; }
     public function getHeater() as Heater? { return isHeater() ? _controllable as Heater : null; }
@@ -86,4 +92,5 @@ import Toybox.Lang;
     public function getMode() as String { return _mode != null ? _mode : "unknown"; }
 
     public function getChargeRemainingDuration() as Number { return _chargeRemainingDuration != null ? _chargeRemainingDuration : 0; }
+
 }

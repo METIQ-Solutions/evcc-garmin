@@ -92,15 +92,8 @@ import Toybox.Lang;
         // If there are two or less loadpoints, we show them directly
         if( state.getLoadpointCount() <= 2 ) {
             var loadpoints = state.getLoadpoints();
-            var hasLoadpoint = false;
             for( var i = 0; i < loadpoints.size(); i++ ) {
-                hasLoadpoint = addLoadpoint( block, loadpoints[i] ) || hasLoadpoint;
-            }
-            // We check if at least one of the two loadpoints
-            // was displayed. addLoadpoint will ignore loadpoints that
-            // have no connected vehicle and are not a heater or integrated device
-            if( ! hasLoadpoint ) {
-                block.addText( "No vehicle" );
+                addLoadpoint( block, loadpoints[i] );
             }
         } else {
             // If there are more, we look at them per category
@@ -143,27 +136,22 @@ import Toybox.Lang;
     // Returns true if the loadpoint was added, otherwise false.
     // Ignored are loadpoints without a vehicle that are neither heaters
     // nor integrated devices.
-    private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Boolean {
+    private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Void {
         // Route to different rendering functions for each
         // type of loadpoint (connected vehicle, heater, integrated device)
         if( loadpoint.isHeater() ) {
             block.addBlock( renderHeater( loadpoint ) );
-            return true;
+        } else if( loadpoint.isIntegratedDevice() ) {
+            block.addBlock( renderIntegratedDevice( loadpoint ) );
         } else if( loadpoint.isVehicle() ) {
-            // EV chargers are shown only if a vehicle is connected
-            var loadpointLine = renderVehicle( loadpoint, true );
+            var loadpointLine = renderVehicle( loadpoint );
             block.addBlock( loadpointLine );
-            // If the vehicle is charging, a separate line with details
-            // will be added
+            // If the vehicle is charging, a separate line with details will be added
             if( loadpoint.isCharging() ) {
                 block.addBlock( renderVehicleChargingDetails( loadpoint, loadpointLine.getOption( :marginLeft ) as Number ) );
             }
-            return true;
-        } else if( loadpoint.isIntegratedDevice() ) {
-            block.addBlock( renderIntegratedDevice( loadpoint ) );
-            return true;
         } else {
-            return false;
+            block.addBlock( renderDisconnectedLoadpoint( loadpoint ) );
         }
     }
 
@@ -171,12 +159,6 @@ import Toybox.Lang;
     // Helper function to add the charging mode of a loadpoint to a line
     private function addMode( line as HorizontalBlock, loadpoint as Loadpoint ) as Void {
         line.addTextWithOptions( " (" + WidgetUiHelper.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
-    }
-
-
-    // Helper function to add the title of the controllable device (vehicle, heater or integreated device)
-    private function addTitle( line as HorizontalBlock, controllable as Controllable ) as Void {
-        line.addTextWithOptions( controllable.getTitle(), { :isTruncatable => true } as DbOptions );
     }
 
 
@@ -259,28 +241,34 @@ import Toybox.Lang;
     }
 
 
-    // Function to generate the main line representing a connected vehicle
-    private function renderVehicle( loadpoint as Loadpoint, showChargingDetails as Boolean ) as HorizontalBlock {
-        var vehicle = loadpoint.getVehicle() as ConnectedVehicle;
+    // Function to generate the line representing a charger without connected EV
+    private function renderDisconnectedLoadpoint( loadpoint as Loadpoint ) as HorizontalBlock {
+        var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
+        line.addIcon( IconBlock.ICON_CAR_DISCONNECTED, {} );
+        line.addTextWithOptions( " " + loadpoint.getTitle(), { :isTruncatable => true } );
+        return line;
+    }
+
+
+    // Function to generate the main line representing a charger with a connected EV
+    private function renderVehicle( loadpoint as Loadpoint ) as HorizontalBlock {
+        var vehicle = loadpoint.getVehicle() as Vehicle;
 
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        
-        addTitle( line, vehicle );
+
+        line.addTextWithOptions( vehicle.getTitle(), { :isTruncatable => true } );
         
         // For guest vehicles there is no SoC
         if( ! vehicle.isGuest() ) {
             line.addText( " " + WidgetUiHelper.formatSoc( vehicle.getSoc() ) );
         }
 
-        // If the vehicle is charging, we show the power
+        // If the vehicle is charging, show the power.
+        // Otherwise, show the charging mode.
+        // When charging, the mode is displayed in the separate charging details line.
         if( loadpoint.isCharging() ) {
             addChargePower( line, loadpoint );
-            if( ! showChargingDetails ) {
-                line.addTextWithOptions( " (" +  WidgetUiHelper.formatMode( loadpoint ) + ")", { :relativeFont => 4 } );
-            }
-        }
-
-        if( ! loadpoint.isCharging() || ! showChargingDetails ) {
+        } else {
             addMode( line, loadpoint );
         }
 
@@ -294,7 +282,7 @@ import Toybox.Lang;
         lineCharging.addText( WidgetUiHelper.formatMode( loadpoint ) );
         if( loadpoint.getChargeRemainingDuration() > 0 ) {
             lineCharging.addText( " - " );
-            lineCharging.addIcon( IconBlock.ICON_DURATION, {} as DbOptions );
+            lineCharging.addIcon( IconBlock.ICON_DURATION, {} );
             lineCharging.addText( " " + WidgetUiHelper.formatDuration( loadpoint.getChargeRemainingDuration() ) );
         }
         return lineCharging;
@@ -306,7 +294,7 @@ private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
         var heater = loadpoint.getHeater() as Heater;
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
         
-        addTitle( line, heater );
+        line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );
 
         line.addText( " " + WidgetUiHelper.formatTemp( heater.getTemperature() ) );
         
@@ -323,10 +311,9 @@ private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
 
     // Function to generate the line for integrated device loadpoints
 private function renderIntegratedDevice( loadpoint as Loadpoint ) as HorizontalBlock {
-        var integratedDevice = loadpoint.getIntegratedDevice() as IntegratedDevice;
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
         
-        addTitle( line, integratedDevice );
+        line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );
         
         // If the integrated device is operating, we show the power
         if( loadpoint.getChargePowerRounded() > 0 ) {

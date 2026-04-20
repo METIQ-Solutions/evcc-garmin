@@ -7,8 +7,8 @@ import Toybox.Lang;
 
 // Class representing an integrated device
 (:glance) 
-class IntegratedDevice extends Controllable {
+class IntegratedDevice extends LoadpointItem {
     function initialize( dataLp as JsonObject ) {
-        Controllable.initialize( dataLp );
+        LoadpointItem.initialize( dataLp );
     }
 }

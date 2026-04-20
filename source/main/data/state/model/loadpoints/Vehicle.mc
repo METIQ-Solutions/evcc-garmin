@@ -8,7 +8,7 @@ import Toybox.Lang;
 // Class representing a vehicle connected to a loadpoint
 // Currently only connected vehicles are relevant, others
 // are ignored
-(:glance) class ConnectedVehicle extends Controllable {
+(:glance) class Vehicle extends LoadpointItem {
     private var _name as String;
     private var _title as String;
     private var _soc as Number = 0;
@@ -20,8 +20,8 @@ import Toybox.Lang;
     private const VH_TITLE = "title";
     private const VEHICLESOC = "vehicleSoc";
 
-    function initialize( dataLp as JsonObject, dataResult as JsonObject ) {
-        Controllable.initialize( dataLp );
+    function initialize( dataLp as JsonObject, dataResult as JsonObject, lpTitle as String ) {
+        LoadpointItem.initialize( dataLp );
 
         var name = dataLp[VEHICLENAME] as String?;
         
@@ -35,7 +35,7 @@ import Toybox.Lang;
         
         // For guest vehicles we use the loadpoint title as name/title
         if( name == null || name.equals( "" ) ) {
-            name = Controllable.getTitle();
+            name = lpTitle;
             title = name;
             _isGuest = true;
         } else {
@@ -63,13 +63,11 @@ import Toybox.Lang;
     }
     
     function serialize( loadpoint as JsonObject ) as JsonObject {
-        if( _isGuest ) {
-            loadpoint[LP_TITLE] = _name;
-        } else {
+        if( ! _isGuest ) {
             loadpoint[VEHICLENAME] = _name;
             loadpoint[VEHICLETITLE] = _title; // diversion from evcc response structure, see above
             loadpoint[VEHICLESOC] = _soc;
-            Controllable.serialize( loadpoint );
+            LoadpointItem.serialize( loadpoint );
         }
         return loadpoint;
     }

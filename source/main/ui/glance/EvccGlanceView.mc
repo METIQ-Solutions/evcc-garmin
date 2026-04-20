@@ -72,7 +72,7 @@ import Toybox.Application.Properties;
                         line.addBlock( column );
                     }
 
-                    var loadpoints = state.getLoadpoints() as ArrayOfLoadpoints;
+                    var loadpoints = state.getChargers().getLoadpoints();
                     var hasVehicle = false;
                     // We use the height of the font as effectiveSpacing between the columns
                     // This gives us a space that is suitable for each screen size/resolution

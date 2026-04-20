@@ -45,7 +45,7 @@ import Toybox.Time;
     // Loadpoints and their accessor
     // Loadpoints are stored in three lists, depending on their type
     // On low-memory devices, only vehicles are supported
-    private var _connectedVehicles as LoadpointList = new LoadpointList();
+    private var _chargers as LoadpointList = new LoadpointList();
     private var _heaters as LoadpointList = new LoadpointList();
     private var _integratedDevices as LoadpointList = new LoadpointList();
 
@@ -59,14 +59,14 @@ import Toybox.Time;
     // less code in the low memory variant
     private function getAndClearLoadpoints() as ArrayOfLoadpoints { 
         var merged = new ArrayOfLoadpoints[0];
-        merged.addAll( _connectedVehicles.getAndClearLoadpoints() );
+        merged.addAll( _chargers.getAndClearLoadpoints() );
         merged.addAll( _heaters.getAndClearLoadpoints() );
         merged.addAll( _integratedDevices.getAndClearLoadpoints() );
         return merged;
     }
     
     // Accessor for the loadpoint lists
-    public function getConnectedVehicles() as LoadpointList { return _connectedVehicles; }
+    public function getChargers() as LoadpointList { return _chargers; }
     public function getHeaters() as LoadpointList { return _heaters; }
     public function getIntegratedDevices() as LoadpointList { return _integratedDevices; }
 
@@ -74,7 +74,7 @@ import Toybox.Time;
     // Needed only for the categorized, aggregated display not available
     // on low memory devices
     public function getLoadpointCount() as Number {
-        return _connectedVehicles.getLoadpoints().size()
+        return _chargers.getLoadpoints().size()
                + _heaters.getLoadpoints().size()
                + _integratedDevices.getLoadpoints().size();
     }
@@ -82,7 +82,7 @@ import Toybox.Time;
     // Accessor for an aggregated list of loadpoints
     public function getLoadpoints() as ArrayOfLoadpoints { 
         var merged = new ArrayOfLoadpoints[0];
-        merged.addAll( _connectedVehicles.getLoadpoints() );
+        merged.addAll( _chargers.getLoadpoints() );
         merged.addAll( _heaters.getLoadpoints() );
         merged.addAll( _integratedDevices.getLoadpoints() );
         return merged;
@@ -94,7 +94,7 @@ import Toybox.Time;
     (:typecheck([disableGlanceCheck])) 
     public function getAllLoadpointsCategories() as Array<LoadpointCategory> { 
         var lpCategories = [
-            [ IconBlock.ICON_CAR, _connectedVehicles ],
+            [ IconBlock.ICON_CAR, _chargers ],
             [ IconBlock.ICON_HEATER, _heaters ],
             [ IconBlock.ICON_DEVICE, _integratedDevices ]
         ];
@@ -172,12 +172,12 @@ import Toybox.Time;
                 var loadpoint = new Loadpoint( loadpointData, result );
                 // In addition to the array of all loadpoints, we also
                 // maintain a list of each type, for the display of categories
-                if( loadpoint.isVehicle() ) { 
-                    _connectedVehicles.add( loadpoint ); 
-                } else if( loadpoint.isHeater() ) {
+                if( loadpoint.isHeater() ) {
                     _heaters.add( loadpoint );
                 } else if ( loadpoint.isIntegratedDevice() ) {
                     _integratedDevices.add( loadpoint );
+                } else { 
+                    _chargers.add( loadpoint ); 
                 }
             }
         }

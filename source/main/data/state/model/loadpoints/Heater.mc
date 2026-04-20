@@ -7,18 +7,18 @@ import Toybox.Lang;
 
 // Class representing a heater
 (:glance) 
-class Heater extends Controllable {
+class Heater extends LoadpointItem {
     private var _temp as Number = 0;
     
     private const VEHICLESOC = "vehicleSoc";
 
     function initialize( dataLp as JsonObject ) {
-        Controllable.initialize( dataLp );
+        LoadpointItem.initialize( dataLp );
         _temp = dataLp[VEHICLESOC] as Number;
     }
 
     function serialize( loadpoint as JsonObject ) as JsonObject {
-        Controllable.serialize( loadpoint );
+        LoadpointItem.serialize( loadpoint );
         loadpoint[VEHICLESOC] = _temp;
         return loadpoint;
     }

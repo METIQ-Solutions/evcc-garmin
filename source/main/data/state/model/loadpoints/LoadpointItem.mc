@@ -5,20 +5,14 @@ import Toybox.Lang;
 // as web response, as well as serializing in a JSON dictionary with
 // the same structure for persiting the state in storage
 
-// Class representing an integrated device
-(:glance) class Controllable {
-    private var _title as String = "";
-    
-    protected const LP_TITLE = "title";
-
+// Class representing the item connected to a loadpoint
+// Currently there is no common data/functionality, but this
+// base class is retained for future use.
+(:glance) class LoadpointItem {
     function initialize( dataLp as JsonObject ) {
-        _title = dataLp[LP_TITLE] as String;
     }
 
     function serialize( loadpoint as JsonObject ) as JsonObject {
-        loadpoint[LP_TITLE] = _title;
         return loadpoint;
     }
-
-    public function getTitle() as String { return _title; }
 }

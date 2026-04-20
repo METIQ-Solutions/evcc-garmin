@@ -194,13 +194,13 @@ For sites with detail views, an arc indicates the select button to press for acc
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_2site_1_main_300px.png"/></td>
-    <td width="33.33%"><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Top Level Views</td>
+    <td style="padding-bottom: 20px" align="center" valign="top">2nd Level Views</td>
     <td></td>
   </tr>
   <tr>
-    <td style="padding-bottom: 20px" align="center" valign="top">First site, with an arc indicating available lower-level views.</td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Forecast view for the first site.</td>
+    <td width="33.33%"><img src="screenshots/widget_2site_1_main_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
     <td></td>
   </tr>
   <tr>
@@ -209,28 +209,13 @@ For sites with detail views, an arc indicates the select button to press for acc
     <td></td>
   </tr>
   <tr>
-    <td></td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Statistics view for the first site.</td>
-    <td></td>
-  </tr>
-  <tr>
     <td width="33.33%"><img src="screenshots/widget_2site_2_main_300px.png"/></td>
     <td width="33.33%"><img src="screenshots/widget_2site_2_loadpoint_300px.png"/></td>
     <td></td>
   </tr>
   <tr>
-    <td style="padding-bottom: 20px" align="center" valign="top">Second site, with an arc indicating available lower-level views.</td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Loadpoint view for the second site.</td>
-    <td></td>
-  </tr>
-  <tr>
     <td></td>
     <td><img src="screenshots/widget_2site_2_statistics_300px.png"/></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Statistics view for the second site.</td>
     <td></td>
   </tr>
 </table>

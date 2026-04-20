@@ -207,7 +207,7 @@ For sites with detail views, an arc indicates the select button to press for acc
     <td></td>
     <td></td>
     <td style="padding-top: 20px; padding-bottom: 20px" valign="center">
-      <td><img width="50%" src="svg/arrow-down.svg"/></td>
+      <img width="50%" src="svg/arrow-down.svg"/>
     </td>
   </tr>
   <tr>
@@ -226,7 +226,7 @@ For sites with detail views, an arc indicates the select button to press for acc
     <td></td>
     <td></td>
     <td style="padding-top: 20px; padding-bottom: 20px" valign="center">
-      <td><img width="50%" src="svg/arrow-down.svg"/></td>
+      <img width="50%" src="svg/arrow-down.svg"/>
     </td>
   </tr>
   <tr>

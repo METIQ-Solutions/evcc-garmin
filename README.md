@@ -240,9 +240,9 @@ To support a new device:
 
 All icons are stored in SVG format in the [icons folder](#folder-icons). From these, device-specific PNGs are generated at multiple font sizes, tailored to each device's display resolution. The resulting PNGs are stored in the appropriate [resource folders](#folders-resources-and-settings).
 
-At runtime, the app dynamically selects the appropriate icon size based on the displayed content. Font sizes per device are defined in `/icons/generate.json`.
+At runtime, the app dynamically selects the appropriate icon size based on the displayed content. Font sizes per device are defined in `/scripts/generate-drawables/generate.json`.
 
-Each icon also requires entries in `/icons/drawables.xml` for every size it will be used at.
+Each icon also requires entries in `/resources/drawables/src/xml/drawables.xml` for every size it will be used at.
 
 The following sections explain how font sizes are selected, how to add support for a new device, how to add new icons, and how to generate the PNGs.
 
@@ -325,27 +325,27 @@ To determine the actual font sizes used by the app, follow these steps:
 
 **Example entries:**
 ```json
-"fenix6":{
-    "fontMode":"static",
-    "deviceType":"noglance-lowmemory",
-    "logo_flash":"40",
-    "logo_evcc":"13",
-    "icon_micro":"19",
-    "icon_xtiny":"22",
-    "icon_tiny":"29",
-    "icon_small":"32",
-    "icon_medium":"37"
+"venu2":{
+    "fontMode":"static-opt",
+    "logo_flash":"70",
+    "logo_evcc":"22",
+    "icon_medium":"58",
+    "icon_small":"49",
+    "icon_tiny":"43",
+    "icon_xtiny":"32",
+    "icon_micro":"32",
+    "icon_glance":"43"
 },
 "fenix847mm": {
   "fontMode": "vector",
   "logo_flash": "65",
   "logo_evcc": "26",
-  "icon_glance": "42",
-  "icon_micro": "33",
-  "icon_xtiny": "40",
-  "icon_tiny": "46",
+  "icon_medium": "59",
   "icon_small": "53",
-  "icon_medium": "59"
+  "icon_tiny": "46",
+  "icon_xtiny": "40",
+  "icon_micro": "33",
+  "icon_glance": "42"
 }
 ```
 
@@ -354,9 +354,7 @@ To determine the actual font sizes used by the app, follow these steps:
 - `icon_*`: These values correspond to the font sizes selected by the app, based on the method described [above](#how-the-app-selects-font-sizes).
 - `logo_flash`: Must match the **Launcher Icon Size** as listed in Garmin’s [Device Reference](https://developer.garmin.com/connect-iq/reference-guides/devices-reference).
 - `logo_evcc`: The logo shown at the bottom of the screen. Typically set to 65% of `icon_xtiny`.
-- `deviceType`: Enables special handling for older devices that either do not support glances or use the tiny glance. Can be omitted for newer models. See the section on [`drawables*.xml`](#2-drawablesxml) for more details.
 - `fontMode`: A comment indicating the font sizing mode used by the app for this device (e.g., `"vector"`, `"static"`, or `"static-optimized"`).
-- `devices`: A comment listing the devices this entry applies to.
 
 <br>
 
@@ -364,7 +362,7 @@ To determine the actual font sizes used by the app, follow these steps:
 
 To add, remove, or change icons, you'll need to update the following files in the `/icons` directory:
 
-#### **1. `generate.json`**  
+#### **1. `/scripts/generate-drawables/generate.json`**  
 
 This file serves as input for the PNG generation script.
 
@@ -411,15 +409,9 @@ For example, the output PNGs for `sun.svg` would include:
 
 <br>
 
-#### **2. `drawables*.xml`**  
+#### **2. `/resources/drawables/src/xml/drawables.xml`**  
 
 Defines resources for use in the app via the Connect IQ SDK.
-
-There are three versions of this file:
-
-- **`drawables.xml`**: The default version, containing all icons and using the full color palette available on the device.
-- **`drawables-noglance-lowmemory.xml`**: A version for devices without glances and with limited memory. Glance icons are omitted, and all other icons are compiled with a reduced color palette and no transparency to conserve memory.
-- **`drawables-tinyglance.xml`**: A version for tiny glance devices. Only the icons used in the tiny glance are included, with a reduced color palette and no transparency.
 
 Each icon must have an entry for **every size** it's used in, and in **all applicable versions** of the drawables file.  
 For example, the medium-sized `sun.svg` icon would be defined in both `drawables.xml` and `drawables-tinyglance.xml` like this:
@@ -430,22 +422,6 @@ For example, the medium-sized `sun.svg` icon would be defined in both `drawables
 
 - `scope="foreground"` indicates the icon is only available in widget contexts.
 
-In `drawables-noglance-lowmemory.xml`, the same icon would appear as:
-
-```xml
-<bitmap scope="foreground" id="sun_medium" filename="icon_medium_sun.png">
-    <palette disableTransparency="true">
-        <color>FFFFFF</color>
-        <color>AAAAAA</color>
-        <color>555555</color>
-        <color>000000</color>    
-    </palette>
-</bitmap>
-```
-
-- The `<palette>` tag limits the icon to four grayscale colors: white, light gray, dark gray, and black.
-- `disableTransparency="true"` disables transparency, which would otherwise occupy a separate color slot. In this case, transparency is replaced with black—already part of the palette—so no extra color is needed.
-
 **Further reading:**
 
 - See the [Connect IQ SDK Resources documentation](https://developer.garmin.com/connect-iq/core-topics/resources/#resources) for more information on resource definitions.
@@ -454,7 +430,7 @@ In `drawables-noglance-lowmemory.xml`, the same icon would appear as:
 <br>
 
 
-#### **3. `/source/commons/resources/EvccResourceSet.mc`**  
+#### **3. `/source/main/ui/shared/assets/ResourceSets.mc`**  
 
 This file contains Monkey C classes that define resource sets used in the app. Each resource set defines font sizes to be used and maps them to the corresponding PNG resources.
 
@@ -521,11 +497,6 @@ Below is an additional reference for developers, showing the Connect IQ (CIQ) AP
 
 | Device               | CIQ API Level |
 |----------------------|---------------|
-| fenix6               | 3.4.0         |
-| fenix6s              | 3.4.0         |
-| fenix6pro            | 3.4.0         |
-| fenix6spro           | 3.4.0         |
-| fenix6xpro           | 3.4.0         |
 | fenix7               | 5.1.0         |
 | fenix7s              | 5.1.0         |
 | fenix7x              | 5.1.0         |
@@ -542,9 +513,6 @@ Below is an additional reference for developers, showing the Connect IQ (CIQ) AP
 | fenix8solar47mm      | 5.1.0         |
 | fenix8solar51mm      | 5.1.0         |
 | fenix8pro47mm        | 5.1.0         |
-| fr745                | 3.3.0         |
-| fr945                | 3.3.0         |
-| fr945lte             | 3.4.0         |
 | fr955                | 5.1.0         |
 | fr165                | 5.1.0         |
 | fr165m               | 5.1.0         |
@@ -560,11 +528,6 @@ Below is an additional reference for developers, showing the Connect IQ (CIQ) AP
 | venux1               | 5.1.0         |
 | venu441mm            | 5.1.0         |
 | venu447mm            | 5.1.0         |
-| vivoactive3          | 3.1.0         |
-| vivoactive3m         | 3.2.0         |
-| vivoactive3mlte      | 3.1.0         |
-| vivoactive4          | 3.3.0         |
-| vivoactive4s         | 3.3.0         |
 | vivoactive5          | 5.1.0         |
 | vivoactive6          | 5.1.0         |
 
@@ -586,13 +549,13 @@ While debug statements are only printed in debug builds, they still occupy code 
 To find all active debug statements in VS Code, press `CTRL+SHIFT+H` to open the global search and replace panel. Enable regular expressions by clicking the `.*` icon next to the search field, and use the following pattern to locate all active debug statements:
 
 ```
-(?<!\/\/ )EvccHelperBase\.debug\(
+(?<!\/\/ )Logger\.debug\(
 ```
 
 To deactivate the debug statements, replace them with:
 
 ```
-// EvccHelperBase.debug(
+// Logger.debug(
 ```
 
 This will comment them out without affecting any lines that are already commented.

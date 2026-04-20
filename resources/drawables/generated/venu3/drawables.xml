@@ -38,6 +38,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="house_xtiny" filename="icon_xtiny_house.png"/>
     <bitmap scope="foreground" id="grid_xtiny" filename="icon_xtiny_grid.png"/>
     <bitmap scope="foreground" id="car_xtiny" filename="icon_xtiny_car.png"/>
+    <bitmap scope="foreground" id="car_disconnected_xtiny" filename="icon_xtiny_car_disconnected.png"/>
     <bitmap scope="foreground" id="heater_xtiny" filename="icon_xtiny_heater.png"/>
     <bitmap scope="foreground" id="device_xtiny" filename="icon_xtiny_device.png"/>
     <!-- exceptions - icons not available in all font sizes -->
@@ -59,6 +60,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="house_tiny" filename="icon_tiny_house.png"/>
     <bitmap scope="foreground" id="grid_tiny" filename="icon_tiny_grid.png"/>
     <bitmap scope="foreground" id="car_tiny" filename="icon_tiny_car.png"/>
+    <bitmap scope="foreground" id="car_disconnected_tiny" filename="icon_tiny_car_disconnected.png"/>
     <bitmap scope="foreground" id="heater_tiny" filename="icon_tiny_heater.png"/>
     <bitmap scope="foreground" id="device_tiny" filename="icon_tiny_device.png"/>
 
@@ -75,6 +77,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="house_small" filename="icon_small_house.png"/>
     <bitmap scope="foreground" id="grid_small" filename="icon_small_grid.png"/>
     <bitmap scope="foreground" id="car_small" filename="icon_small_car.png"/>
+    <bitmap scope="foreground" id="car_disconnected_small" filename="icon_small_car_disconnected.png"/>
     <bitmap scope="foreground" id="heater_small" filename="icon_small_heater.png"/>
     <bitmap scope="foreground" id="device_small" filename="icon_small_device.png"/>
 
@@ -91,6 +94,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="house_medium" filename="icon_medium_house.png"/>
     <bitmap scope="foreground" id="grid_medium" filename="icon_medium_grid.png"/>
     <bitmap scope="foreground" id="car_medium" filename="icon_medium_car.png"/>
+    <bitmap scope="foreground" id="car_disconnected_medium" filename="icon_medium_car_disconnected.png"/>
     <bitmap scope="foreground" id="heater_medium" filename="icon_medium_heater.png"/>
     <bitmap scope="foreground" id="device_medium" filename="icon_medium_device.png"/>
     <!-- exceptions - icons not available in all font sizes -->

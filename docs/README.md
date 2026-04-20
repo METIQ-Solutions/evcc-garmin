@@ -194,30 +194,44 @@ For sites with detail views, an arc indicates the select button to press for acc
 
 <table class="layoutTable">
   <tr>
-    <td style="padding-bottom: 20px" align="center" valign="top">Main Views</td>
-    <td></td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Detail Views</td>
+    <td width="33.33%" style="padding-bottom: 20px" align="center" valign="top">Main Views</td>
+    <td width="15%"></td>
+    <td width="33.33%" style="padding-bottom: 20px" align="center" valign="top">Detail Views</td>
   </tr>
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_2site_1_main_300px.png"/></td>
+    <td><img src="screenshots/widget_2site_1_main_300px.png"/></td>
     <td><img width="10%" src="svg/arrow-right.svg"/></td>
-    <td width="33.33%"><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
+    <td><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
   </tr>
   <tr>
     <td></td>
-    <td style="padding-bottom: 20px" align="center" valign="top" width="33.33%">
+    <td></td>
+    <td style="padding-top: 20px; padding-bottom: 20px" align="center" valign="top">
+      <td><img width="10%" src="svg/arrow-down.svg"/></td>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td style="padding-bottom: 20px" align="center" valign="top">
       <img src="screenshots/widget_2site_1_statistics_300px.png"/>
     </td>
-    <td></td>
   </tr>
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_2site_2_main_300px.png"/></td>
-    <td width="33.33%"><img src="screenshots/widget_2site_2_loadpoint_300px.png"/></td>
-    <td></td>
+    <td><img src="screenshots/widget_2site_2_main_300px.png"/></td>
+    <td><img width="10%" src="svg/arrow-right.svg"/></td>
+    <td><img src="screenshots/widget_2site_2_loadpoint_300px.png"/></td>
   </tr>
   <tr>
     <td></td>
-    <td style="padding-bottom: 20px" align="center" valign="top" width="33.33%">
+    <td></td>
+    <td style="padding-top: 20px; padding-bottom: 20px" align="center" valign="top">
+      <td><img width="10%" src="svg/arrow-down.svg"/></td>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td style="padding-bottom: 20px" align="center" valign="top">
       <img src="screenshots/widget_2site_2_statistics_300px.png"/>
     </td>
     <td></td>

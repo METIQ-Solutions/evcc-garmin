@@ -1,5 +1,5 @@
 title: evccg User Manual
 remote_theme: pages-themes/midnight@v0.2.0
-show_downlaods: false
+show_downloads: false
 plugins:
 - jekyll-remote-theme

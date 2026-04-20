@@ -94,7 +94,7 @@ import Toybox.Lang;
             var loadpoints = state.getLoadpoints();
             var hasLoadpoint = false;
             for( var i = 0; i < loadpoints.size(); i++ ) {
-                hasLoadpoint = hasLoadpoint || addLoadpoint( block, loadpoints[i] );
+                hasLoadpoint = addLoadpoint( block, loadpoints[i] ) || hasLoadpoint;
             }
             // We check if at least one of the two loadpoints
             // was displayed. addLoadpoint will ignore loadpoints that
@@ -143,7 +143,7 @@ import Toybox.Lang;
     // Returns true if the loadpoint was added, otherwise false.
     // Ignored are loadpoints without a vehicle that are neither heaters
     // nor integrated devices.
-private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Boolean {
+    private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Boolean {
         // Route to different rendering functions for each
         // type of loadpoint (connected vehicle, heater, integrated device)
         if( loadpoint.isHeater() ) {
@@ -184,7 +184,7 @@ private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) 
     // If we act as glance (see above) and there is more than
     // one site, there are no detail views and this function
     // will return null.
-public function getDetailViewManager() as DetailViewManager? { return _detailViewManager; }
+    public function getDetailViewManager() as DetailViewManager? { return _detailViewManager; }
 
 
     // Only with view pre-rendering there is an exception

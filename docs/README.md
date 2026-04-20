@@ -195,13 +195,13 @@ For sites with detail views, an arc indicates the select button to press for acc
 <table class="layoutTable">
   <tr>
     <td style="padding-bottom: 20px" align="center" valign="top">Main Views</td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Detail Views</td>
     <td></td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Detail Views</td>
   </tr>
   <tr>
     <td width="33.33%"><img src="screenshots/widget_2site_1_main_300px.png"/></td>
+    <td><img width="10%" src="svg/arrow-right.svg"/></td>
     <td width="33.33%"><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
-    <td></td>
   </tr>
   <tr>
     <td></td>

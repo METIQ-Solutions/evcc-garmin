@@ -205,7 +205,9 @@ For sites with detail views, an arc indicates the select button to press for acc
   </tr>
   <tr>
     <td></td>
-    <td><img src="screenshots/widget_2site_1_statistics_300px.png"/></td>
+    <td style="padding-bottom: 20px" align="center" valign="top" width="33.33%">
+      <img src="screenshots/widget_2site_1_statistics_300px.png"/>
+    </td>
     <td></td>
   </tr>
   <tr>
@@ -215,7 +217,9 @@ For sites with detail views, an arc indicates the select button to press for acc
   </tr>
   <tr>
     <td></td>
-    <td><img src="screenshots/widget_2site_2_statistics_300px.png"/></td>
+    <td style="padding-bottom: 20px" align="center" valign="top" width="33.33%">
+      <img src="screenshots/widget_2site_2_statistics_300px.png"/>
+    </td>
     <td></td>
   </tr>
 </table>

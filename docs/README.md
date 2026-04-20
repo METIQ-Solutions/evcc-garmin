@@ -6,6 +6,8 @@ Click [here](https://apps.garmin.com/apps/2bc2ba9d-b117-4cdf-8fa7-078c1ac90ab0) 
 
 If you still have questions after reading this guide, check the [Support](#help--support) section for additional assistance.
 
+> Note: Support for older devices such as the Fenix 6 and 6 Pro, Forerunner 745 and 945, and Vivoactive 3 and 4 has been moved to the legacy app. If you are using the legacy app, please refer to its [user manual](legacy/).
+
 # Table of Contents
 
 - [Connectivity](#connectivity)
@@ -65,7 +67,7 @@ The following settings are applied to all configured sites:
 | Setting             | Description      |
 |---------------------|------------------|
 | Refresh&nbsp;interval    | The frequency at which new data is requested from your evcc site. The refresh interval can be set between 5 and 60 seconds. If you have multiple sites configured, the currently displayed site will be updated at the configured interval. At the same interval - but offset in time - another site will be updated in a round-robin fashion. |
-| Data&nbsp;expiry         | When viewing the [full-featured glance](#glance) or the widget, data within the expiry time may be shown until new data is retrieved. The expiry time can be set between 5 and 3600 seconds. |
+| Data&nbsp;expiry         | When viewing the [glance](#glance) or the [widget](#widget), data within the expiry time may be shown until new data is retrieved. The expiry time can be set between 5 and 3600 seconds. |
 
 # User Interface
 
@@ -73,22 +75,15 @@ The interface consists of widgets and glances. Widgets are full-screen apps with
 
 ## Glance
 
-Depending on your device’s memory capacity for glances, either the full-featured or tiny glance implementation will be used. Refer to the [devices section](#supported-devices) section to check your wearable's capabilities.
+The glance shows an overview of house battery and connected vehicles, with their respective state-of-charges and whether they are currently charging.
 
 If multiple sites are configured, glances will always display data from the last site selected in the widget.
 
 <table class="layoutTable">
   <tr>
-    <td width="50%"><h3>Full-Featured Glance</h3></td>
-    <td width="50%"><h3>Tiny Glance</h3></td>
-  </tr>
-  <tr>
-    <td><img width="66.66%" src="screenshots/glance_full_300px.png"/></td>
-    <td><img width="66.66%" src="screenshots/glance_tinyv3_300px.png"/></td>
-  </tr>
-  <tr>
-    <td style="text-align: left" valign="top">If sufficient memory is available, the glance will show battery and vehicle SoC along with charging/discharging status, updating at the configured <a href="#global-settings">interval</a>.</td>
-    <td style="text-align: left" valign="top">On devices with limited memory, the glance displays only battery and vehicle SoC. Due to memory constraints, it cannot process the state from evcc directly. Instead, a background task retrieves the state, which Garmin restricts to every five minutes. As a result, real-time charging/discharging information is not shown, and the glance indicates the data's age in minutes.</td>
+    <td width="33.33%"><img src="screenshots/glance_full_300px.png"/></td>
+    <td></td>
+    <td></td>
   </tr>
 </table>
 
@@ -101,12 +96,10 @@ This section begins with the following topics:
 - [Keys & Gestures](#keys--gestures)
 - [Site Views](#site-views)
 
-It then details navigation between site views based on your settings and device:
+It then details navigation between site views based on your settings:
 
 - [Navigation Flow: one site, launched from glance](#navigation-flow-one-site-launched-from-glance)
 - [Navigation Flow: multiple sites, launched from glance](#navigation-flow-multiple-sites-launched-from-glance)
-- [Navigation Flow: one site, widget only](#navigation-flow-one-site-widget-only)
-- [Navigation Flow: multiple sites, widget only](#navigation-flow-multiple-sites-widget-only)
 
 Finally, it concludes with an overview of the general system information view:
 
@@ -119,7 +112,7 @@ The following inputs are supported within the widget:
 | Input | Action |
 |-------|--------|
 | up/down&nbsp;key<br>touchscreen&nbsp;swipe&nbsp;up/down| Cycle through views at the same level in a carousel format. Page dots represent the total number of views in the carousel and highlight the currently active view. |
-| select/enter&nbsp;key<br>touchscreen&nbsp;tap/swipe&nbsp;left| Opens lower-level views—see the sections below for details. When a lower-level view is available, an arc next to the corresponding key indicates it:<br><img src="screenshots/input_arc_44px.png"/><br>This arc is shown on both touch and non-touch devices. On touch devices, you can also use tap input or swipe left. If a touch device has no physical key for this action, a tap indicator is shown instead of the arc:<br><img src="screenshots/input_tap_44px.png"/><br>On **Vivoactive 3** and **Vivoactive 4**, when in the widget carousel, lower-level views can only be opened by tapping—swiping left or using the keys will not work. |
+| select/enter&nbsp;key<br>touchscreen&nbsp;tap/swipe&nbsp;left| Opens lower-level views—see the sections below for details. When a lower-level view is available, an arc next to the corresponding key indicates it:<br><img src="screenshots/input_arc_44px.png"/><br>This arc is shown on both touch and non-touch devices. On touch devices, you can also use tap input or swipe left. |
 | back&nbsp;key | Navigates back to the previous higher-level view. |
 | menu&nbsp;key<br>touchscreen&nbsp;hold | Pressing the menu key opens the [System Info](#system-info-view) view, if supported by your device. On touchscreen devices, you can also tap and hold the screen to access it. This is especially important for devices without a menu key, such as the **Vivoactive 6**. |
 
@@ -228,55 +221,9 @@ For sites with detail views, an arc indicates the select button to press for acc
   </tr>
 </table>
 
-### Navigation Flow: one site, widget only
-
-On devices that do not support glances, widgets are arranged in a carousel, with a single initial view representing each widget.
-
-If a single site is configured, the main view of your site will appear in the widget carousel, with any available detail views accessible as lower-level views, indicated by an arc.
-
-<table class="layoutTable">
-  <tr>
-    <td width="33.33%"><img src="screenshots/widget_no_glance_1site_initial_300px.png"/></td>
-    <td width="33.33%"><img src="screenshots/widget_no_glance_1site_forecast_300px.png"/></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td align="center">Main View</td>
-    <td align="center">Forecast View</td>
-    <td></td>
-  </tr>
-</table>
-
-### Navigation Flow: multiple sites, widget only
-
-If multiple sites are configured, the main view of the last selected site will appear in the widget carousel. On the lower level, a carousel of all main views is available, allowing access to detail views where applicable. The site title is displayed at the top of each view, limited to the first nine characters due to space constraints.
-
-<table class="layoutTable">
-  <tr>
-    <td width="33.33%"><img src="screenshots/widget_noglance_2site_initial_300px.png"/></td>
-    <td width="33.33%"><img src="screenshots/widget_no_glance_2site_main_1_300px.png"/></td>
-    <td width="33.33%"><img src="screenshots/widget_no_glance_2site_forecast_300px.png"/></td>
-  </tr>
-  <tr>
-    <td style="padding-bottom: 20px" align="center" valign="top">The initial view included in the widget carousel.</td>
-    <td style="padding-bottom: 20px" align="center" valign="top">Opening it launches a carousel featuring the main views of all sites. Here, the first site...</td>
-    <td style="padding-bottom: 20px" align="center" valign="top">For the first site, the arc indicates that the forecast view is available, as shown here.</td>
-  </tr>
-  <tr>
-    <td></td>
-    <td><img src="screenshots/widget_no_glance_2site_main_2_300px.png"/></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td align="center" valign="top">... and the second site in the carousel.</td>
-  </tr>
-</table>
-
 ### System Info View
 
-On most devices, a system info view is available, though a few lack this feature due to limited memory. Check the [devices section](#supported-devices) to see if your device includes the system info view.  
-
-You can open it from any widget (but not from the glance) by using the menu key or the corresponding touch gesture. For example, on Fenix and Epix wearables, the menu key is accessed by long-pressing the middle button on the left side. On touch-oriented devices, tap and hold the touch screen.
+You can open the System Info View from any widget (but not from the glance) by using the menu key or the corresponding touch gesture. For example, on Fenix and Epix wearables, the menu key is accessed by long-pressing the middle button on the left side. On touch-oriented devices, tap and hold the touch screen.
 
 The view shows the evcc-garmin version, the Connect IQ (monkey) version supported by the device, and the device's part number.
 
@@ -308,58 +255,69 @@ Errors are displayed only in the views directly affected, ensuring the rest of t
 
 The table below lists supported devices along with their capabilities. Click on a column header to learn more about a specific property.
 
-| Watch              | [Glance](#glance) | [Max Sites](#max-sites) | [Detail Views](#detail-views) | [Fonts](#fonts)  | Notes                                                                              |
-|--------------------|:-----------------:|:-----------------------:|:--------------------------------:|:----------------:|------------------------------------------------------------------------------------|
-| fenix6             | Tiny              | 1                       | No                               | Static           | May not work with large sites (memory limit) <br> No glance due to memory limits   |
-| fenix6s            | Tiny              | 1                       | No                               | Static           | May not work with large sites (memory limit) <br> No glance due to memory limits   |
-| fenix6pro          | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fenix6spro         | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fenix6xpro         | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fenix7             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7s            | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7x            | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| epix2pro42mm       | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| epix2pro47mm       | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| epix2pro51mm       | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7pro          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7pronowifi    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7spro         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7xpro         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7xpronowifi   | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix843mm         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix847mm         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix8solar47mm    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix8solar51mm    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix8pro47mm      | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr745              | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fr945              | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fr945lte           | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fr955              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr165              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr165m             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr265              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr265s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr965              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr970              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu2              | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| venu2plus          | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| venu2s             | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| venu3              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu3s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venux1             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu441mm          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu445mm          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| vivoactive3        | -                 | 1                       | No                               | Static           | May not work with large sites (memory limit)                                       |
-| vivoactive3m       | -                 | 5                       | Yes                              | Static           |                                                                                    |
-| vivoactive3mlte    | -                 | 5                       | Yes                              | Static           | May not work with large sites (cpu limit)                                          |
-| vivoactive4        | -                 | 5                       | Yes                              | Static           |                                                                                    |
-| vivoactive4s       | -                 | 5                       | Yes                              | Sbtatic           |                                                                                    |
-| vivoactive5        | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| vivoactive6        | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+> Note: With legacy devices moved to a [separate app](legacy/), all supported devices now share the full feature set. The only difference is the font type. This table remains for potential device-specific details in future features.
 
-## Max Sites
-
-On devices with limited memory, the number of supported sites is restricted to one. If you’re using one of these devices and need support for multiple sites, please [contact](#help--support) the developer.
+| Watch                   | [Fonts](#fonts)  | Notes |
+|-------------------------|:----------------:|-------|
+| approachs50             | Static&#8209;Opt |       |
+| approachs7042mm         | Vector           |       |
+| approachs7047mm         | Vector           |       |
+| d2airx10                | Static&#8209;Opt |       |
+| d2mach1                 | Vector           |       |
+| d2mach2                 | Vector           |       |
+| d2mach2pro              | Vector           |       |
+| descentg2               | Static           |       |
+| descentmk343mm          | Vector           |       |
+| descentmk351mm          | Vector           |       |
+| enduro3                 | Vector           |       |
+| epix2                   | Vector           |       |
+| epix2pro42mm            | Vector           |       |
+| epix2pro47mm            | Vector           |       |
+| epix2pro51mm            | Vector           |       |
+| fenix7                  | Vector           |       |
+| fenix7s                 | Vector           |       |
+| fenix7x                 | Vector           |       |
+| fenix7pro               | Vector           |       |
+| fenix7pronowifi         | Vector           |       |
+| fenix7spro              | Vector           |       |
+| fenix7xpro              | Vector           |       |
+| fenix7xpronowifi        | Vector           |       |
+| fenixe                  | Vector           |       |
+| fenix843mm              | Vector           |       |
+| fenix847mm              | Vector           |       |
+| fenix8solar47mm         | Vector           |       |
+| fenix8solar51mm         | Vector           |       |
+| fenix8pro47mm           | Vector           |       |
+| fr165                   | Vector           |       |
+| fr165m                  | Vector           |       |
+| fr255                   | Static           |       |
+| fr255m                  | Static           |       |
+| fr255s                  | Static&#8209;Opt |       |
+| fr255sm                 | Static&#8209;Opt |       |
+| fr265                   | Vector           |       |
+| fr265s                  | Vector           |       |
+| fr57042mm               | Vector           |       |
+| fr57047mm               | Vector           |       |
+| fr955                   | Vector           |       |
+| fr965                   | Vector           |       |
+| fr970                   | Vector           |       |
+| instinct3amoled45mm     | Static           |       |
+| instinct3amoled50mm     | Static           |       |
+| instinctcrossoveramoled | Static&#8209;Opt |       |
+| marq2                   | Vector           |       |
+| marq2aviator            | Vector           |       |
+| venu2                   | Static&#8209;Opt |       |
+| venu2plus               | Static&#8209;Opt |       |
+| venu2s                  | Static&#8209;Opt |       |
+| venu3                   | Vector           |       |
+| venu3s                  | Vector           |       |
+| venux1                  | Vector           |       |
+| venu441mm               | Vector           |       |
+| venu445mm               | Vector           |       |
+| venusq2                 | Static&#8209;Opt |       |
+| venusq2m                | Static&#8209;Opt |       |
+| vivoactive5             | Static&#8209;Opt |       |
+| vivoactive6             | Vector           |       |
 
 ## Fonts
 
@@ -370,10 +328,6 @@ The app offers five font sizes and selects the most suitable one based on the co
 | Vector | If the device supports vector fonts, the five sizes are evenly distributed from largest to smallest for a balanced appearance. |
 | Static | On devices without vector font support, predefined font sizes must be used (medium, small, tiny, glance, xtiny). This can result in uneven size differences, such as a larger gap between the largest and second-largest font than between the smallest ones. |
 | Static&#8209;Opt | "Opt" stands for optimized. On some devices, certain adjacent font sizes may be identical (e.g., small and tiny could appear the same). In such cases, duplicate sizes are removed, effectively increasing the range of distinct font sizes available for better content display. |
-
-## Detail Views
-
-On some devices with very limited memory available to apps, the [detail views](#site-views) of the site and the [system info view](#system-info-view) are not available. Additionally, the [main view](#site-views) is restricted to showing only connected vehicles — heaters and integrated devices are omitted on those devices.
 
 # Troubleshooting
 
@@ -401,8 +355,6 @@ Some other common errors are:
 |-------|-------------|
 | expected Number/Float/Long/Double | This error may occur if you're using an older version of the app to access an evcc instance running version 0.133.0 or later. Ensure you have the latest version of the app installed. In some cases, the Connect IQ app may install an outdated version despite a newer one being available. If this happens, try uninstalling and reinstalling the app.
 
-
-
 # Help & Support
 
 You can get help by posting in [this thread](https://github.com/evcc-io/evcc/discussions/14013) on the evcc forum or by reaching out to the developer via the **Contact Developer** link on the app's [Connect IQ Store page](https://apps.garmin.com/en-US/apps/2bc2ba9d-b117-4cdf-8fa7-078c1ac90ab0).
@@ -411,6 +363,7 @@ You can get help by posting in [this thread](https://github.com/evcc-io/evcc/dis
 
 | Version | Changes |
 |--------:|-------------|
+| **v2.0.0** | Improved support for a larger number of loadpoints<br>Added support for all smartwatches with CIQ 5.0.0+ and sufficient hardware resources (Approach, D2, Descent, Enduro, MARQ, …)<br>Dropped support for devices with earlier CIQ versions or insufficient hardware resources. These will continue to be supported in the new [evcc Legacy app](legacy/)<br>Improved support for watches with rectangular screens (Venu Sq 2, Venu Sq 2 Music, Venu X1)<br>Forecast adjustment based on real data is now disabled by default and can be enabled in the app settings.<br>Minor UI fixes
 | **v1.4.4** | Fixed an issue where the battery status was no longer displayed due to a breaking change in evcc 0.301.0. [ticket #129](https://github.com/METIQ-Solutions/evcc-garmin/issues/129)<br>Added support for the newly released Fenix 8 Pro, Forerunner 970, and Venu 4 models [ticket #131](https://github.com/METIQ-Solutions/evcc-garmin/issues/131)<br>Updated to Garmin Connect IQ SDK 8.4.1. [ticket #130](https://github.com/METIQ-Solutions/evcc-garmin/issues/130)
 | **v1.4.3** | Added support for the newly released Venu X1 [ticket #128](https://github.com/METIQ-Solutions/evcc-garmin/issues/128)<br>Updated to handle an upcoming breaking change in the evcc REST API [ticket #127](https://github.com/METIQ-Solutions/evcc-garmin/issues/127)
 | **v1.4.2.1** | Fixed an issue where the state did not persist correctly, causing a "Loading" message to appear when opening the widget [ticket #126](https://github.com/METIQ-Solutions/evcc-garmin/issues/126)

@@ -81,7 +81,7 @@ If multiple sites are configured, glances will always display data from the last
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/glance_full_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/glance_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -122,21 +122,37 @@ The most important view is the main view of the site:
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_views_main_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_main_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
 </table>
 
-The main view includes fixed elements representing power flows from the PV, grid, and home. Dynamic elements, such as the battery and load points, are limited to a maximum of six.
+The main view shows the basic power flows between PV, grid, battery, load points, and home.
 
-If a battery is present, the house battery is always displayed first. When multiple batteries exist, a single element consolidates the total data from all batteries.
+If multiple batteries are present, their data is combined into a single element.
 
-EV charging load points appear only when a vehicle is connected. Each load point displays a main line with the vehicle name, power flow, state of charge (SoC), and charging mode. If the vehicle is charging, a smaller secondary line shows the charging mode and estimated remaining charge time. The layout prioritizes displaying as many load points as possible, with secondary lines shown only if space permits.
+If two or fewer load points are available, they are displayed individually, including their state, charging mode, and power consumption.
 
-Load points representing heaters or integrated devices are always displayed, even when they are not active. However, on some older devices with very limited app memory, these load points may be omitted entirely. For details, refer to the Detail Views column in the [Supported Devices](#supported-devices) table.
+If more than two load points are present, they are grouped into the categories chargers, heaters, and integrated devices. Categories with a single load point are still shown individually. Categories with multiple load points are displayed as a summary, while the individual load points are accessible in the detail views (see below).
 
-Beyond the main view, additional detail views are available:
+The screenshot above illustrates this behavior, showing a single charger load point and two integrated devices grouped together.
+
+In addition to the main view, the following detail views are available:
+
+#### Loadpoint View(s)
+
+As described above, when more than two load points are present, they may be grouped. A separate load point view is shown for each group. If a group contains more than three load points, it is split across multiple views.
+
+<table class="layoutTable">
+  <tr>
+    <td width="33.33%"><img src="screenshots/widget_1site_loadpoint_300px.png"/></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+The example above shows a group of integrated devices with two load points.
 
 #### Forecast View
 
@@ -144,7 +160,7 @@ The forecast displays the remaining energy for today, tomorrow, and partially fo
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_views_forecast_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_forecast_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -170,34 +186,7 @@ Data is presented for four time periods: the last 30 days, year to date, the las
 
 <br>
 
-### Navigation Flow: one site, launched from glance
-
-If you have a single site configured and launch the widget from the glance, you'll enter a carousel featuring the main view and any available detail views, such as the forecast.
-
-<table class="layoutTable">
-  <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_main_300px.png"/></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td style="padding-bottom: 20px;" align="center">Main View</td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_forecast_300px.png"/></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td align="center">Forecast View</td>
-    <td></td>
-    <td></td>
-  </tr>
-</table>
-
-### Navigation Flow: multiple sites, launched from glance
+### Navigation Flow with Multiple Sites
 
 If you have multiple sites configured and launch the widget from the glance, you'll enter a carousel displaying the sites. The site title appears at the top of each view, limited to the first nine characters due to space constraints.
 
@@ -205,18 +194,45 @@ For sites with detail views, an arc indicates the select button to press for acc
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_2site_main_1_300px.png"/></td>
-    <td width="33.33%"><img src="screenshots/widget_2site_forecast_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_2site_1_main_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
     <td></td>
-  </tr><tr>
+  </tr>
+  <tr>
     <td style="padding-bottom: 20px" align="center" valign="top">First site, with an arc indicating available lower-level views.</td>
     <td style="padding-bottom: 20px" align="center" valign="top">Forecast view for the first site.</td>
     <td></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/widget_2site_main_2_300px.png"/></td>
-  </tr><tr>
-    <td align="center" valign="top">Second site without lower-level views.</td>
+    <td></td>
+    <td><img src="screenshots/widget_2site_1_statistics_300px.png"/></td>
+    <td></td>
+  </tr>
+  <tr>
+  <tr>
+    <td></td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Statistics view for the first site.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td width="33.33%"><img src="screenshots/widget_2site_1_main_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_2site_1_loadpoint_300px.png"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td style="padding-bottom: 20px" align="center" valign="top">Second site, with an arc indicating available lower-level views.</td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Loadpoint view for the second site.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><img src="screenshots/widget_2site_1_statistics_300px.png"/></td>
+    <td></td>
+  </tr>
+  <tr>
+  <tr>
+    <td></td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Statistics view for the second site.</td>
     <td></td>
   </tr>
 </table>
@@ -225,7 +241,7 @@ For sites with detail views, an arc indicates the select button to press for acc
 
 You can open the System Info View from any widget (but not from the glance) by using the menu key or the corresponding touch gesture. For example, on Fenix and Epix wearables, the menu key is accessed by long-pressing the middle button on the left side. On touch-oriented devices, tap and hold the touch screen.
 
-The view shows the evcc-garmin version, the Connect IQ (monkey) version supported by the device, and the device's part number.
+The view shows the evcc-garmin version, the Connect IQ (monkey) version supported by the device, and the device's part number.6
 
 <table class="layoutTable">
   <tr>

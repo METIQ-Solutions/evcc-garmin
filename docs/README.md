@@ -190,12 +190,12 @@ Data is presented for four time periods: the last 30 days, year to date, the las
 
 If you have multiple sites configured and launch the widget from the glance, you'll enter a carousel displaying the sites. The site title appears at the top of each view, limited to the first nine characters due to space constraints.
 
-For sites with detail views, an arc indicates the select button to press for access. If supported by the device, a tap or swipe left on the touchscreen can also open these specialized views. Pressing the back button will return to the site's main view.
+For sites with detail views, an arc indicates the select button to press for access. If supported by the device, a tap or swipe left on the touchscreen can also open these detail views. Pressing the back button will return to the site's main view.
 
 <table class="layoutTable">
   <tr>
-    <td style="padding-bottom: 20px" align="center" valign="top">Top Level Views</td>
-    <td style="padding-bottom: 20px" align="center" valign="top">2nd Level Views</td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Main Views</td>
+    <td style="padding-bottom: 20px" align="center" valign="top">Detail Views</td>
     <td></td>
   </tr>
   <tr>

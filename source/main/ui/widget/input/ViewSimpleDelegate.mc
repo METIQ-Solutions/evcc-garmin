@@ -16,7 +16,7 @@ class ViewSimpleDelegate extends WatchUi.BehaviorDelegate {
 
     public function onMenu() as Boolean {
         // Logger.debug( "ViewSimpleDelegate: onMenu" );
-        WatchUi.pushView( new SystemInfoView(), new ViewSystemInfoDelegate(), WatchUi.SLIDE_BLINK );
+        ViewStack.pushView( new SystemInfoView(), new ViewSystemInfoDelegate(), WatchUi.SLIDE_BLINK );
         return true;
     }
 

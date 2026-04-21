@@ -30,6 +30,38 @@ class EvccSiteViewBase extends WatchUi.View {
         :pageIndex as Number?
     };
 
+    // Constructor
+    // Part of the constructor has to be duplicated, since initialization of non-null members can
+    // only be done in the constructor, not in in another function 
+    protected function initialize( options as Options ) {
+        // Logger.debug("WidgetSiteBase: initialize");
+        View.initialize();
+
+        _siteIndex = options[:siteIndex] as Number;
+        _parentView = options[:parentView] as EvccSiteViewBase;
+        _sameLevelViews = options[:views] as ArrayOfSiteViews;
+
+        var pageIndex = options[:pageIndex];
+        if( pageIndex instanceof Number ) {
+            _pageIndex = pageIndex as Number;
+        }
+
+        // This part is special for pre-rendering
+        // For pre-rendering, the state request should not just call WatchUi.requestUpdate, but
+        // instead should trigger a callback to all views related to the state. Therefore
+        // each view registers a callback with the corresponding state request.
+        // We register with the state request for callbacks
+        getWebRequest().registerCallback( self );
+        
+        // For content and shell, we instantiate the versions
+        // working with tasks. Updating all views needs a lot of resources and
+        // would block user input, if it is not split up in small tasks that
+        // are executed by the task queue (which allows user input to be processed
+        // between each task).
+        _shell = new SiteShellPreRenderer( self );
+        _content = new SiteContentPreRenderer( self );
+    }
+
     // Functions to access the index and state request for the site of this view
     private var _siteIndex as Number;
     public function getSiteIndex() as Number { return _siteIndex; }
@@ -120,59 +152,36 @@ class EvccSiteViewBase extends WatchUi.View {
         WebRequestRegistry.setActiveSite( _siteIndex );
     }
     function onHide() as Void { _isActiveView = false; }
+    public function isActiveView() as Boolean {
+        return _isActiveView;
+    }
 
     private var _content as SiteContentPreRenderer;
     private var _shell as SiteShellPreRenderer;
 
-    // Constructor
-    // Part of the constructor has to be duplicated, since initialization of non-null members can
-    // only be done in the constructor, not in in another function 
-    protected function initialize( options as Options ) {
-        // Logger.debug("WidgetSiteBase: initialize");
-        View.initialize();
-
-        _siteIndex = options[:siteIndex] as Number;
-        _parentView = options[:parentView] as EvccSiteViewBase;
-        _sameLevelViews = options[:views] as ArrayOfSiteViews;
-
-        var pageIndex = options[:pageIndex];
-        if( pageIndex instanceof Number ) {
-            _pageIndex = pageIndex as Number;
-        }
-
-        // This part is special for pre-rendering
-        // For pre-rendering, the state request should not just call WatchUi.requestUpdate, but
-        // instead should trigger a callback to all views related to the state. Therefore
-        // each view registers a callback with the corresponding state request.
-        // We register with the state request for callbacks
-        getWebRequest().registerCallback( self );
-        
-        // For content and shell, we instantiate the versions
-        // working with tasks. Updating all views needs a lot of resources and
-        // would block user input, if it is not split up in small tasks that
-        // are executed by the task queue (which allows user input to be processed
-        // between each task).
-        _shell = new SiteShellPreRenderer( self );
-        _content = new SiteContentPreRenderer( self );
-    }
-
-
+ 
     // The dispose function must be called when a view is not needed
     // anymore. It unregisters the callback with the state request,
     // and switches to the first view in the carousel if disposed
     // view is currently being displayed.
+    private var _isDisposed as Boolean = false;
     public function dispose() as Void { 
         // Logger.debug( "EvccSiteViewBase.dispose" );
         getWebRequest().unregisterCallback( self );
+        _isDisposed = true;
+        /*
         if( _isActiveView ) {
             var delegate = ViewStack.getCurrentView()[1];
             if( delegate instanceof ViewCarouselDelegate ) {
                 // Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
-                delegate.switchToFirst();
+                delegate.switchToFirstOrParent();
             }
-        }     
+        }
+        */    
     }
-
+    public function isDisposed() as Boolean {
+        return _isDisposed;
+    }
 
     private function removeTasks() as Void {
         TaskQueue.getInstance().removeByTaskExceptionState( getTaskExceptionState() );
@@ -275,10 +284,4 @@ class EvccSiteViewBase extends WatchUi.View {
         }
     }
 
-    /*
-    private var _updateCounter as Number = 0;
-    public function testTimer() as Void {
-        // Logger.debug( "WidgetSiteBase: timer triggered" );
-    }
-    */
 }

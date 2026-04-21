@@ -199,10 +199,10 @@ import Toybox.Lang;
     }
     function prepareByTasks() as Void {
         // Logger.debug("WidgetSiteMain: prepareByTasks site=" + getSiteIndex() );
-        if( _detailViewManager != null ) {
-            TaskQueue.getInstance().add( new InitOrUpdateDetailViewsTask( self ) );
-        }
         EvccSiteViewBase.prepareByTasks();
+        if( _detailViewManager != null ) {
+            TaskQueue.getInstance().addToFront( new InitOrUpdateDetailViewsTask( self ) );
+        }
     }
 
 
@@ -290,7 +290,7 @@ import Toybox.Lang;
 
 
     // Function to generate the line for heater loadpoints
-private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
+    private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
         var heater = loadpoint.getHeater() as Heater;
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
         
@@ -310,7 +310,7 @@ private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
 
 
     // Function to generate the line for integrated device loadpoints
-private function renderIntegratedDevice( loadpoint as Loadpoint ) as HorizontalBlock {
+    private function renderIntegratedDevice( loadpoint as Loadpoint ) as HorizontalBlock {
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
         
         line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );

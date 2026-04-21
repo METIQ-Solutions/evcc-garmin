@@ -229,6 +229,24 @@ class DetailViewManager {
             // In the end, we add the forecast and statistics view
             addDetailView( _forecastView );
             addDetailView( _statisticsView );
+
+            // Once the new array has been defined, check whether the current view
+            // has been disposed of. If so, use the delegate to switch to a different
+            // view. If at least one view remains on the current level, switch to the
+            // first view on that level; otherwise, switch to the parent level.
+            var viewBinding = ViewStack.getCurrentView();
+            var view = viewBinding[0];
+            var delegate = viewBinding[1];
+
+            if( view instanceof EvccSiteViewBase && view.isActiveView() && view.isDisposed() ) {
+                if( delegate instanceof ViewCarouselDelegate ) {
+                    // Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view or parent view." );
+                    delegate.switchToFirstOrParent();
+                } else if( delegate instanceof ViewSimpleDelegate ) {
+                    // Logger.debug( "EvccSiteViewBase.dispose: single view is active, switching to parent view." );
+                    delegate.onBack();
+                }
+            }
         }
     }
 

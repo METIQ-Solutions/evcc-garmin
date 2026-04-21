@@ -127,6 +127,7 @@ class SiteShell {
 
         // If there is more than one view on the same level, draw the page indicator
         var piSpacing = 0;
+        _pageIndicator = null;
         if( _view.getSameLevelViewCount() > 1 ) {
             _pageIndicator = new PageIndicator( _view.getPageIndex(), _view.getSameLevelViewCount(), calcDc );
             piSpacing = _pageIndicator.getSpacing();
@@ -134,6 +135,7 @@ class SiteShell {
 
         // If there are lower level views, draw the select indicator
         var siSpacing = 0;        
+        _selectIndicator = null;
         if( _view.getLowerLevelViewCount() > 0 ) {
             _selectIndicator = new SelectIndicator();
             siSpacing = ( _selectIndicator as SelectIndicator ).getSpacing( calcDc ) as Number;

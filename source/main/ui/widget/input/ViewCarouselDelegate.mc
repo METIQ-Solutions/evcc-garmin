@@ -134,7 +134,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
                     }
                     delegate = new ViewCarouselDelegate( lowerLevelViews, childCrumb );
                 }
-                WatchUi.pushView( lowerLevelViews[activeSubView], delegate, WatchUi.SLIDE_LEFT );
+                ViewStack.pushView( lowerLevelViews[activeSubView], delegate, WatchUi.SLIDE_LEFT );
             }
             return true;
         } catch ( ex ) {
@@ -154,7 +154,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
             if( _views.size() > 1 ) {
                 var activeView = _breadCrumb.getSelectedChild( _views.size() );
                 activeView = activeView == _views.size() - 1 ? 0 : activeView + 1;
-                WatchUi.switchToView( _views[activeView], self, WatchUi.SLIDE_UP );
+                ViewStack.switchToView( _views[activeView], self, WatchUi.SLIDE_UP );
                 _breadCrumb.setSelectedChild( activeView );
             }
             return true;
@@ -171,7 +171,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
             if( _views.size() > 1 ) {
                 var activeView = _breadCrumb.getSelectedChild( _views.size() );
                 activeView = activeView == 0 ? _views.size() - 1 : activeView - 1;
-                WatchUi.switchToView( _views[activeView], self, WatchUi.SLIDE_DOWN );
+                ViewStack.switchToView( _views[activeView], self, WatchUi.SLIDE_DOWN );
                 _breadCrumb.setSelectedChild( activeView );
             }
             return true;
@@ -181,13 +181,18 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
         }
     }
 
-    public function switchToFirst() as Void {
-        // Logger.debug("ViewCarouselDelegate: switchToFirst");
+    // Used to switch to a different view when a view is disposed.
+    // It either switches to the first view in the carousel or of there
+    // is none left then to the parent view.
+    public function switchToFirstOrParent() as Void {
+        // Logger.debug("ViewCarouselDelegate: switchToFirstOrParent");
         if( _views.size() == 0 ) {
-            throw new OperationNotAllowedException( "ViewCarouselDelegate: attempted switch to first on an empty view array." );
+            // If there is no view left, we go one level up
+            onBack();
+        } else {
+            // Otherwise we switch to the first view in the carousel
+            ViewStack.switchToView( _views[0], self, WatchUi.SLIDE_DOWN );
+            _breadCrumb.setSelectedChild( 0 );
         }
-        WatchUi.switchToView( _views[0], self, WatchUi.SLIDE_DOWN );
-        _breadCrumb.setSelectedChild( 0 );
     }
-
 }

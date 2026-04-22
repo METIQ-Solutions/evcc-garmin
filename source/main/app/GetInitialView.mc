@@ -57,14 +57,14 @@ class GetInitialView {
                 // since it can be either multiple sites, or one site with detailed views
                 // (such as forecast) presented on the same level
                 var activeView = breadCrumb.getSelectedChild( views.size() );
-                var delegate = new ViewCarouselDelegate( views, breadCrumb );
+                var delegate = new SiteCarouselDelegate( views, breadCrumb );
                 
                 // Start with the active page
                 return [views[activeView], delegate];
             }
         } catch ( ex ) {
             Logger.debugException( ex );
-            return [new ErrorView( ex ), new ViewSimpleDelegate()];
+            return [new ErrorView( ex ), new SiteSimpleDelegate()];
         }
     }
 }

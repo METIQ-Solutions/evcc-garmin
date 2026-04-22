@@ -13,12 +13,13 @@ import Toybox.Application;
 // get swipe left to work as expected on some devices.
 
 // Standard derivate, that just implements onSwipe for swipe left
-(:exclForSwipeLeftOverride) class ViewCarouselDelegate extends ViewCarouselDelegateBase {
+(:exclForSwipeLeftOverride) 
+class SiteCarouselDelegate extends ViewCarouselDelegateBase {
     function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
         ViewCarouselDelegateBase.initialize( views, breadCrumb );
     }
     public function onSwipe( swipeEvent ) as Boolean {
-        // Logger.debug("ViewCarouselDelegate: onSwipe");
+        // Logger.debug("SiteCarouselDelegate: onSwipe");
         if( swipeEvent.getDirection() == SWIPE_LEFT ) {
             return onSelect();
         }
@@ -34,7 +35,7 @@ import Toybox.Application;
 // be called, because onNextPage() is called first.
 // To circumvent this, excplicitly does not handle onNextPage(), and instead
 // uses onKey() and onSwipe()
-(:exclForSwipeLeftDefault) class ViewCarouselDelegate extends ViewCarouselDelegateBase {
+(:exclForSwipeLeftDefault) class SiteCarouselDelegate extends ViewCarouselDelegateBase {
     private var _onNextPage as Boolean = false;
     function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
         ViewCarouselDelegateBase.initialize( views, breadCrumb );
@@ -42,7 +43,7 @@ import Toybox.Application;
     // We call onNextPage again if it was the original behavior,
     // or hand over to our base class
     public function onKey( keyEvent ) as Boolean {
-        // Logger.debug("ViewCarouselDelegate (override): onKey");
+        // Logger.debug("SiteCarouselDelegate (override): onKey");
         if( _onNextPage ) {
             return onNextPage();
         } else {
@@ -54,7 +55,7 @@ import Toybox.Application;
     // again if it was the original behavior,
     // or hand over to our base class
     public function onSwipe( swipeEvent ) as Boolean {
-        // Logger.debug("ViewCarouselDelegate (override): onSwipe");
+        // Logger.debug("SiteCarouselDelegate (override): onSwipe");
         if( swipeEvent.getDirection() == SWIPE_LEFT ) {
             _onNextPage = false;
             return onSelect();
@@ -80,12 +81,12 @@ import Toybox.Application;
 }
 
 // Main class implementing most of the delegate functionality
-class ViewCarouselDelegateBase extends ViewSimpleDelegate {
+class ViewCarouselDelegateBase extends SiteSimpleDelegate {
     private var _views as ArrayOfSiteViews;
     private var _breadCrumb as BreadCrumb;
 
     function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
-        ViewSimpleDelegate.initialize();
+        SiteSimpleDelegate.initialize();
         _views = views;
         _breadCrumb = breadCrumb;
     }
@@ -94,7 +95,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // behavior. In some gesture-based devices the keys are not
     // associated with that behavior (Venu, Vivoactive)
     (:exclForHasSelect) public function onKey( keyEvent ) as Boolean {
-        // Logger.debug("ViewCarouselDelegate: onKey");
+        // Logger.debug("SiteCarouselDelegate: onKey");
         if( keyEvent.getKey() == KEY_ENTER ) {
             return onSelect();
         }
@@ -104,7 +105,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // When the select action is triggered, we open the active sub view
     public function onSelect() as Boolean {
         try {
-            // Logger.debug("ViewCarouselDelegate: onSelect");
+            // Logger.debug("SiteCarouselDelegate: onSelect");
 
             // For devices that do not have glances, this view
             // acts as glance, displaying only the selected site
@@ -127,12 +128,12 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
                 activeSubView = activeSubView < lowerLevelViews.size() ? activeSubView : 0;
                 var delegate;
                 if( lowerLevelViews.size() == 1 ) {
-                    delegate = new ViewSimpleDelegate();
+                    delegate = new SiteSimpleDelegate();
                 } else {
                     if( ! _views[0].actsAsGlance() ) {
                         childCrumb = _breadCrumb.getChild( activeView );
                     }
-                    delegate = new ViewCarouselDelegate( lowerLevelViews, childCrumb );
+                    delegate = new SiteCarouselDelegate( lowerLevelViews, childCrumb );
                 }
                 ViewStack.pushView( lowerLevelViews[activeSubView], delegate, WatchUi.SLIDE_LEFT );
             }
@@ -147,7 +148,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // on the current level. This methods implement wrapping,
     // i.e. the last view goes to the first and vice versa.
     public function onNextPage() as Boolean {
-        // Logger.debug("ViewCarouselDelegate: onNextPage");
+        // Logger.debug("SiteCarouselDelegate: onNextPage");
         try {
             // In case of errors, there may be only one view
             // present and we do not need to execute tha page change
@@ -164,7 +165,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
         }
     }
     public function onPreviousPage() as Boolean {
-        // Logger.debug("ViewCarouselDelegate: onPreviousPage");
+        // Logger.debug("SiteCarouselDelegate: onPreviousPage");
         try {
             // In case of errors, there may be only one view
             // present and we do not need to execute tha page change
@@ -185,7 +186,7 @@ class ViewCarouselDelegateBase extends ViewSimpleDelegate {
     // It either switches to the first view in the carousel or of there
     // is none left then to the parent view.
     public function switchToFirstOrParent() as Void {
-        // Logger.debug("ViewCarouselDelegate: switchToFirstOrParent");
+        // Logger.debug("SiteCarouselDelegate: switchToFirstOrParent");
         if( _views.size() == 0 ) {
             // If there is no view left, we go one level up
             onBack();

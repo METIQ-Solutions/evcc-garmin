@@ -172,7 +172,7 @@ class EvccSiteViewBase extends WatchUi.View {
         /*
         if( _isActiveView ) {
             var delegate = ViewStack.getCurrentView()[1];
-            if( delegate instanceof ViewCarouselDelegate ) {
+            if( delegate instanceof SiteCarouselDelegate ) {
                 // Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view." );
                 delegate.switchToFirstOrParent();
             }

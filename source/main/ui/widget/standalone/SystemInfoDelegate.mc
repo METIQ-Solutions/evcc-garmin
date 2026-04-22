@@ -3,7 +3,7 @@ import Toybox.WatchUi;
 import Toybox.Application;
 
 // Delegate for the system info view, only used to override the slide behavior
-class ViewSystemInfoDelegate extends WatchUi.BehaviorDelegate {
+class SystemInfoDelegate extends WatchUi.BehaviorDelegate {
     function initialize() {
         BehaviorDelegate.initialize();
     }

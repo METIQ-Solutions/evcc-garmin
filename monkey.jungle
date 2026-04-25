@@ -23,7 +23,7 @@ project.typecheck = 3
 # This includes the path to the base device properties.
 #
 # Applies to all devices
-sourceBase = source/main;source/properties/base
+sourceBase = source/main;source/properties/base;source/jq
 
 # For devices that override the default device properties, a directory
 # under source/properties/devices must contain a DevicePropertiesOverride

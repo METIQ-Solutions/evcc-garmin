@@ -1,0 +1,1 @@
+cscript generate-jq.js //E:JScript

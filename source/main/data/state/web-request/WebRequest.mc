@@ -27,35 +27,6 @@ typedef WebRequestCallback as interface {
 (:glance) 
 class WebRequest {
     
-    // To conserve memory, use a jq filter to narrow the
-    // response to the fields we need on the server side
-    // In the background we only request basic data, the foreground
-    // class derived from this one will add additional data to the JQ filter
-    // NOTE: in some instances we support newer and older REST API versions,
-    // see for example the access to battery and grid fields.
-    private const JQ_BASE_OPENING = 
-        " . as $root | ($root.result // $root) as $data | {loadpoints:[($data.loadpoints[]|{chargePower,chargerFeatureHeating,chargerFeatureIntegratedDevice,charging,connected,vehicleName,vehicleSoc,title,phasesActive,mode,chargeRemainingDuration})],pvPower:$data.pvPower,homePower:$data.homePower,siteTitle:$data.siteTitle,batterySoc:$data.batterySoc,batteryPower:$data.batteryPower,gridPower:$data.gridPower,grid:{power:$data.grid.power},vehicles:($data.vehicles|map_values({title}))";
-
-    private const JQ_STATISTICS = 
-        ",statistics:$data.statistics|map_values({solarPercentage})";
-
-    private const JQ_FORECAST = 
-        ",forecast:{solar:$data.forecast.solar|{scale,today:{energy:.today.energy},tomorrow:{energy:.tomorrow.energy},dayAfterTomorrow:{energy:.dayAfterTomorrow.energy}}}";
-
-    // Close the main filter
-    private const JQ_BASE_CLOSING = 
-        "}" +
-        // The "battery" fields in JQ_BASE_OPENING are used in evcc versions < 0.301.0
-        // From 0.301.0 onwards, they are in the "battery" object
-        // Since < 0.301.0 "battery" was an array, we cannot just access it like we do 
-        // for the old/new version of "grid", instead we need a conditional access
-        // here and merge it into the main object
-        "+if ($data.battery|type)==\"object\" then {battery:{power:$data.battery.power,soc:$data.battery.soc}} else {} end" +
-        // Add function to remove all null values and empty objects or arrays
-        "|walk(if type==\"object\"then with_entries(select(.value!=null and .value!={} and .value!=[]))elif type==\"array\"then map(select(.!=null and .!={} and .!=[]))else . end)";
-
-    private const JQ as String = JQ_BASE_OPENING + JQ_FORECAST + JQ_STATISTICS + JQ_BASE_CLOSING;
-
     // Other classes can register callback methods that will 
     // be called whenever a new web response is received
     private var _callbacks as Array<WebRequestCallback> = [];
@@ -209,7 +180,7 @@ class WebRequest {
         var siteConfig = new SiteConfig( _siteIndex );
 
         var url = siteConfig.getUrl() + "/api/state";
-        var parameters = { "jq" => JQ };
+        var parameters = { "jq" => EVCC_JQ_FILTER };
 
         // Logger.debug( JQ );
         
@@ -259,7 +230,7 @@ class WebRequest {
         // To mask temporary errors because of instable connections, we report
         // errors only if the data we have now has expired, otherwise we continue
         // to display the existing data
-        } else if( ! hasPreviousValidState() ) {
+        } else { // if( ! hasPreviousValidState() ) {
             _error = true;
             if ( responseCode == -104 ) {
                 _errorMessage = "No phone"; _errorCode = "";

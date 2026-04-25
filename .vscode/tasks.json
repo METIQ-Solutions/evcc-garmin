@@ -30,6 +30,16 @@
           "isDefault": false
         },
         "problemMatcher": []
+      },
+      {
+        "label": "evccg: Generate JQ",
+        "type": "shell",
+        "command": "cd .\\scripts\\generate-jq;.\\generate-jq.bat",
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "problemMatcher": []
       }
     ]
   }

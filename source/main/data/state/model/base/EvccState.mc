@@ -32,6 +32,8 @@ import Toybox.Time;
     public static const SITETITLE = "siteTitle";
     private const LOADPOINTS = "loadpoints";
     private const FORECAST = "forecast";
+    private const FORECAST_SOLAR = "solar";
+    private const FORECAST_GRID = "grid";
     private const STATISTICS = "statistics";
 
     public function hasBattery() as Boolean { return _hasBattery; }
@@ -112,9 +114,13 @@ import Toybox.Time;
         return categories[index];
     }
 
-    private var _forecast as SolarForecast?;
-    public function getForecast() as SolarForecast? { return _forecast; }
-    (:typecheck([disableBackgroundCheck,disableGlanceCheck])) public function hasForecast() as Boolean { return _forecast == null ? false : _forecast.hasForecast(); }
+    private var _solarForecast as SolarForecast?;
+    public function getSolarForecast() as SolarForecast? { return _solarForecast; }
+    public function hasSolarForecast() as Boolean { return _solarForecast != null; }
+
+    private var _gridPrices as GridPriceForecast?;
+    public function getGridPrices() as GridPriceForecast? { return _gridPrices; }
+    public function hasGridPrices() as Boolean { return _gridPrices != null; }
 
     protected var _statistics as Statistics?;
     public function getStatistics() as Statistics { return _statistics as Statistics; }
@@ -134,41 +140,45 @@ import Toybox.Time;
     // Some classes are not available in background/glance
     // The code handles this, but the typechecker does not know that,
     // so we need to exclude the scope checks.
-    function initialize( result as JsonObject, dataTimestamp as Moment ) {
+    function initialize( result as JsonAdapter, dataTimestamp as Moment ) {
         _timestamp = dataTimestamp;
 
         // For battery power we support both the old structure with
         // batterySoc and batteryPower and the new structure with
         // battery.soc and battery.bower.
-        var battery = result[BATTERY] as JsonObject;
-        if( battery != null && battery[SOC] != null ) {
-            _batterySoc = battery[SOC] as Number;
-            _batteryPower = battery[POWER] as Number;
-            _hasBattery = true;
-        } else if( result[BATTERYSOC] != null ) {
-            _batterySoc = result[BATTERYSOC] as Number;
-            _batteryPower = result[BATTERYPOWER] as Number;
-            _hasBattery = true;
+        var battery = result.getJsonObjectOrNull( BATTERY );
+        if( battery != null ) {
+            _batterySoc = battery.getNumberOrNull( SOC );
+            if( _batterySoc != null ) {
+                _batteryPower = battery.getNumber( POWER );
+                _hasBattery = true;
+            }
+        }
+        if( ! _hasBattery ) {
+            _batterySoc = result.getNumberOrNull( BATTERYSOC );
+            if( _batterySoc != null ) {
+                _batteryPower = result.getNumber( BATTERYPOWER );
+                _hasBattery = true;
+            }
         }
 
         // For grid power we support both the old structure with
         // result.gridPower and the new structure with result.grid.power
         // used by evcc from 0.132.2 onwards
-        _gridPower = result[GRIDPOWER] as Number?;
+        _gridPower = result.getNumberOrNull( GRIDPOWER );
         if( _gridPower == null ) {
-            var grid = result[GRID] as Array;
-            _gridPower = grid[POWER] as Number?;
+            _gridPower = result.getJsonObject( GRID ).getNumberOrNull( POWER );
         }
 
-        _homePower = result[HOMEPOWER] as Number?;
-        _pvPower = result[PVPOWER] as Number?;
-        _siteTitle = result[SITETITLE] as String?;
+        _homePower = result.getNumberOrNull( HOMEPOWER );
+        _pvPower = result.getNumberOrNull( PVPOWER );
+        _siteTitle = result.getStringOrNull( SITETITLE );
 
-        var loadpoints = result[LOADPOINTS] as Array;
+        var loadpoints = result.getArrayOrNull( LOADPOINTS );
         // If there are no loadpoints, we get null, not an empty array
         if( loadpoints != null ) {
             for( var i = 0; i < loadpoints.size(); i++ ) {
-                var loadpointData = loadpoints[i] as JsonObject;
+                var loadpointData = loadpoints[i];
                 var loadpoint = new Loadpoint( loadpointData, result );
                 // In addition to the array of all loadpoints, we also
                 // maintain a list of each type, for the display of categories
@@ -182,11 +192,18 @@ import Toybox.Time;
             }
         }
 
-        var forecast = result[FORECAST] as JsonObject?;
+        var forecast = result.getJsonObjectOrNull( FORECAST );
         if( forecast != null ) {
-            _forecast = new SolarForecast( forecast );
+            var solarForecast = forecast.getJsonObjectOrNull( FORECAST_SOLAR );
+            if( solarForecast != null) {
+                _solarForecast = new SolarForecast( forecast );
+            }
+            var gridPrices = forecast.getJsonObjectOrNull( FORECAST_GRID );
+            if( gridPrices != null ) {
+                _gridPrices = new GridPriceForecast( gridPrices );
+            }
         }
-        var statistics = result[STATISTICS] as JsonObject?;
+        var statistics = result.getJsonObjectOrNull( STATISTICS );
         if( statistics != null ) {
             _statistics = new Statistics( statistics );
         }
@@ -222,9 +239,15 @@ import Toybox.Time;
 
         result.put( LOADPOINTS, serializedLoadpoints );
 
-        var forecast = _forecast;
-        if( forecast != null && hasForecast() ) {
-            result.put( FORECAST, forecast.serialize() );
+        if( _solarForecast != null || _gridPrices != null ) {
+            var forecast = {} as JsonObject;
+            if( _solarForecast != null ) {
+                forecast.put( FORECAST_SOLAR, _solarForecast.serialize() );
+            }
+            if( _gridPrices != null ) {
+                forecast.put( FORECAST_GRID, _gridPrices.serialize() );
+            }
+            result.put( FORECAST, forecast );
         }
         if( _statistics != null ) {
             result.put( STATISTICS, _statistics.serialize() );
@@ -232,5 +255,4 @@ import Toybox.Time;
 
        return result; 
     }
-
 }

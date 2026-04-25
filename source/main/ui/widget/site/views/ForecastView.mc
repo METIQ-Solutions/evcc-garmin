@@ -35,9 +35,9 @@ class ForecastView extends EvccSiteViewBase {
         var state = getWebRequest().getState();
         var dcHeight = calcDc.getHeight();
 
-        if( state != null && state.hasForecast() ) {
+        if( state != null && state.hasSolarForecast() ) {
 
-            var forecast = state.getForecast();
+            var forecast = state.getSolarForecast();
 
             if( forecast != null ) {
                 // Check if scale is available and configured to be applied

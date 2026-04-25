@@ -8,7 +8,7 @@ import Toybox.Lang;
 // Class representing an integrated device
 (:glance) 
 class IntegratedDevice extends LoadpointItem {
-    function initialize( dataLp as JsonObject ) {
+    function initialize( dataLp as JsonAdapter ) {
         LoadpointItem.initialize( dataLp );
     }
 }

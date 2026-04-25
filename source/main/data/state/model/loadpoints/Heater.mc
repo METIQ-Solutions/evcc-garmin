@@ -12,9 +12,9 @@ class Heater extends LoadpointItem {
     
     private const VEHICLESOC = "vehicleSoc";
 
-    function initialize( dataLp as JsonObject ) {
+    function initialize( dataLp as JsonAdapter ) {
         LoadpointItem.initialize( dataLp );
-        _temp = dataLp[VEHICLESOC] as Number;
+        _temp = dataLp.getNumber( VEHICLESOC );
     }
 
     function serialize( loadpoint as JsonObject ) as JsonObject {

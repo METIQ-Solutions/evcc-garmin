@@ -158,7 +158,7 @@ class DetailViewManager {
             
             // We check the forecast and statistic and update
             // the view accordingly
-            _forecastView = ensureDetailView( state.hasForecast(), _forecastView, ForecastView, calledDuringAppStartup ) as ForecastView?;
+            _forecastView = ensureDetailView( state.hasSolarForecast(), _forecastView, ForecastView, calledDuringAppStartup ) as ForecastView?;
             _statisticsView = ensureDetailView( state.hasStatistics(), _statisticsView, StatisticsView, calledDuringAppStartup ) as StatisticsView?;
 
             // The list of detail views is re-assembled

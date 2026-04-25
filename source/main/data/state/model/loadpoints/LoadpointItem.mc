@@ -9,7 +9,7 @@ import Toybox.Lang;
 // Currently there is no common data/functionality, but this
 // base class is retained for future use.
 (:glance) class LoadpointItem {
-    function initialize( dataLp as JsonObject ) {
+    function initialize( dataLp as JsonAdapter ) {
     }
 
     function serialize( loadpoint as JsonObject ) as JsonObject {

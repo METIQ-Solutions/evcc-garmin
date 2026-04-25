@@ -20,10 +20,10 @@ import Toybox.Lang;
     private const VH_TITLE = "title";
     private const VEHICLESOC = "vehicleSoc";
 
-    function initialize( dataLp as JsonObject, dataResult as JsonObject, lpTitle as String ) {
+    function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter, lpTitle as String ) {
         LoadpointItem.initialize( dataLp );
 
-        var name = dataLp[VEHICLENAME] as String?;
+        var name = dataLp.getStringOrNull( VEHICLENAME );
         
         // Note: here the storage serialization diverts from the 
         // evcc response. In the evcc response, the loadpoint
@@ -31,7 +31,7 @@ import Toybox.Lang;
         // in the vehicles to get the vehicle title. For serialization
         // we store the vehicle title in the loadpoint as well, to 
         // save space
-        var title = dataLp[VEHICLETITLE] as String?;
+        var title = dataLp.getStringOrNull( VEHICLETITLE );
         
         // For guest vehicles we use the loadpoint title as name/title
         if( name == null || name.equals( "" ) ) {
@@ -39,7 +39,7 @@ import Toybox.Lang;
             title = name;
             _isGuest = true;
         } else {
-            _soc = dataLp[VEHICLESOC] as Number;
+            _soc = dataLp.getNumber( VEHICLESOC );
         }
         
         // Only if no title was set (either from storage or because it is
@@ -49,11 +49,11 @@ import Toybox.Lang;
             title = name;
             // and then lookup the vehicle and replace it
             // if we find the title there
-            var vehicles = dataResult[VEHICLES] as Dictionary?;
+            var vehicles = dataResult.getJsonObjectOrNull( VEHICLES );
             if( vehicles != null ) {
-                var vehicle = vehicles[name] as Dictionary?;
+                var vehicle = vehicles.getJsonObjectOrNull( name );
                 if( vehicle != null ) {
-                    title = vehicle[VH_TITLE] as String;
+                    title = vehicle.getString( VH_TITLE );
                 }
             }
         }

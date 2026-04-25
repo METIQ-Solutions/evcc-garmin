@@ -13,11 +13,11 @@ class Statistics {
 
     private const STATISTICS_PERIOD = [ "30d", "thisYear", "365d", "total" ];
 
-    function initialize( statistics as JsonObject ) {
+    function initialize( statistics as JsonAdapter ) {
         for( var i = 0; i < STATISTICS_PERIOD.size(); i++ ) {
             _statistics.add( 
                 new StatisticsPeriod( 
-                    statistics[STATISTICS_PERIOD[i]]
+                    statistics.getJsonObjectOrNull( STATISTICS_PERIOD[i] ) 
                 ) 
             );
         }
@@ -43,12 +43,9 @@ class Statistics {
 
     // Constructor
     // The solar percentage is set only if valid data is found
-    function initialize( statisticsPeriod as Object? ) {
-        if( statisticsPeriod instanceof Dictionary ) {
-            var solarPercent = statisticsPeriod[STATISTICS_SOLAR_PERCENTAGE];
-            if( solarPercent instanceof Float ) {
-                _solarPercent = solarPercent;
-            }
+    function initialize( statisticsPeriod as JsonAdapter? ) {
+        if( statisticsPeriod != null ) {
+            _solarPercent = statisticsPeriod.getFloatOrNull( STATISTICS_SOLAR_PERCENTAGE );
         }
     }
 

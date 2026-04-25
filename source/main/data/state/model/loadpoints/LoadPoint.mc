@@ -26,19 +26,19 @@ import Toybox.Lang;
     private const CHARGERFEATUREHEATING = "chargerFeatureHeating";
     private const CHARGERFEATUREINTEGRATEDDEVICE = "chargerFeatureIntegratedDevice";
     
-    function initialize( dataLp as JsonObject, dataResult as JsonObject ) {
-        _title = dataLp[TITLE] as String;
-        _isCharging = dataLp[CHARGING] as Boolean;
-        _activePhases = dataLp[PHASESACTIVE] as Number;
-        _chargePower = dataLp[CHARGEPOWER] as Number;
-        _mode = dataLp[MODE] as String;
-        _chargeRemainingDuration = dataLp[CHARGEREMAININGDURATION] as Number?;
+    function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter ) {
+        _title = dataLp.getString( TITLE );
+        _isCharging = dataLp.getBoolean( CHARGING );
+        _activePhases = dataLp.getNumber( PHASESACTIVE );
+        _chargePower = dataLp.getNumber( CHARGEPOWER );
+        _mode = dataLp.getString( MODE );
+        _chargeRemainingDuration = dataLp.getNumberOrNull( CHARGEREMAININGDURATION );
 
-        if( JsonHelper.readBoolean( dataLp, CHARGERFEATUREHEATING ) ) {
+        if( dataLp.getBooleanOrFalse( CHARGERFEATUREHEATING ) ) {
             _controllable = new Heater( dataLp );
-        } else if( JsonHelper.readBoolean( dataLp, CHARGERFEATUREINTEGRATEDDEVICE ) ) {
+        } else if( dataLp.getBooleanOrFalse( CHARGERFEATUREINTEGRATEDDEVICE ) ) {
             _controllable = new IntegratedDevice( dataLp );
-        } else if( JsonHelper.readBoolean( dataLp, CONNECTED ) ) {
+        } else if( dataLp.getBooleanOrFalse( CONNECTED ) ) {
             _controllable = new Vehicle( dataLp, dataResult, _title );
         }
     }

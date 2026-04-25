@@ -56,7 +56,7 @@ class StateStore {
             if( stateData != null ) {
                 var siteTitle = stateData[EvccState.SITETITLE] as String?;
                 if( siteTitle != null && ! siteTitle.equals( "" ) ) {
-                    state = new EvccState( stateData, new Moment( siteData[NAME_DATATIMESTAMP] as Number ) );
+                    state = new EvccState( new JsonAdapter( stateData ), new Moment( siteData[NAME_DATATIMESTAMP] as Number ) );
                 }
             }
         }
@@ -92,6 +92,6 @@ class StateStore {
 
     public function setState( result as JsonObject ) as Void {
         // Logger.debug( "StateStore: storing site " + _siteIndex );
-        _state = new EvccState( result, Time.now() );
+        _state = new EvccState( new JsonAdapter( result ), Time.now() );
     }
 }

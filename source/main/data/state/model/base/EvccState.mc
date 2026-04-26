@@ -9,16 +9,7 @@ import Toybox.Time;
 // This is the root class, holding data on site-level
 (:glance) class EvccState {
     
-    private var _timestamp as Moment;
-    public function getTimestamp() as Moment { return _timestamp; }
-
-    private var _hasBattery as Boolean = false;
-    private var _batterySoc as Number? = null;
-    private var _batteryPower as Number? = null;
-    private var _gridPower as Number?;
-    private var _homePower as Number?;
-    private var _pvPower as Number?;
-    private var _siteTitle as String?;
+    /******** JSON NAMES ********/
 
     private const BATTERYSOC = "batterySoc";
     private const BATTERYPOWER = "batteryPower";
@@ -35,14 +26,37 @@ import Toybox.Time;
     private const FORECAST_SOLAR = "solar";
     private const FORECAST_GRID = "grid";
     private const STATISTICS = "statistics";
+    private const TARIFF_GRID = "tariffGrid";
+    private const SMART_COST_AVAILABLE = "smartCostAvailable";
 
-    public function hasBattery() as Boolean { return _hasBattery; }
-    public function getBatterySoc() as Number? { return _batterySoc; }
-    public function getBatteryPowerRounded() as Number { return ExtendedMath.roundPower( _batteryPower ); }
+
+    /******** MEMBERS AND ACCESSORS ********/
+
+
+    // Timestamp
+    private var _timestamp as Moment;
+    public function getTimestamp() as Moment { return _timestamp; }
+
+    // Site title
+    private var _siteTitle as String?;
+    public function getSiteTitle() as String { return _siteTitle != null ? _siteTitle : ""; }
+
+    // Basic power numbers
+    private var _gridPower as Number?;
+    private var _homePower as Number?;
+    private var _pvPower as Number?;
     public function getGridPowerRounded() as Number { return ExtendedMath.roundPower( _gridPower ); }
     public function getHomePowerRounded() as Number { return ExtendedMath.roundPower( _homePower ); }
     public function getPvPowerRounded() as Number { return ExtendedMath.roundPower( _pvPower ); }
-    public function getSiteTitle() as String { return _siteTitle != null ? _siteTitle : ""; }
+
+
+    // Battery and its state and power
+    private var _hasBattery as Boolean = false;
+    private var _batterySoc as Number? = null;
+    private var _batteryPower as Number? = null;
+    public function hasBattery() as Boolean { return _hasBattery; }
+    public function getBatterySoc() as Number? { return _batterySoc; }
+    public function getBatteryPowerRounded() as Number { return ExtendedMath.roundPower( _batteryPower ); }
 
     // Loadpoints and their accessor
     // Loadpoints are stored in three lists, depending on their type
@@ -114,17 +128,26 @@ import Toybox.Time;
         return categories[index];
     }
 
+    // Solar forecast
     private var _solarForecast as SolarForecast?;
     public function getSolarForecast() as SolarForecast? { return _solarForecast; }
     public function hasSolarForecast() as Boolean { return _solarForecast != null; }
 
+    // Grid price, current and forecast
+    private var _tariffGrid as Float;
+    private var _smartCostAvailable as Boolean;
     private var _gridPrices as GridPriceForecast?;
-    public function getGridPrices() as GridPriceForecast? { return _gridPrices; }
-    public function hasGridPrices() as Boolean { return _gridPrices != null; }
+    public function getGridTariff() as Float { return _tariffGrid; }
+    public function getGridPriceForecast() as GridPriceForecast? { return _gridPrices; }
+    public function hasGridPriceForecast() as Boolean { return _gridPrices != null; }
 
     protected var _statistics as Statistics?;
     public function getStatistics() as Statistics { return _statistics as Statistics; }
     public function hasStatistics() as Boolean { return _statistics != null; }
+
+
+    /******** CONSTRUCTOR ********/
+
 
     // Creating a new state object.
     
@@ -192,14 +215,19 @@ import Toybox.Time;
             }
         }
 
+        var tariffGrid = result.getFloatOrNull( TARIFF_GRID );
+        _tariffGrid = tariffGrid != null ? tariffGrid : 0.0;
+        _smartCostAvailable = result.getBooleanOrFalse( SMART_COST_AVAILABLE );
+
         var forecast = result.getJsonObjectOrNull( FORECAST );
         if( forecast != null ) {
             var solarForecast = forecast.getJsonObjectOrNull( FORECAST_SOLAR );
             if( solarForecast != null) {
-                _solarForecast = new SolarForecast( forecast );
+                _solarForecast = new SolarForecast( solarForecast );
             }
             var gridPrices = forecast.getJsonObjectOrNull( FORECAST_GRID );
             if( gridPrices != null ) {
+                gridPrices.debug();
                 _gridPrices = new GridPriceForecast( gridPrices );
             }
         }
@@ -208,6 +236,10 @@ import Toybox.Time;
             _statistics = new Statistics( statistics );
         }
     }
+
+
+    /******** SERIALIZATION ********/
+
 
     // Create a dictionary for persisting the state from the data in this class, 
     // with the same structure that is used by the evcc response. Thus the
@@ -238,6 +270,11 @@ import Toybox.Time;
         }
 
         result.put( LOADPOINTS, serializedLoadpoints );
+
+        if( _tariffGrid != null ) {
+            result.put( TARIFF_GRID, _tariffGrid );
+        }
+        result.put( SMART_COST_AVAILABLE, _smartCostAvailable );
 
         if( _solarForecast != null || _gridPrices != null ) {
             var forecast = {} as JsonObject;

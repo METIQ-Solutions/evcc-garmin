@@ -40,8 +40,6 @@ class WebRequest {
 
     private var _hasCurrentState as Boolean = false;
 
-    private var _json as JsonObject?;
-
     // How often the state should be requested
     private var _refreshInterval as Number;
 
@@ -65,14 +63,6 @@ class WebRequest {
         if( _error ) {
             throw new WebRequestException( _errorMessage, _errorCode );
         }
-    }
-
-
-    // The JSON can be accessed once and is then nulled, to conserve memory
-    public function consumeJson() as JsonObject? {
-        var json = _json;
-        _json = null;
-        return json;
     }
 
     // Current state is true if either data from storage that is within the
@@ -201,15 +191,6 @@ class WebRequest {
     }
 
 
-     // Receive the data from the web request
-    public function onJsonReceive() as Void {
-        var json = consumeJson();
-        if( json != null ) {
-            _stateStore.setState( json );
-        }
-    }
-
-
     // Receive the data from the web request
     // For some reason this function shows scope errors when compiling
     // with SDK >= 8.2. Therefore we disable the scope check.
@@ -219,29 +200,37 @@ class WebRequest {
         _hasCurrentState = true;
         _error = false; _errorMessage = ""; _errorCode = "";
         
-        if( responseCode == 200 ) {
-            if( data instanceof Dictionary ) {
-                _json = data as JsonObject;
-                onJsonReceive();
-            } else {
-                _errorMessage = "Unexpected response: " + data;
+        try {
+            if( responseCode == 200 ) {
+                if( data instanceof Dictionary ) {
+                    _stateStore.setState( data );
+                } else {
+                    _errorMessage = "Unexpected response: " + data;
+                    _error = true;
+                }
+            // To mask temporary errors because of instable connections, we report
+            // errors only if the data we have now has expired, otherwise we continue
+            // to display the existing data
+            } else if( ! hasPreviousValidState() ) {
                 _error = true;
+                if ( responseCode == -104 ) {
+                    _errorMessage = "No phone"; _errorCode = "";
+                } else {
+                    _errorMessage = "Request failed"; _errorCode = responseCode.toString();
+                    // Logger.debug("WebRequest: request failed" );
+                }
             }
-        // To mask temporary errors because of instable connections, we report
-        // errors only if the data we have now has expired, otherwise we continue
-        // to display the existing data
-        } else if( ! hasPreviousValidState() ) {
+        } catch( ex ) {
+            var errorMessage = ex.getErrorMessage();
+            _errorMessage = errorMessage != null
+                            ? errorMessage
+                            : "Response processing failed due to an unexpected error.";
             _error = true;
-            if ( responseCode == -104 ) {
-                _errorMessage = "No phone"; _errorCode = "";
-            } else {
-                _errorMessage = "Request failed"; _errorCode = responseCode.toString();
-                // Logger.debug("WebRequest: request failed" );
-            }
         }
 
-        // Trigger the callback logic, see below
+        // Trigger the callback logic
         invokeCallbacks();
+
         // Logger.debug("WebRequest: onReceive done" );
     }
 

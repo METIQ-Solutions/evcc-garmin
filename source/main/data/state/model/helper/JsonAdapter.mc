@@ -18,6 +18,7 @@ class JsonAdapter {
         _jsonObject = jsonObject;
     }
 
+    // Prints all members of this JSON object
     (:debug)
     public function debug() as Void {
         Logger.debug( "JSON Object:" );
@@ -28,6 +29,11 @@ class JsonAdapter {
         }
     }
 
+
+    // ARRAY
+    // Currently only arrays of objects (represented by JsonAdapter)
+    // are needed and supported.
+
     public function getArray( key as String ) as JsonArray {
         var value = getArrayOrNull( key );
         if( value != null ) {
@@ -37,6 +43,7 @@ class JsonAdapter {
         }
     }
 
+    // Instantiates the JsonAdapter for each array element
     public function getArrayOrNull( key as String ) as JsonArray? {
         var jsonArray = _jsonObject[ key ];
         if( jsonArray == null ) {
@@ -57,6 +64,9 @@ class JsonAdapter {
         }
     }
 
+    
+    // BOOLEAN
+    
     public function getBoolean( key as String ) as Boolean {
         var value = getBooleanOrNull( key );
         if( value != null ) {
@@ -80,6 +90,9 @@ class JsonAdapter {
         }
     }
 
+
+    // FLOAT
+
     public function getFloat( key as String ) as Float {
         var value = getFloatOrNull( key );
         if( value != null ) {
@@ -100,6 +113,10 @@ class JsonAdapter {
         }
     }
 
+
+    // MOMENT
+    // Parses an ISO time field into a (UTC) moment
+
     public function getMoment( key as String ) as Moment {
         var value = getMomentOrNull( key );
         if( value != null ) {
@@ -118,6 +135,9 @@ class JsonAdapter {
         }
     }
 
+
+    // NUMBER
+
     public function getNumber( key as String ) as Number {
         var value = getNumberOrNull( key );
         if( value != null ) {
@@ -126,6 +146,7 @@ class JsonAdapter {
             throw new InvalidValueException( "JSON: " + key + " is missing." );
         }
     }
+
     public function getNumberOrNull( key as String ) as Number? {
         var value = _jsonObject[key];
         if( value instanceof Number || value == null ) {
@@ -136,6 +157,9 @@ class JsonAdapter {
             throw new InvalidValueException( "JSON: " + key + " is not a Number." );
         }
     }
+
+
+    // STRING
 
     public function getString( key as String ) as String {
         var value = getStringOrNull( key );
@@ -155,6 +179,9 @@ class JsonAdapter {
         }
     }
 
+
+    // JSON Object
+
     public function getJsonObject( key as String ) as JsonAdapter {
         var value = getJsonObjectOrNull( key );
         if( value != null ) {
@@ -163,8 +190,8 @@ class JsonAdapter {
             throw new InvalidValueException( "JSON: " + key + " is missing." );
         }
     }
+
     public function getJsonObjectOrNull( key as String ) as JsonAdapter? {
-        debug();
         var value = _jsonObject[key];
         if( value == null ) {
             return null;
@@ -175,6 +202,8 @@ class JsonAdapter {
         }
     }
 
+
+    // Helper function for parsing an ISO timestamp
     private function parseIsoLocalMoment( value as String ) as Moment? {
         // Minimal length check: "YYYY-MM-DDTHH:MM:SS"
         if (value == null || value.length() < 19) {
@@ -228,6 +257,7 @@ class JsonAdapter {
         return moment;
     }
 
+    // Helper function to parse a number
     private function parseNumberOrNull( s as String? ) as Number? {
         if( s == null ) {
             return null;
@@ -236,8 +266,9 @@ class JsonAdapter {
     }
 
 
+    // Helper function to format the Moment again for serialization
     public static function momentToIsoLocalString( moment as Moment ) as String {
-        var info = Gregorian.info( moment, Time.FORMAT_SHORT );
+        var info = Gregorian.utcInfo( moment, Time.FORMAT_SHORT );
 
         var month = info.month;
         if( ! ( month instanceof Number ) ) {

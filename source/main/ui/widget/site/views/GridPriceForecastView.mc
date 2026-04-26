@@ -5,7 +5,8 @@ import Toybox.Time;
 // View showing grid price forecast data
 class GridPriceForecastView extends EvccSiteViewBase {
     private const LABELS = [ "+1h", "+2h", "tday", "tmrw" ];
-
+    private const UNIT = " ct";
+    
     function initialize( options as EvccSiteViewBase.Options ) {
         EvccSiteViewBase.initialize( options );
     }
@@ -13,10 +14,10 @@ class GridPriceForecastView extends EvccSiteViewBase {
     // Show the forecast icon as page title
     // Set icon and title for this page
     public function getPageTitle() as TextBlock? {
-        return new TextBlock( "grid price", {} as DbOptions );
+        return new TextBlock( "grid price", { :color => Graphics.COLOR_LT_GRAY } );
     }
     public function getPageIcon() as IconBlock? {
-        return new IconBlock( IconBlock.ICON_PRICE, {} as DbOptions );
+        return new IconBlock( IconBlock.ICON_PRICE, {} );
     }
     // Forecast is limited by width not the default height
     function limitHeight() as Boolean { return true; }
@@ -31,13 +32,13 @@ class GridPriceForecastView extends EvccSiteViewBase {
         var now = state.getGridTariff();
         if( now != null ) {
             addSingle( block, "now", now );
-            block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.1 } ) );
+            block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
         }
         if( state != null && state.hasGridPriceForecast() ) {
             var forecast = state.getGridPriceForecast();
             if( forecast != null ) {
                 addAverages( block, forecast.getAveragePrices() );
-                block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.1 } ) );
+                block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
                 addSingle( block, "min", forecast.getCheapestHourAverage() );
                 addCheapestHour( block, forecast.getCheapestHourStart(), forecast.getCheapestHourEnd() );
             }
@@ -74,7 +75,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
               :color => Graphics.COLOR_LT_GRAY } 
         );
         row.addTextWithOptions( " " + formatPrice( price ), { :relativeFont => 0, :verticalJustifyToBaseFont => true } );
-        row.addTextWithOptions( "ct", { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
+        row.addTextWithOptions( UNIT, { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
         block.addBlock( row );
     }
 
@@ -112,7 +113,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
             // And finally the unit with the optional indicator
             var unit = new HorizontalBlock( { :justify => Graphics.TEXT_JUSTIFY_LEFT} );
-            unit.addTextWithOptions( "ct", { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
+            unit.addTextWithOptions( UNIT, { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
             columns[ci][2].addBlock( unit );
         
             ci = 1 - ci;

@@ -15,10 +15,10 @@ class StatisticsView extends EvccSiteViewBase {
 
     // Set icon and title for this page
     function getPageTitle() as TextBlock? {
-        return new TextBlock( "solar energy", {} as DbOptions );
+        return new TextBlock( "solar energy", { :color => Graphics.COLOR_LT_GRAY } );
     }
     function getPageIcon() as IconBlock? {
-        return new IconBlock( IconBlock.ICON_STATISTICS, {} as DbOptions );
+        return new IconBlock( IconBlock.ICON_STATISTICS, {} );
     }
 
     // Add the content

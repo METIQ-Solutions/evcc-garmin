@@ -23,10 +23,10 @@ class SolarForecastView extends EvccSiteViewBase {
     // Show the forecast icon as page title
     // Set icon and title for this page
     function getPageTitle() as TextBlock? {
-        return new TextBlock( "forecast", {} as DbOptions );
+        return new TextBlock( "forecast", { :color => Graphics.COLOR_LT_GRAY } );
     }
     function getPageIcon() as IconBlock? {
-        return new IconBlock( IconBlock.ICON_FORECAST, {} as DbOptions );
+        return new IconBlock( IconBlock.ICON_FORECAST, {} );
     }
 
     // Add the content
@@ -52,7 +52,12 @@ class SolarForecastView extends EvccSiteViewBase {
                 addForecast( block, energy, scale );
 
                 if( applyScale ) {
-                    block.addTextWithOptions( "adj. w\\ real data", { :relativeFont => 4, :marginTop => dcHeight * 0.007 } );
+                    block.addTextWithOptions( 
+                        "adj. w\\ real data", 
+                        { :relativeFont => 4, 
+                          :marginTop => dcHeight * 0.007,
+                          :color => Graphics.COLOR_LT_GRAY } 
+                    );
                 }
 
             }

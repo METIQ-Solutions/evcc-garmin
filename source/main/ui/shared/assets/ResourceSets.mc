@@ -144,6 +144,7 @@ class WidgetResourceSetBase {
         [ Rez.Drawables.heater_medium, Rez.Drawables.heater_small, Rez.Drawables.heater_tiny, Rez.Drawables.heater_xtiny, null ],
         [ Rez.Drawables.device_medium, Rez.Drawables.device_small, Rez.Drawables.device_tiny, Rez.Drawables.device_xtiny, null ],
         [ Rez.Drawables.forecast_medium, null, null, Rez.Drawables.forecast_xtiny, null ],
+        [ Rez.Drawables.price_medium, null, null, Rez.Drawables.price_xtiny, null ],
         [ Rez.Drawables.statistics_medium, null, null, Rez.Drawables.statistics_xtiny, null ]
     ];
 }

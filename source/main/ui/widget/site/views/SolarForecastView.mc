@@ -76,7 +76,13 @@ class SolarForecastView extends EvccSiteViewBase {
 
         for( var i = 0; i < energy.size(); i++ ) {
             // Start with the label
-            column1.addTextWithOptions( _label[i] + ":", { :relativeFont => 2, :verticalJustifyToBaseFont => true, :justify => Graphics.TEXT_JUSTIFY_RIGHT} );
+            column1.addTextWithOptions( 
+                _label[i] + ":", 
+                { :relativeFont => 2, 
+                  :verticalJustifyToBaseFont => true, 
+                  :justify => Graphics.TEXT_JUSTIFY_RIGHT,
+                  :color => Graphics.COLOR_LT_GRAY } 
+            );
             
             // Then add the value
             column2.addTextWithOptions( " " + formatEnergy( energy[i] * scale ) + " ", { :justify => Graphics.TEXT_JUSTIFY_RIGHT } );
@@ -85,7 +91,12 @@ class SolarForecastView extends EvccSiteViewBase {
             var unit = new HorizontalBlock( { :justify => Graphics.TEXT_JUSTIFY_LEFT} );
             unit.addTextWithOptions( "kWh", { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
             if( _indicator[i] != null ) {
-                unit.addTextWithOptions( " " + _indicator[i], { :relativeFont => 4, :verticalJustifyToBaseFont => true } );
+                unit.addTextWithOptions( 
+                    " " + _indicator[i], 
+                    { :relativeFont => 4, 
+                      :verticalJustifyToBaseFont => true,
+                      :color => Graphics.COLOR_LT_GRAY } 
+                );
             }
             column3.addBlock( unit );
         }

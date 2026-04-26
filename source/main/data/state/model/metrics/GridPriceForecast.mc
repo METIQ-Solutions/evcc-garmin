@@ -9,7 +9,7 @@ import Toybox.Time;
 // Class to represent the solar forecast
 (:glance) 
 class GridPriceForecast {
-    private const GRID_PRICE_AVERAGES = [ "next60MinutesAverage", "remainingTodayAverage", "remainingTodayAverage", "tomorrowAverage" ];
+    private const GRID_PRICE_AVERAGES = [ "next60MinutesAverage", "next60To120MinutesAverage", "remainingTodayAverage", "tomorrowAverage" ];
     private const GRID_PRICE_CHEAPEST_HOUR = "cheapestHour";
     private const GRID_PRICE_CHEAPEST_HOUR_AVERAGE = "average";
     private const GRID_PRICE_CHEAPEST_HOUR_START = "start";
@@ -21,7 +21,10 @@ class GridPriceForecast {
     private var _cheapestHourEnd as Moment;
 
     public function getAveragePrices() as Array<Float> { return _averagePrices; }
-
+    public function getCheapestHourAverage() as Float { return _cheapestHourAverage; }
+    public function getCheapestHourStart() as Moment { return _cheapestHourStart; }
+    public function getCheapestHourEnd() as Moment { return _cheapestHourEnd; }
+    
     function initialize( grid as JsonAdapter ) {
         for( var i = 0; i < _averagePrices.size(); i++ ) {
             _averagePrices[i] = grid.getFloat( GRID_PRICE_AVERAGES[i] );

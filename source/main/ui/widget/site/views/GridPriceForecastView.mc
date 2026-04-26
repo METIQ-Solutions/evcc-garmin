@@ -1,10 +1,10 @@
 import Toybox.Graphics;
 import Toybox.Lang;
-using Toybox.Time.Gregorian;
+import Toybox.Time;
 
 // View showing grid price forecast data
 class GridPriceForecastView extends EvccSiteViewBase {
-    private const LABELS = [ "now", "+1h", "+2h", "tday", "tmrw" ];
+    private const LABELS = [ "+1h", "+2h", "tday", "tmrw" ];
 
     function initialize( options as EvccSiteViewBase.Options ) {
         EvccSiteViewBase.initialize( options );
@@ -12,34 +12,35 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
     // Show the forecast icon as page title
     // Set icon and title for this page
-    function getPageTitle() as TextBlock? {
+    public function getPageTitle() as TextBlock? {
         return new TextBlock( "grid price", {} as DbOptions );
     }
-    function getPageIcon() as IconBlock? {
-        return new IconBlock( IconBlock.ICON_FORECAST, {} as DbOptions );
+    public function getPageIcon() as IconBlock? {
+        return new IconBlock( IconBlock.ICON_PRICE, {} as DbOptions );
     }
+    // Forecast is limited by width not the default height
+    function limitHeight() as Boolean { return true; }
+    function limitWidth() as Boolean { return false; }
 
     // Add the content
-    function addContent( block as VerticalBlock, calcDc as EvccDcInterface ) {
+    public function addContent( block as VerticalBlock, calcDc as EvccDcInterface ) {
 
         var state = getWebRequest().getState();
         var dcHeight = calcDc.getHeight();
 
+        var now = state.getGridTariff();
+        if( now != null ) {
+            addSingle( block, "now", now );
+            block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.1 } ) );
+        }
         if( state != null && state.hasGridPriceForecast() ) {
-            var prices = new Array<Float>[0];
-            var currentPrice = state.getGridTariff();
-            if( currentPrice != null ) {
-                prices.add( currentPrice );
-            } else {
-                throw new InvalidValueException( "Current price is missing." );
-            }
             var forecast = state.getGridPriceForecast();
             if( forecast != null ) {
-                prices.addAll( forecast.getAveragePrices() );
-                addAverages( block, prices );
+                addAverages( block, forecast.getAveragePrices() );
+                block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.1 } ) );
+                addSingle( block, "min", forecast.getCheapestHourAverage() );
+                addCheapestHour( block, forecast.getCheapestHourStart(), forecast.getCheapestHourEnd() );
             }
-        } else {
-            block.addText( "No grid prices" );
         }
 
         // Add a small margin to the bottom. While the content is centered vertically between title and logo,
@@ -49,35 +50,86 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
     
     // Assemble one row of the table
-    function addAverages( block as VerticalBlock, price as Array<Float> ) as Void {
+    private function addCheapestHour( block as VerticalBlock, start as Moment, end as Moment ) as Void {
+        var startInfo = Gregorian.info( start, Time.FORMAT_MEDIUM );
+        var endInfo = Gregorian.info( end, Time.FORMAT_MEDIUM );
+        block.addTextWithOptions( 
+            startInfo.day_of_week
+                + " " + StringFormatter.pad2( startInfo.hour ) 
+                + ":" + StringFormatter.pad2( startInfo.min )
+                + "-" + StringFormatter.pad2( endInfo.hour ) 
+                + ":" + StringFormatter.pad2( endInfo.min ), 
+            { :relativeFont => 4 } 
+        );
+    }
+
+
+    // Assemble one row of the table
+    private function addSingle( block as VerticalBlock, label as String, price as Float ) as Void {
+        var row = new HorizontalBlock( {} as DbOptions );
+        row.addTextWithOptions( 
+            label + ":", 
+            { :relativeFont => 2, 
+              :verticalJustifyToBaseFont => true,
+              :color => Graphics.COLOR_LT_GRAY } 
+        );
+        row.addTextWithOptions( " " + formatPrice( price ), { :relativeFont => 0, :verticalJustifyToBaseFont => true } );
+        row.addTextWithOptions( "ct", { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
+        block.addBlock( row );
+    }
+
+
+    // Assemble one row of the table
+    private function addAverages( block as VerticalBlock, price as Array<Float> ) as Void {
 
         var row = new HorizontalBlock( {} as DbOptions );
-        var column1 = new VerticalBlock( {} as DbOptions );
-        var column2 = new VerticalBlock( {} as DbOptions );
-        var column3 = new VerticalBlock( {} as DbOptions );
+        var columns = [ [
+            new VerticalBlock( {} as DbOptions ),
+            new VerticalBlock( {} as DbOptions ),
+            new VerticalBlock( {} as DbOptions )
+        ], [
+            new VerticalBlock( {} as DbOptions ),
+            new VerticalBlock( {} as DbOptions ),
+            new VerticalBlock( {} as DbOptions )
+        ] ];
 
-        for( var i = 0; i < price.size(); i++ ) {
+        var ci = 0;
+
+        for( var pi = 0; pi < price.size(); pi++ ) {
             // Start with the label
-            column1.addTextWithOptions( LABELS[i] + ":", { :relativeFont => 2, :verticalJustifyToBaseFont => true, :justify => Graphics.TEXT_JUSTIFY_RIGHT} );
+            columns[ci][0].addTextWithOptions( 
+                ( ci == 1 ? "      " : "" ) + LABELS[pi] + ":", 
+                { 
+                    :relativeFont => 2, 
+                    :verticalJustifyToBaseFont => true, 
+                    :justify => Graphics.TEXT_JUSTIFY_RIGHT,
+                    :color => Graphics.COLOR_LT_GRAY
+                } 
+            );
             
             // Then add the value
-            column2.addTextWithOptions( " " + formatPrice( price[i] ) + " ", { :justify => Graphics.TEXT_JUSTIFY_RIGHT } );
+            columns[ci][1].addTextWithOptions( " " + formatPrice( price[pi] ), { :justify => Graphics.TEXT_JUSTIFY_RIGHT } );
 
             // And finally the unit with the optional indicator
             var unit = new HorizontalBlock( { :justify => Graphics.TEXT_JUSTIFY_LEFT} );
             unit.addTextWithOptions( "ct", { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
-            column3.addBlock( unit );
+            columns[ci][2].addBlock( unit );
+        
+            ci = 1 - ci;
         }
 
-        row.addBlock( column1 );
-        row.addBlock( column2 );
-        row.addBlock( column3 );
+        for( var i = 0; i < columns.size(); i++ ) {
+            for( var j= 0 ; j < columns[i].size(); j++ ) {
+                row.addBlock( columns[i][j] );
+            }
+        }
         
         block.addBlock( row );
     }
 
     // Function to prices for the forecast view
     private function formatPrice( price as Float ) as String {
-        return Math.round( price * 100.0 ).format( "%.1f" );    
+        return Math.round( price * 100.0 ).format( "%u" );    
+        //return Math.round( price * 100.0 ).format( "%.1f" );    
     }
 }

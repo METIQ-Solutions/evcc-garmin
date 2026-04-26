@@ -188,13 +188,16 @@ class JsonAdapter {
         var min   = parseNumberOrNull(value.substring(14, 16));
         var sec   = parseNumberOrNull(value.substring(17, 19));
 
+        var offsetSign = value.substring(19, 20);
+        var offsetHour = parseNumberOrNull(value.substring(20, 22));
+
         // Validate everything before constructing Moment
         if (year == null || month == null || day == null ||
             hour == null || min == null || sec == null) {
             return null;
         }
 
-        return Gregorian.moment({
+        var moment = Gregorian.moment({
             :year   => year,
             :month  => month,
             :day    => day,
@@ -202,6 +205,27 @@ class JsonAdapter {
             :minute => min,
             :second => sec
         });
+
+        /*
+        Logger.debug( "Year: " + year );
+        Logger.debug( "Month: " + month );
+        Logger.debug( "Day: " + day );
+        Logger.debug( "Hour: " + hour );
+        Logger.debug( "Minute: " + min );
+        Logger.debug( "Second: " + sec );
+        Logger.debug( "offsetSign: " + offsetSign );
+        Logger.debug( "offsetHour: " + offsetHour );
+        */
+
+        if( offsetSign != null && offsetHour != null ) {
+            var offsetSecond = offsetHour * 3600;
+            if( offsetSign.equals( "+" ) ) {
+                offsetSecond = - offsetSecond;
+            }
+            moment = moment.add( new Time.Duration( offsetSecond ) );
+        }
+
+        return moment;
     }
 
     private function parseNumberOrNull( s as String? ) as Number? {
@@ -211,12 +235,6 @@ class JsonAdapter {
         return s.toNumber();
     }
 
-    private static function pad2( value as Number ) as String {
-        if (value < 10) {
-            return "0" + value.toString();
-        }
-        return value.toString();
-    }
 
     public static function momentToIsoLocalString( moment as Moment ) as String {
         var info = Gregorian.info( moment, Time.FORMAT_SHORT );
@@ -227,11 +245,11 @@ class JsonAdapter {
         }
 
         return info.year.toString()
-            + "-" + pad2( month )
-            + "-" + pad2( info.day )
-            + "T" + pad2( info.hour )
-            + ":" + pad2( info.min )
-            + ":" + pad2( info.sec );
+            + "-" + StringFormatter.pad2( month )
+            + "-" + StringFormatter.pad2( info.day )
+            + "T" + StringFormatter.pad2( info.hour )
+            + ":" + StringFormatter.pad2( info.min )
+            + ":" + StringFormatter.pad2( info.sec );
     }
 
 }

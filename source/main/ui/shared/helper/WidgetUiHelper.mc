@@ -61,6 +61,7 @@ class WidgetUiHelper extends GlanceUiHelper {
         else { return mode; }
     }
 
+    
     // Needed to satisfy the compiler
     private function initialize() {
         GlanceUiHelper.initialize();

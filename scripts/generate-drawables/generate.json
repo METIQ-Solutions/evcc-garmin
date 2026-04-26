@@ -359,6 +359,7 @@
         "heater.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "device.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_tiny", "icon_small", "icon_medium"] },
         "forecast.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_medium"] },
+        "price.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_medium"] },
         "statistics.svg":{ "anti-aliasing":"3", "types":["icon_xtiny", "icon_medium"] },
         "clock.svg":{ "anti-aliasing":"3", "types":["icon_micro", "icon_xtiny"] },
         "evcc.svg":{ "anti-aliasing":"3", "types":["logo_evcc"], "png-name":"logo_evcc.png" },

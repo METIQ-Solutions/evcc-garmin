@@ -31,6 +31,7 @@ import Toybox.WatchUi;
         ICON_HEATER,
         ICON_DEVICE,
         ICON_FORECAST,
+        ICON_PRICE,
         ICON_STATISTICS
     }
 

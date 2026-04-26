@@ -41,11 +41,13 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="car_disconnected_xtiny" filename="icon_xtiny_car_disconnected.png"/>
     <bitmap scope="foreground" id="heater_xtiny" filename="icon_xtiny_heater.png"/>
     <bitmap scope="foreground" id="device_xtiny" filename="icon_xtiny_device.png"/>
-    <!-- exceptions - icons not available in all font sizes -->
-    <bitmap scope="foreground" id="forecast_xtiny" filename="icon_xtiny_forecast.png"/>
-    <bitmap scope="foreground" id="statistics_xtiny" filename="icon_xtiny_statistics.png"/>
+    <!-- Exceptions: icons not available in all font sizes -->
+    <!-- The clock icon (for displaying remaining charge time) is only required at the smallest font size -->
     <bitmap scope="foreground" id="clock_xtiny" filename="icon_xtiny_clock.png"/>
-
+    <!-- Icons for detail pages in xtiny size, used when multiple sites are present -->
+    <bitmap scope="foreground" id="forecast_xtiny" filename="icon_xtiny_forecast.png"/>
+    <bitmap scope="foreground" id="price_xtiny" filename="icon_xtiny_price.png"/>
+    <bitmap scope="foreground" id="statistics_xtiny" filename="icon_xtiny_statistics.png"/>
 
     <!-- tiny font size -->
     <bitmap scope="foreground" id="battery_empty_tiny" filename="icon_tiny_battery_empty.png"/>
@@ -97,8 +99,10 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="car_disconnected_medium" filename="icon_medium_car_disconnected.png"/>
     <bitmap scope="foreground" id="heater_medium" filename="icon_medium_heater.png"/>
     <bitmap scope="foreground" id="device_medium" filename="icon_medium_device.png"/>
-    <!-- exceptions - icons not available in all font sizes -->
+    <!-- Exceptions: icons not available in all font sizes -->
+    <!-- Icons for detail pages in medium size, used when only one site is present -->
     <bitmap scope="foreground" id="forecast_medium" filename="icon_medium_forecast.png"/>
+    <bitmap scope="foreground" id="price_medium" filename="icon_medium_price.png"/>
     <bitmap scope="foreground" id="statistics_medium" filename="icon_medium_statistics.png"/>
 
 

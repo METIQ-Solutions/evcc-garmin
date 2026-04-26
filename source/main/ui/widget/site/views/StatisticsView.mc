@@ -38,7 +38,13 @@ class StatisticsView extends EvccSiteViewBase {
 
                 for( var i = 0; i < statisticsPeriods.size(); i++ ) {
                     // Add the label
-                    column1.addTextWithOptions( LABELS[i] + ":", { :relativeFont => 2, :verticalJustifyToBaseFont => true, :justify => Graphics.TEXT_JUSTIFY_RIGHT } as DbOptions );
+                    column1.addTextWithOptions( 
+                        LABELS[i] + ":", 
+                        { :relativeFont => 2, 
+                          :verticalJustifyToBaseFont => true, 
+                          :justify => Graphics.TEXT_JUSTIFY_RIGHT,
+                          :color => Graphics.COLOR_LT_GRAY }
+                    );
 
                     // Add the value as one right-justified horizontal block,
                     // with value and unit in different sizes

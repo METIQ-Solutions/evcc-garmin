@@ -2,8 +2,8 @@ import Toybox.Graphics;
 import Toybox.Lang;
 using Toybox.Time.Gregorian;
 
-// View showing forecast data
-class ForecastView extends EvccSiteViewBase {
+// View showing solar forecast data
+class SolarForecastView extends EvccSiteViewBase {
     private var _label as Array<String>;
     private var _indicator as Array<String?>;
 
@@ -67,7 +67,7 @@ class ForecastView extends EvccSiteViewBase {
 
     
     // Assemble one row of the table
-    (:exclForCalcSimple) function addForecast( block as VerticalBlock, energy as Array<Float>, scale as Float ) as Void {
+    function addForecast( block as VerticalBlock, energy as Array<Float>, scale as Float ) as Void {
 
         var row = new HorizontalBlock( {} as DbOptions );
         var column1 = new VerticalBlock( {} as DbOptions );

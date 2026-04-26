@@ -132,10 +132,12 @@ def cheapest_hour:
         ],
         pvPower: $data.pvPower,
         siteTitle: $data.siteTitle,
+        smartCostAvailable: $data.smartCostAvailable,
         statistics: (
             $data.statistics
             | map_values({ solarPercentage })
         ),
+        tariffGrid: $data.tariffGrid,
         vehicles: (
             $data.vehicles
             | map_values({ title })

@@ -170,7 +170,10 @@ class WebRequest {
         var siteConfig = new SiteConfig( _siteIndex );
 
         var url = siteConfig.getUrl() + "/api/state";
-        var parameters = { "jq" => EVCC_JQ_FILTER };
+        
+        // Our JQ filter is already too long for Postman, so we omit it,
+        // since the Postman mock would ignore it anyway
+        var parameters = siteConfig.isMock() ? {} : { "jq" => EVCC_JQ_FILTER };
 
         // Logger.debug( JQ );
         

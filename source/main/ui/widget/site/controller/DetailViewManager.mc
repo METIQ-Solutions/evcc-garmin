@@ -14,7 +14,8 @@ class DetailViewManager {
     
 
     // References to forecast/statistics detail views
-    var _forecastView as ForecastView?;
+    var _solarForecastView as SolarForecastView?;
+    var _gridPriceForecastView as GridPriceForecastView?;
     var _statisticsView as StatisticsView?;
 
 
@@ -124,7 +125,7 @@ class DetailViewManager {
         calledDuringAppStartup as Boolean 
     ) as EvccSiteViewBase {
         if( isNeeded && currentView == null ) {
-            currentView = initDetailView( viewClass, {}, calledDuringAppStartup ) as ForecastView;
+            currentView = initDetailView( viewClass, {}, calledDuringAppStartup ) as SolarForecastView;
         } else if( ! isNeeded && currentView != null ) {
             currentView.dispose();
             currentView = null;
@@ -158,7 +159,8 @@ class DetailViewManager {
             
             // We check the forecast and statistic and update
             // the view accordingly
-            _forecastView = ensureDetailView( state.hasSolarForecast(), _forecastView, ForecastView, calledDuringAppStartup ) as ForecastView?;
+            _solarForecastView = ensureDetailView( state.hasSolarForecast(), _solarForecastView, SolarForecastView, calledDuringAppStartup ) as SolarForecastView?;
+            _gridPriceForecastView = ensureDetailView( state.hasGridPriceForecast(), _gridPriceForecastView, GridPriceForecastView, calledDuringAppStartup ) as GridPriceForecastView?;
             _statisticsView = ensureDetailView( state.hasStatistics(), _statisticsView, StatisticsView, calledDuringAppStartup ) as StatisticsView?;
 
             // The list of detail views is re-assembled
@@ -227,7 +229,8 @@ class DetailViewManager {
             }
 
             // In the end, we add the forecast and statistics view
-            addDetailView( _forecastView );
+            addDetailView( _solarForecastView );
+            addDetailView( _gridPriceForecastView );
             addDetailView( _statisticsView );
 
             // Once the new array has been defined, check whether the current view

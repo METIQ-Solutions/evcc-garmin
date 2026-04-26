@@ -44,7 +44,8 @@ import Toybox.Math;
     // we clear the storage, just in case the new
     // version is using a new structure for storing
     // data
-    (:release) function onAppUpdate() as Void {
+    (:release) 
+    public function onAppUpdate() as Void {
         try {
             // Logger.debug( "EvccApp: onAppUpdate" );
             Storage.clearValues();
@@ -52,13 +53,19 @@ import Toybox.Math;
             Logger.debugException( ex );
        }
     }
-    
+
+    // Clear the storage if the settings where changed
+    public function onSettingsChanged() as Void {
+        // Logger.debug( "EvccApp.onSettingsChanged" );
+        Storage.clearValues();
+    }
+
     // Called when the app is stopped
     // The onHide() function of the views takes care
     // of required clean-ups. For glances, onHide() is
     // not called automatically, so we do this here
     (:typecheck([disableGlanceCheck]))
-    function onStop( state as Lang.Dictionary or Null ) as Void {
+    public function onStop( state as Lang.Dictionary or Null ) as Void {
         try {
             // Logger.debug( "EvccApp: onStop" );
             hideGlance();

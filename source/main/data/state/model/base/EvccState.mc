@@ -225,10 +225,11 @@ import Toybox.Time;
             if( solarForecast != null) {
                 _solarForecast = new SolarForecast( solarForecast );
             }
-            var gridPrices = forecast.getJsonObjectOrNull( FORECAST_GRID );
-            if( gridPrices != null ) {
-                gridPrices.debug();
-                _gridPrices = new GridPriceForecast( gridPrices );
+            if( _smartCostAvailable ) {
+                var gridPrices = forecast.getJsonObjectOrNull( FORECAST_GRID );
+                if( gridPrices != null ) {
+                    _gridPrices = new GridPriceForecast( gridPrices );
+                }
             }
         }
         var statistics = result.getJsonObjectOrNull( STATISTICS );

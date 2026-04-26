@@ -20,9 +20,9 @@ class GridPriceForecast {
     private var _cheapestHourStart as Moment;
     private var _cheapestHourEnd as Moment;
 
-    function initialize( grid as JsonAdapter ) {
-        grid.debug();
+    public function getAveragePrices() as Array<Float> { return _averagePrices; }
 
+    function initialize( grid as JsonAdapter ) {
         for( var i = 0; i < _averagePrices.size(); i++ ) {
             _averagePrices[i] = grid.getFloat( GRID_PRICE_AVERAGES[i] );
         }

@@ -127,7 +127,7 @@ class EvccSiteViewBase extends WatchUi.View {
 
     // Function to allow debug output state the type of view
     (:debug) private function getType() as String {
-        if( self instanceof ForecastView ) {
+        if( self instanceof SolarForecastView ) {
             return "forecast";
         } else if( self instanceof MainView ) {
             return "main";

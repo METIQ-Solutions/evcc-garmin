@@ -122,7 +122,7 @@ The most important view is the main view of the site:
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_main_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_1_main_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -146,7 +146,7 @@ As described above, when more than two load points are present, they may be grou
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_loadpoint_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_2loadpoint_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -160,7 +160,7 @@ The forecast displays the remaining energy for today, tomorrow, and partially fo
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_forecast_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_3forecast_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -176,7 +176,7 @@ The statistics view displays the percentage of solar energy relative to the tota
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_statistics_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_5statistics_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>

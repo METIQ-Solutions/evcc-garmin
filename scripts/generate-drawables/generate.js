@@ -12,12 +12,13 @@ WScript.Echo( "Reading configuration ...");
 
 var FOLDER_ROOT = "..\\..\\";
 var FOLDER_GENERATED = FOLDER_ROOT + "resources\\drawables\\generated\\";
-var FOLDER_SRC_XML = FOLDER_ROOT + "resources\\drawables\\src\\xml\\"
+var FOLDER_SRC_XML = FOLDER_ROOT + "resources\\drawables\\src\\res-defs\\"
 var FOLDER_SRC_SVG = FOLDER_ROOT + "resources\\drawables\\src\\svg\\"
+var FOLDER_SRC_JSON = FOLDER_ROOT + "resources\\drawables\\src\\build\\"
 
 // Read the JSON configuration
 var fso = new ActiveXObject("Scripting.FileSystemObject");
-var jsonFile = fso.OpenTextFile("generate.json", 1);
+var jsonFile = fso.OpenTextFile( FOLDER_SRC_JSON + "generate.json", 1);
 var content = jsonFile.ReadAll();
 
 // Convert JSON string to object structure

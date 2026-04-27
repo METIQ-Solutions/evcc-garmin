@@ -28,8 +28,11 @@ import Toybox.WatchUi;
         ICON_DURATION,
         ICON_CAR,
         ICON_CAR_DISCONNECTED,
+        ICON_CAR_COLORED,
         ICON_HEATER,
+        ICON_HEATER_COLORED,
         ICON_DEVICE,
+        ICON_DEVICE_COLORED,
         ICON_FORECAST,
         ICON_PRICE,
         ICON_STATISTICS

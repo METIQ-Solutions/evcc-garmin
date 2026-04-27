@@ -98,7 +98,7 @@ import Toybox.System;
         } else {
             if( option == :font ) { throw new InvalidValueException( "NOFONT" ); }
             if( option == :backgroundColor ) { return EvccColors.BACKGROUND; }
-            if( option == :color ) { return EvccColors.FOREGROUND; }
+            if( option == :color ) { return EvccColors.CONTENT; }
         }
 
         // Value is not present

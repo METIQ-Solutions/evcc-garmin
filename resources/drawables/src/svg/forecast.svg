@@ -4,8 +4,8 @@
    fill="none"
    version="1.1"
    id="svg1"
-   sodipodi:docname="forecast_alternative_2.svg"
-   inkscape:version="1.4-beta (62f545ba5e, 2024-04-22)"
+   sodipodi:docname="forecast.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -37,5 +37,5 @@
      stroke-linecap="round"
      stroke-linejoin="round"
      id="path1"
-     style="stroke:#ffffff;stroke-opacity:1" />
+     style="stroke:#4fc3f7;stroke-opacity:1" />
 </svg>

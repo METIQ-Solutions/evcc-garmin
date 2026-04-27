@@ -20,6 +20,15 @@ class LoadpointView extends EvccSiteViewBase {
     /******** STATIC ********/
 
 
+    // Icons and labels to be used for the loadpoint categories
+    // The detail views use colored icons, therefore there are different
+    // icons used than in the main view
+    private static const ICON_LABEL_ITEMS as Array<[IconBlock.Icon,String]> = [
+        [ IconBlock.ICON_CAR_COLORED, "CHARGERS" ],
+        [ IconBlock.ICON_HEATER_COLORED, "HEATERS" ],
+        [ IconBlock.ICON_DEVICE_COLORED, "DEVICES" ]
+    ];
+
     public static function getLoadpointsPerPage( category as Number ) as Number {
         return [2,3,3][category];
     }
@@ -99,15 +108,12 @@ class LoadpointView extends EvccSiteViewBase {
     // The page index within the category
     // E.g. 0 = the first page of the category
     private var _categoryPageIndex as Number;
-    // The icon representing the category
-    private var _icon as IconBlock.Icon;
 
     // Constructor
     function initialize( options as Options ) {
         EvccSiteViewBase.initialize( options );
         _category = options[:category] as Number;
         _categoryPageIndex = options[:categoryPageIndex] as Number;
-        _icon = getWebRequest().getState().getLoadpointCategory( _category )[0];
     }
 
     // Renders the content and adds it to the block
@@ -211,9 +217,12 @@ class LoadpointView extends EvccSiteViewBase {
         }
     }
 
-    // Show the category icon as page title
+    // Show the category icon and label as page title
+    function getPageTitle() as TextBlock? {
+        return new TextBlock( ICON_LABEL_ITEMS[ _category ][1], { :color => EvccColors.HEADER } );
+    }
     public function getPageIcon() as IconBlock? {
-        return new IconBlock( _icon, {} as DbOptions );
+        return new IconBlock( ICON_LABEL_ITEMS[ _category ][0], {} );
     }
 
 }

@@ -105,7 +105,7 @@ import Toybox.Application.Properties;
                     }
 
                     if( ! hasVehicle ) {
-                        line.addText( "No vehicle" );
+                        line.addText( "NO VEHICLE" );
                     }
                 }
 
@@ -130,7 +130,7 @@ import Toybox.Application.Properties;
                     line.setOption( :marginLeft, baseSpacing );
                 }
 
-                dc.setColor( EvccColors.FOREGROUND, Graphics.COLOR_TRANSPARENT );
+                dc.setColor( EvccColors.CONTENT, Graphics.COLOR_TRANSPARENT );
                 line.draw( dc, 0, dc.getHeight() / 2 );
                 // dc.drawRectangle( 0, 0, dc.getWidth(), dc.getHeight() );
                 //throw new InvalidOptionsException( "This is a test exception. Not sure where it happend. Beware!" );

@@ -51,7 +51,7 @@ class SelectIndicator {
         dc.drawArc( x, y, r, Graphics.ARC_COUNTER_CLOCKWISE, from - 2, to + 2 );
 
         // Now draw the indicator in foreground color
-        dc.setColor( EvccColors.FOREGROUND, EvccColors.BACKGROUND );
+        dc.setColor( EvccColors.NAVIGATION, EvccColors.BACKGROUND );
         dc.setPenWidth( lineWidth );
         dc.drawArc( x, y, r, Graphics.ARC_COUNTER_CLOCKWISE, from, to );
     }
@@ -101,7 +101,7 @@ class SelectIndicator {
         dc.fillCircle( x, y, radiusInner * 2 );
 
         // Now draw the indicator in foreground color
-        dc.setColor( EvccColors.FOREGROUND, EvccColors.BACKGROUND );
+        dc.setColor( EvccColors.NAVIGATION, EvccColors.BACKGROUND );
         dc.fillCircle( x, y, radiusInner );
         dc.setPenWidth( penWidth );
         dc.drawArc( x, y, radiusOuter, Graphics.ARC_COUNTER_CLOCKWISE, 0, 180 );
@@ -162,7 +162,7 @@ class SelectIndicator {
             - lineLength/2;
         
         // Now draw the indicator in foreground color
-        dc.setColor( EvccColors.FOREGROUND, EvccColors.BACKGROUND );
+        dc.setColor( EvccColors.NAVIGATION, EvccColors.BACKGROUND );
         dc.setPenWidth( lineWidth );
         dc.drawLine( x, yStart, x, yStart + lineLength );
     }

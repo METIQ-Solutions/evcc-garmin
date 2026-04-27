@@ -6,7 +6,7 @@ class WidgetUiHelper extends GlanceUiHelper {
     
     // Sets the colors and clears the device context
     public static function clearDc( dc as Dc ) as Void {
-        dc.setColor( EvccColors.FOREGROUND, EvccColors.BACKGROUND );
+        dc.setColor( EvccColors.CONTENT, EvccColors.BACKGROUND );
         dc.clear();
     }
 
@@ -54,10 +54,10 @@ class WidgetUiHelper extends GlanceUiHelper {
     // Returns the text to be displayed for the charging mode
     public static function formatMode( loadpoint as Loadpoint ) as String { 
         var mode = loadpoint.getMode();
-        if( mode.equals( "pv" ) ) { return "Solar"; }
-        else if( mode.equals( "minpv" ) ) { return "Min+Solar"; }
-        else if( mode.equals( "now" ) ) { return "Fast"; }
-        else if( mode.equals( "off" ) ) { return "Off"; }
+        if( mode.equals( "pv" ) ) { return "SOLAR"; }
+        else if( mode.equals( "minpv" ) ) { return "MIN+SOLAR"; }
+        else if( mode.equals( "now" ) ) { return "FAST"; }
+        else if( mode.equals( "off" ) ) { return "OFF"; }
         else { return mode; }
     }
 

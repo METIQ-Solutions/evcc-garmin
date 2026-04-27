@@ -12,18 +12,18 @@ class SolarForecastView extends EvccSiteViewBase {
 
         // Define the labels for the rows
         // Third label is the three-character short code for the weekday
-        _label = [ "tday", "tmrw" ];
+        _label = [ "TDAY", "TMRW" ];
         var dat = Gregorian.info(Time.now().add( Gregorian.duration({:days => 2})), Time.FORMAT_MEDIUM);
-        _label.add( dat.day_of_week.toString().toLower() );
+        _label.add( dat.day_of_week.toString().toUpper() );
         
         // Define indicators to be shown in small font at the end of each line
-        _indicator = [ "rem.", null, "ptly" ];
+        _indicator = [ "REM.", null, "PTLY" ];
     }
 
     // Show the forecast icon as page title
     // Set icon and title for this page
     function getPageTitle() as TextBlock? {
-        return new TextBlock( "forecast", { :color => Graphics.COLOR_LT_GRAY } );
+        return new TextBlock( "FORECAST", { :color => EvccColors.HEADER } );
     }
     function getPageIcon() as IconBlock? {
         return new IconBlock( IconBlock.ICON_FORECAST, {} );
@@ -53,10 +53,10 @@ class SolarForecastView extends EvccSiteViewBase {
 
                 if( applyScale ) {
                     block.addTextWithOptions( 
-                        "adj. w\\ real data", 
+                        "ADJ. W\\ REAL DATA", 
                         { :relativeFont => 4, 
                           :marginTop => dcHeight * 0.007,
-                          :color => Graphics.COLOR_LT_GRAY } 
+                          :color => EvccColors.ACCENT } 
                     );
                 }
 
@@ -86,7 +86,7 @@ class SolarForecastView extends EvccSiteViewBase {
                 { :relativeFont => 2, 
                   :verticalJustifyToBaseFont => true, 
                   :justify => Graphics.TEXT_JUSTIFY_RIGHT,
-                  :color => Graphics.COLOR_LT_GRAY } 
+                  :color => EvccColors.ACCENT } 
             );
             
             // Then add the value
@@ -100,7 +100,7 @@ class SolarForecastView extends EvccSiteViewBase {
                     " " + _indicator[i], 
                     { :relativeFont => 4, 
                       :verticalJustifyToBaseFont => true,
-                      :color => Graphics.COLOR_LT_GRAY } 
+                      :color => EvccColors.ACCENT } 
                 );
             }
             column3.addBlock( unit );

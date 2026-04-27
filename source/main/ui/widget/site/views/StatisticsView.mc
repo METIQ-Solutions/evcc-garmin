@@ -4,10 +4,10 @@ using Toybox.Time.Gregorian;
 
 // View showing statistics data
 class StatisticsView extends EvccSiteViewBase {
-    private var LABELS as Array<String> = [ "30 days", 
-                                            "this year", 
-                                            "365 days", 
-                                            "all time" ];
+    private var LABELS as Array<String> = [ "30 DAYS", 
+                                            "THIS YEAR", 
+                                            "365 DAYS", 
+                                            "ALL TIME" ];
 
     function initialize( options as EvccSiteViewBase.Options ) {
         EvccSiteViewBase.initialize( options );
@@ -15,7 +15,7 @@ class StatisticsView extends EvccSiteViewBase {
 
     // Set icon and title for this page
     function getPageTitle() as TextBlock? {
-        return new TextBlock( "solar energy", { :color => Graphics.COLOR_LT_GRAY } );
+        return new TextBlock( "SOLAR ENERGY", { :color => EvccColors.HEADER } );
     }
     function getPageIcon() as IconBlock? {
         return new IconBlock( IconBlock.ICON_STATISTICS, {} );
@@ -43,7 +43,7 @@ class StatisticsView extends EvccSiteViewBase {
                         { :relativeFont => 2, 
                           :verticalJustifyToBaseFont => true, 
                           :justify => Graphics.TEXT_JUSTIFY_RIGHT,
-                          :color => Graphics.COLOR_LT_GRAY }
+                          :color => EvccColors.ACCENT }
                     );
 
                     // Add the value as one right-justified horizontal block,

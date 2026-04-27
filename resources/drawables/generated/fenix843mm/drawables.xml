@@ -48,6 +48,9 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="forecast_xtiny" filename="icon_xtiny_forecast.png"/>
     <bitmap scope="foreground" id="price_xtiny" filename="icon_xtiny_price.png"/>
     <bitmap scope="foreground" id="statistics_xtiny" filename="icon_xtiny_statistics.png"/>
+    <bitmap scope="foreground" id="car_colored_xtiny" filename="icon_xtiny_car_colored.png"/>
+    <bitmap scope="foreground" id="heater_colored_xtiny" filename="icon_xtiny_heater_colored.png"/>
+    <bitmap scope="foreground" id="device_colored_xtiny" filename="icon_xtiny_device_colored.png"/>
 
     <!-- tiny font size -->
     <bitmap scope="foreground" id="battery_empty_tiny" filename="icon_tiny_battery_empty.png"/>
@@ -104,6 +107,8 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="forecast_medium" filename="icon_medium_forecast.png"/>
     <bitmap scope="foreground" id="price_medium" filename="icon_medium_price.png"/>
     <bitmap scope="foreground" id="statistics_medium" filename="icon_medium_statistics.png"/>
-
+    <bitmap scope="foreground" id="car_colored_medium" filename="icon_xtiny_car_colored.png"/>
+    <bitmap scope="foreground" id="heater_colored_medium" filename="icon_medium_heater_colored.png"/>
+    <bitmap scope="foreground" id="device_colored_medium" filename="icon_medium_device_colored.png"/>
 
 </drawables>

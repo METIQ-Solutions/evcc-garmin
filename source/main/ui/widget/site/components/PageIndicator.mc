@@ -24,7 +24,7 @@ class BasePageIndicator {
 
     // Function to draw a single dot at a certain X/Y location
     protected function drawDotXY( dc as Dc, dotX as Number, dotY as Number, active as Boolean ) as Void {
-        dc.setColor( EvccColors.FOREGROUND, Graphics.COLOR_BLACK );
+        dc.setColor( EvccColors.NAVIGATION, Graphics.COLOR_BLACK );
         
         // Anti-alias is only available in newer SDK versions
         if( dc has :setAntiAlias ) {
@@ -34,7 +34,7 @@ class BasePageIndicator {
         dc.drawCircle( dotX, dotY, _dotSize );
         dc.setColor( Graphics.COLOR_BLACK, Graphics.COLOR_BLACK );
         dc.drawCircle( dotX, dotY, _dotSize - _lineWidth );
-        dc.setColor( EvccColors.FOREGROUND, Graphics.COLOR_BLACK );
+        dc.setColor( EvccColors.NAVIGATION, Graphics.COLOR_BLACK );
         if( active ) {
             dc.fillCircle( dotX, dotY, _dotSize - _lineWidth * 2 );
         }

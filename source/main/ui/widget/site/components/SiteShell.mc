@@ -66,7 +66,10 @@ class SiteShell {
             hasSiteTitle = true;
             if( stateRequest.hasState() ) {
                 // We display a max of 9 characters
-                header.addText( (stateRequest.getState().getSiteTitle().substring(0,9) as String) );
+                header.addTextWithOptions( 
+                    stateRequest.getState().getSiteTitle().substring(0,9) as String,
+                    { :color => EvccColors.HEADER }
+                );
             }
         }
         
@@ -92,7 +95,7 @@ class SiteShell {
                 if( pageTitle != null ) {
                     pageTitle.setOption( :font, WidgetResourceSet.FONT_XTINY );
                     if( pageIcon == null ) {
-                        pageTitle.setOption( :marginTop, spacing * 2 / 3 );
+                        pageTitle.setOption( :marginTop, spacing );
                     }
                     header.addBlock( pageTitle );
                 }

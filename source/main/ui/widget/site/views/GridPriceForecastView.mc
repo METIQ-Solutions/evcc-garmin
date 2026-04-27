@@ -4,7 +4,7 @@ import Toybox.Time;
 
 // View showing grid price forecast data
 class GridPriceForecastView extends EvccSiteViewBase {
-    private const LABELS = [ "+1h", "+2h", "tday", "tmrw" ];
+    private const LABELS = [ "+1H", "+2H", "TDAY", "TMRW" ];
     private const UNIT = " ct";
     
     function initialize( options as EvccSiteViewBase.Options ) {
@@ -14,7 +14,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
     // Show the forecast icon as page title
     // Set icon and title for this page
     public function getPageTitle() as TextBlock? {
-        return new TextBlock( "grid price", { :color => Graphics.COLOR_LT_GRAY } );
+        return new TextBlock( "GRID PRICE", { :color => EvccColors.HEADER } );
     }
     public function getPageIcon() as IconBlock? {
         return new IconBlock( IconBlock.ICON_PRICE, {} );
@@ -31,7 +31,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
         var now = state.getGridTariff();
         if( now != null ) {
-            addSingle( block, "now", now );
+            addSingle( block, "NOW", now );
             block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
         }
         if( state != null && state.hasGridPriceForecast() ) {
@@ -39,7 +39,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
             if( forecast != null ) {
                 addAverages( block, forecast.getAveragePrices() );
                 block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
-                addSingle( block, "min", forecast.getCheapestHourAverage() );
+                addSingle( block, "MIN", forecast.getCheapestHourAverage() );
                 addCheapestHour( block, forecast.getCheapestHourStart(), forecast.getCheapestHourEnd() );
             }
         }
@@ -55,7 +55,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
         var startInfo = Gregorian.info( start, Time.FORMAT_MEDIUM );
         var endInfo = Gregorian.info( end, Time.FORMAT_MEDIUM );
         block.addTextWithOptions( 
-            startInfo.day_of_week
+            startInfo.day_of_week.toString().toUpper()
                 + " " + StringFormatter.pad2( startInfo.hour ) 
                 + ":" + StringFormatter.pad2( startInfo.min )
                 + "-" + StringFormatter.pad2( endInfo.hour ) 
@@ -72,7 +72,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
             label + ":", 
             { :relativeFont => 2, 
               :verticalJustifyToBaseFont => true,
-              :color => Graphics.COLOR_LT_GRAY } 
+              :color => EvccColors.ACCENT } 
         );
         row.addTextWithOptions( " " + formatPrice( price ), { :relativeFont => 0, :verticalJustifyToBaseFont => true } );
         row.addTextWithOptions( UNIT, { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
@@ -104,7 +104,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
                     :relativeFont => 2, 
                     :verticalJustifyToBaseFont => true, 
                     :justify => Graphics.TEXT_JUSTIFY_RIGHT,
-                    :color => Graphics.COLOR_LT_GRAY
+                    :color => EvccColors.ACCENT
                 } 
             );
             

@@ -11,29 +11,23 @@ import Toybox.Time;
 class GridPriceForecast {
     private const GRID_PRICE_AVERAGES = [ "next60MinutesAverage", "next60To120MinutesAverage", "remainingTodayAverage", "tomorrowAverage" ];
     private const GRID_PRICE_CHEAPEST_HOUR = "cheapestHour";
-    private const GRID_PRICE_CHEAPEST_HOUR_AVERAGE = "average";
-    private const GRID_PRICE_CHEAPEST_HOUR_START = "start";
-    private const GRID_PRICE_CHEAPEST_HOUR_END = "end";
 
-    private var _averagePrices as Array<Float> = new Array<Float>[GRID_PRICE_AVERAGES.size()];
-    private var _cheapestHourAverage as Float;
-    private var _cheapestHourStart as Moment;
-    private var _cheapestHourEnd as Moment;
+    private var _averagePrices as Array<Float?> = new Array<Float?>[GRID_PRICE_AVERAGES.size()];
+    private var _cheapestHour as CheapestHour?;
 
-    public function getAveragePrices() as Array<Float> { return _averagePrices; }
-    public function getCheapestHourAverage() as Float { return _cheapestHourAverage; }
-    public function getCheapestHourStart() as Moment { return _cheapestHourStart; }
-    public function getCheapestHourEnd() as Moment { return _cheapestHourEnd; }
+    public function getAveragePrices() as Array<Float?> { return _averagePrices; }
+    public function getCheapestHour() as CheapestHour? { return _cheapestHour; }
     
     function initialize( grid as JsonAdapter ) {
         for( var i = 0; i < _averagePrices.size(); i++ ) {
-            _averagePrices[i] = grid.getFloat( GRID_PRICE_AVERAGES[i] );
+            _averagePrices[i] = grid.getFloatOrNull( GRID_PRICE_AVERAGES[i] );
         }
 
-        var cheapestHour = grid.getJsonObject( GRID_PRICE_CHEAPEST_HOUR );
-        _cheapestHourAverage = cheapestHour.getFloat( GRID_PRICE_CHEAPEST_HOUR_AVERAGE );
-        _cheapestHourStart = cheapestHour.getMoment( GRID_PRICE_CHEAPEST_HOUR_START );
-        _cheapestHourEnd = cheapestHour.getMoment( GRID_PRICE_CHEAPEST_HOUR_END );
+        var cheapestHour = grid.getJsonObjectOrNull( GRID_PRICE_CHEAPEST_HOUR );
+
+        if( cheapestHour != null ) {
+            _cheapestHour = new CheapestHour( cheapestHour );
+        }
     }
 
     function serialize() as JsonObject { 
@@ -41,6 +35,34 @@ class GridPriceForecast {
         for( var i = 0; i < _averagePrices.size(); i++ ) {
             gridPrices.put( GRID_PRICE_AVERAGES[i], _averagePrices[i] );
         }
+        if( _cheapestHour != null ) {
+            gridPrices.put( GRID_PRICE_CHEAPEST_HOUR, _cheapestHour.serialize() );
+        }
+        return gridPrices;
+    }
+}
+
+(:glance)
+class CheapestHour {
+    private const GRID_PRICE_CHEAPEST_HOUR_AVERAGE = "average";
+    private const GRID_PRICE_CHEAPEST_HOUR_START = "start";
+    private const GRID_PRICE_CHEAPEST_HOUR_END = "end";
+
+    private var _cheapestHourAverage as Float;
+    private var _cheapestHourStart as Moment;
+    private var _cheapestHourEnd as Moment;
+
+    public function getCheapestHourAverage() as Float { return _cheapestHourAverage; }
+    public function getCheapestHourStart() as Moment { return _cheapestHourStart; }
+    public function getCheapestHourEnd() as Moment { return _cheapestHourEnd; }
+    
+    function initialize( cheapestHour as JsonAdapter ) {
+        _cheapestHourAverage = cheapestHour.getFloat( GRID_PRICE_CHEAPEST_HOUR_AVERAGE );
+        _cheapestHourStart = cheapestHour.getMoment( GRID_PRICE_CHEAPEST_HOUR_START );
+        _cheapestHourEnd = cheapestHour.getMoment( GRID_PRICE_CHEAPEST_HOUR_END );
+    }
+
+    function serialize() as JsonObject { 
         var cheapestHour = {} as JsonObject;
         cheapestHour.put( GRID_PRICE_CHEAPEST_HOUR_AVERAGE, _cheapestHourAverage );
         cheapestHour.put( 
@@ -51,7 +73,6 @@ class GridPriceForecast {
             GRID_PRICE_CHEAPEST_HOUR_END, 
             JsonAdapter.momentToIsoLocalString( _cheapestHourEnd ) 
         );
-        gridPrices.put( GRID_PRICE_CHEAPEST_HOUR, cheapestHour );
-        return gridPrices;
+        return cheapestHour;
     }
 }

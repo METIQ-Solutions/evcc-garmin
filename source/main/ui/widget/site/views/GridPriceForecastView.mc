@@ -6,6 +6,7 @@ import Toybox.Time;
 class GridPriceForecastView extends EvccSiteViewBase {
     private const LABELS = [ "+1H", "+2H", "TDAY", "TMRW" ];
     private const UNIT = " ct";
+    private const NA = "--";
     
     function initialize( options as EvccSiteViewBase.Options ) {
         EvccSiteViewBase.initialize( options );
@@ -20,8 +21,8 @@ class GridPriceForecastView extends EvccSiteViewBase {
         return new IconBlock( IconBlock.ICON_PRICE, {} );
     }
     // Forecast is limited by width not the default height
-    function limitHeight() as Boolean { return true; }
-    function limitWidth() as Boolean { return false; }
+    function limitHeight() as Boolean { return false; }
+    function limitWidth() as Boolean { return true; }
 
     // Add the content
     public function addContent( block as VerticalBlock, calcDc as EvccDcInterface ) {
@@ -30,17 +31,21 @@ class GridPriceForecastView extends EvccSiteViewBase {
         var dcHeight = calcDc.getHeight();
 
         var now = state.getGridTariff();
-        if( now != null ) {
-            addSingle( block, "NOW", now );
-            block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
-        }
+        addSingle( block, "NOW", now );
+        block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
+
         if( state != null && state.hasGridPriceForecast() ) {
             var forecast = state.getGridPriceForecast();
             if( forecast != null ) {
                 addAverages( block, forecast.getAveragePrices() );
                 block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
-                addSingle( block, "MIN", forecast.getCheapestHourAverage() );
-                addCheapestHour( block, forecast.getCheapestHourStart(), forecast.getCheapestHourEnd() );
+                var cheapestHour = forecast.getCheapestHour();
+                if( cheapestHour != null ) {
+                    addSingle( block, "MIN", cheapestHour.getCheapestHourAverage() );
+                    addCheapestHour( block, cheapestHour.getCheapestHourStart(), cheapestHour.getCheapestHourEnd() );
+                } else {
+                    addSingle( block, "MIN", null );
+                }
             }
         }
 
@@ -66,7 +71,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
 
     // Assemble one row of the table
-    private function addSingle( block as VerticalBlock, label as String, price as Float ) as Void {
+    private function addSingle( block as VerticalBlock, label as String, price as Float? ) as Void {
         var row = new HorizontalBlock( {} as DbOptions );
         row.addTextWithOptions( 
             label + ":", 
@@ -81,7 +86,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
 
     // Assemble one row of the table
-    private function addAverages( block as VerticalBlock, price as Array<Float> ) as Void {
+    private function addAverages( block as VerticalBlock, prices as Array<Float?> ) as Void {
 
         var row = new HorizontalBlock( {} as DbOptions );
         var columns = [ [
@@ -96,7 +101,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
         var ci = 0;
 
-        for( var pi = 0; pi < price.size(); pi++ ) {
+        for( var pi = 0; pi < prices.size(); pi++ ) {
             // Start with the label
             columns[ci][0].addTextWithOptions( 
                 ( ci == 1 ? "      " : "" ) + LABELS[pi] + ":", 
@@ -108,14 +113,23 @@ class GridPriceForecastView extends EvccSiteViewBase {
                 } 
             );
             
+
+            var price = prices[pi];
+
             // Then add the value
-            columns[ci][1].addTextWithOptions( " " + formatPrice( price[pi] ), { :justify => Graphics.TEXT_JUSTIFY_RIGHT } );
+            columns[ci][1].addTextWithOptions( 
+                " " + formatPrice( price ), 
+                { :justify => Graphics.TEXT_JUSTIFY_RIGHT } 
+            );
 
             // And finally the unit with the optional indicator
-            var unit = new HorizontalBlock( { :justify => Graphics.TEXT_JUSTIFY_LEFT} );
-            unit.addTextWithOptions( UNIT, { :relativeFont => 2, :verticalJustifyToBaseFont => true } );
-            columns[ci][2].addBlock( unit );
-        
+            columns[ci][2].addTextWithOptions( 
+                UNIT, 
+                { :relativeFont => 2,
+                  :justify => Graphics.TEXT_JUSTIFY_LEFT,
+                  :verticalJustifyToBaseFont => true } 
+            );
+
             ci = 1 - ci;
         }
 
@@ -129,8 +143,10 @@ class GridPriceForecastView extends EvccSiteViewBase {
     }
 
     // Function to prices for the forecast view
-    private function formatPrice( price as Float ) as String {
-        return Math.round( price * 100.0 ).format( "%u" );    
-        //return Math.round( price * 100.0 ).format( "%.1f" );    
+    private function formatPrice( price as Float? ) as String {
+        return 
+            price != null 
+                ? Math.round( price * 100.0 ).format( "%u" )
+                : NA;
     }
 }

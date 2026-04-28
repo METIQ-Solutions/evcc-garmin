@@ -251,10 +251,24 @@ import Toybox.Lang;
     // Function to generate the main line representing a charger with a connected EV
     private function renderVehicle( loadpoint as Loadpoint ) as HorizontalBlock {
         var vehicle = loadpoint.getVehicle() as Vehicle;
+        
+        // If there is only one loadpoint and either
+        // there is only one vehicle or the vehicle is a
+        // guest vehicle, we show the icon, otherwise
+        // the title.
+        var showIcon = loadpoint.isOnlyInCategory() && ( vehicle.isOnlyVehicle() || vehicle.isGuest() );
 
-        var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
+        // Truncation is only required if the title is shown
+        var line = new HorizontalBlock( 
+            ! showIcon ? { :truncateSpacing => getContentArea().truncateSpacing } : {} 
+        );
 
-        line.addTextWithOptions( vehicle.getTitle(), { :isTruncatable => true } );
+        // Add icon or title
+        if( showIcon ) {
+            line.addIcon( IconBlock.ICON_CAR, {} );
+        } else {
+            line.addTextWithOptions( vehicle.getTitle(), { :isTruncatable => true } );
+        }
         
         // For guest vehicles there is no SoC
         if( ! vehicle.isGuest() ) {
@@ -289,29 +303,34 @@ import Toybox.Lang;
 
     // Renders a heater or integrated device
     private function renderAuxDevice( loadpoint as Loadpoint ) as HorizontalBlock {
-
         var isHeater = loadpoint.isHeater();
         var isOnlyInCategory = loadpoint.isOnlyInCategory();
 
+        // Only if this loadpoint is not the only in its category
+        // we show the title and thus potentially need truncation
         var line = new HorizontalBlock( 
             ! isOnlyInCategory ? { :truncateSpacing => getContentArea().truncateSpacing } : {} 
         );
         
+        // If this loadpoint is the only in its category we
+        // show the icon, otherwise the title
         if( isOnlyInCategory ) {
             line.addIcon( isHeater ? IconBlock.ICON_HEATER : IconBlock.ICON_DEVICE, {} );
         } else {
             line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );
         }
 
+        // For heater we show the temperature
         if( isHeater ) {
             line.addText( " " + WidgetUiHelper.formatTemp( (loadpoint.getHeater() as Heater ).getTemperature() ) );
         }
         
-        // If the heater is operating, we show the power
+        // If the aux device is operating, we show the power
         if( loadpoint.getChargePowerRounded() > 0 ) {
             addChargePower( line, loadpoint );
         }
 
+        // Add charging mode
         addMode( line, loadpoint );
 
         return line;

@@ -28,6 +28,7 @@ import Toybox.WatchUi;
         ICON_DURATION,
         ICON_CHARGER,
         ICON_CHARGER_COLORED,
+        ICON_CAR,
         ICON_HEATER,
         ICON_HEATER_COLORED,
         ICON_DEVICE,

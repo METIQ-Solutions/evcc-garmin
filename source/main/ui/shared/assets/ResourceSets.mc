@@ -141,6 +141,7 @@ class WidgetResourceSetBase {
         [ null, null, null, Rez.Drawables.clock_xtiny, Rez.Drawables.clock_micro ],
         [ Rez.Drawables.charger_medium, Rez.Drawables.charger_small, Rez.Drawables.charger_tiny, Rez.Drawables.charger_xtiny, null ],
         [ Rez.Drawables.charger_colored_medium, null, null, Rez.Drawables.charger_colored_xtiny, null ],
+        [ Rez.Drawables.car_medium, Rez.Drawables.car_small, Rez.Drawables.car_tiny, Rez.Drawables.car_xtiny, null ],
         [ Rez.Drawables.heater_medium, Rez.Drawables.heater_small, Rez.Drawables.heater_tiny, Rez.Drawables.heater_xtiny, null ],
         [ Rez.Drawables.heater_colored_medium, null, null, Rez.Drawables.heater_colored_xtiny, null ],
         [ Rez.Drawables.device_medium, Rez.Drawables.device_small, Rez.Drawables.device_tiny, Rez.Drawables.device_xtiny, null ],

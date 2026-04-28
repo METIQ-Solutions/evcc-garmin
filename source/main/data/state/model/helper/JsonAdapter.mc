@@ -266,7 +266,12 @@ class JsonAdapter {
     }
 
 
+    public function size() as Number {
+        return _jsonObject.size();
+    }
+
     // Helper function to format the Moment again for serialization
+    /*
     public static function momentToIsoLocalString( moment as Moment ) as String {
         var info = Gregorian.utcInfo( moment, Time.FORMAT_SHORT );
 
@@ -282,5 +287,5 @@ class JsonAdapter {
             + ":" + StringFormatter.pad2( info.min )
             + ":" + StringFormatter.pad2( info.sec );
     }
-
+    */
 }

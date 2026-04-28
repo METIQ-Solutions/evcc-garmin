@@ -25,13 +25,4 @@ class SolarForecast {
             _energy[i] = solarForecast.getJsonObject( FORECAST_DAYS[i] ).getFloat( FORECAST_ENERGY );
         }
     }
-
-    function serialize() as JsonObject { 
-        var solar = {} as JsonObject;
-        solar[FORECAST_SCALE] = _scale;
-        for( var i = 0; i < _energy.size(); i++ ) {
-            solar[FORECAST_DAYS[i]] = { FORECAST_ENERGY => _energy[i] };
-        }
-        return solar;
-    }
 }

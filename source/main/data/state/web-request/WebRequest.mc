@@ -238,13 +238,6 @@ class WebRequest {
     }
 
 
-    // Override the parent function to persist the
-    // state class in the state store instead of the JSON
-    public function persistState() as Void { 
-        _stateStore.persist();
-    }
-
-
     // Register a callback
     public function registerCallback( callback as WebRequestCallback ) as Void {
         _callbacks.add( callback );

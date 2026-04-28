@@ -31,11 +31,6 @@ public class WebRequestRegistry {
 
     // Stop all state requests
     public static function stop() as Void {
-        if( _stateRequests.size() > 0 ) {
-            for( var i = 0; i < _stateRequests.size(); i++ ) {
-                _stateRequests[i].persistState();
-            }
-        }
         // Stop the handler
         // If there is an error before we start the registry, then there may not
         // be a timer to stop. (e.g. if there is no site configuration)

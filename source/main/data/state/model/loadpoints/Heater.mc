@@ -17,11 +17,5 @@ class Heater extends LoadpointItem {
         _temp = dataLp.getNumber( VEHICLESOC );
     }
 
-    function serialize( loadpoint as JsonObject ) as JsonObject {
-        LoadpointItem.serialize( loadpoint );
-        loadpoint[VEHICLESOC] = _temp;
-        return loadpoint;
-    }
-
     public function getTemperature() as Number { return _temp; }
 }

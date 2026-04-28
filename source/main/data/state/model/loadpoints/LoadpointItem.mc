@@ -11,8 +11,4 @@ import Toybox.Lang;
 (:glance) class LoadpointItem {
     function initialize( dataLp as JsonAdapter ) {
     }
-
-    function serialize( loadpoint as JsonObject ) as JsonObject {
-        return loadpoint;
-    }
 }

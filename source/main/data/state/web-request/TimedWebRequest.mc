@@ -44,6 +44,5 @@ class TimedWebRequest extends WebRequest {
             _timer.stop();
         }
         Communications.cancelAllRequests();
-        persistState();
     }
 }

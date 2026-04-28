@@ -64,34 +64,13 @@ class StateStore {
     }
 
 
-    // Persist the data to storage
-    // Having this separately from setState() fullfils two purposes
-    // First, it reduces the write operations to persistant storage
-    // Second, setState() is called in the same time as the JSON response
-    // is processed. Storage.setValue() is also memory-intensive, so doing
-    // both at once would cause out of memory errors. So instead we have persist()
-    // be called when the application is stopped, at that point, there is no
-    // JSON data in dictionary form in memory anymore.
-    public function persist() as Void {
-        var state = _state;
-        if( state != null ) {
-            // Logger.debug( "StateStore: persisting site " + _siteIndex );
-            var stateData = state.serialize();
-            var stateTimestamp = state.getTimestamp();
-            state = null;
-            _state = null;
-
-            var siteData = {} as JsonObject;
-            siteData[NAME_DATA] = stateData;
-            siteData[NAME_DATATIMESTAMP] = stateTimestamp.value();
-
-            Storage.setValue( Constants.STORAGE_SITE_PREFIX + _siteIndex, siteData as Lang.Dictionary<Storage.KeyType, Storage.ValueType> );
-        }
-    }
-
-
-    public function setState( result as JsonObject ) as Void {
+    public function setState( json as JsonObject ) as Void {
         // Logger.debug( "StateStore: storing site " + _siteIndex );
-        _state = new EvccState( new JsonAdapter( result ), Time.now() );
+        var timestamp = Time.now();
+        var siteData = {} as JsonObject;
+        siteData[NAME_DATA] = json;
+        siteData[NAME_DATATIMESTAMP] = timestamp.value();
+        Storage.setValue( Constants.STORAGE_SITE_PREFIX + _siteIndex, siteData as Lang.Dictionary<Storage.KeyType, Storage.ValueType> );
+        _state = new EvccState( new JsonAdapter( json ), timestamp );
     }
 }

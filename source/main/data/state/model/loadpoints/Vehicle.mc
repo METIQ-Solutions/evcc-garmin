@@ -9,13 +9,12 @@ import Toybox.Lang;
 // Currently only connected vehicles are relevant, others
 // are ignored
 (:glance) class Vehicle extends LoadpointItem {
-    private var _name as String;
     private var _title as String;
     private var _soc as Number = 0;
     private var _isGuest as Boolean = false;
-    
+    private var _isOnlyVehicle as Boolean = false;
+
     private const VEHICLENAME = "vehicleName";
-    private const VEHICLETITLE = "vehicleTitle";
     private const VEHICLES = "vehicles";
     private const VH_TITLE = "title";
     private const VEHICLESOC = "vehicleSoc";
@@ -24,33 +23,21 @@ import Toybox.Lang;
         LoadpointItem.initialize( dataLp );
 
         var name = dataLp.getStringOrNull( VEHICLENAME );
-        
-        // Note: here the storage serialization diverts from the 
-        // evcc response. In the evcc response, the loadpoint
-        // only has the vehicle name and we need to look it up
-        // in the vehicles to get the vehicle title. For serialization
-        // we store the vehicle title in the loadpoint as well, to 
-        // save space
-        var title = dataLp.getStringOrNull( VEHICLETITLE );
-        
+        var title = null;
+
         // For guest vehicles we use the loadpoint title as name/title
         if( name == null || name.equals( "" ) ) {
-            name = lpTitle;
-            title = name;
+            title = lpTitle;
             _isGuest = true;
         } else {
+            // If it is not a guest, we lookup the SoC and vehicle title
             _soc = dataLp.getNumber( VEHICLESOC );
-        }
-        
-        // Only if no title was set (either from storage or because it is
-        // a guest vehicle), we check the vehicles data.
-        if( title == null || title.equals( "" ) ) {
-            // we still default to the _name ...
-            title = name;
-            // and then lookup the vehicle and replace it
-            // if we find the title there
+            
             var vehicles = dataResult.getJsonObjectOrNull( VEHICLES );
             if( vehicles != null ) {
+                if( vehicles.size() == 1 ) {
+                    _isOnlyVehicle = true;                    
+                }
                 var vehicle = vehicles.getJsonObjectOrNull( name );
                 if( vehicle != null ) {
                     title = vehicle.getString( VH_TITLE );
@@ -58,22 +45,15 @@ import Toybox.Lang;
             }
         }
 
-        _title = title;
-        _name = name;
+        if( title != null ) {
+            _title = title;
+        } else {
+            throw new InvalidValueException( "JSON: could not find vehicle " + name );
+        }
     }
     
-    function serialize( loadpoint as JsonObject ) as JsonObject {
-        if( ! _isGuest ) {
-            loadpoint[VEHICLENAME] = _name;
-            loadpoint[VEHICLETITLE] = _title; // diversion from evcc response structure, see above
-            loadpoint[VEHICLESOC] = _soc;
-            LoadpointItem.serialize( loadpoint );
-        }
-        return loadpoint;
-    }
-
-    public function getName() as String { return _name; }
     public function getTitle() as String { return _title; }
     public function getSoc() as Number { return _soc; }
     public function isGuest() as Boolean { return _isGuest; }
+    public function isOnlyVehicle() as Boolean { return _isOnlyVehicle; }
 }

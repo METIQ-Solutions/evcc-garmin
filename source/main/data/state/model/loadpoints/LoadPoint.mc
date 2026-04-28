@@ -44,33 +44,6 @@ import Toybox.Lang;
         }
     }
 
-    (:typecheck(disableGlanceCheck))
-    function serialize() as JsonObject {
-        var loadpoint = { 
-            TITLE => _title,
-            CHARGING => _isCharging,
-            PHASESACTIVE => _activePhases,
-            CHARGEPOWER => _chargePower,
-            MODE => _mode,
-            CHARGEREMAININGDURATION => _chargeRemainingDuration
-        } as JsonObject;
-
-        if( _controllable != null ) {
-            _controllable.serialize( loadpoint );
-            if( _controllable instanceof Vehicle ) {
-                loadpoint[CONNECTED] = true;
-            } else if( _controllable instanceof Heater ) {
-                loadpoint[CONNECTED] = true;
-                loadpoint[CHARGERFEATUREHEATING] = true;
-            } else if( _controllable instanceof IntegratedDevice ) {
-                loadpoint[CONNECTED] = true;
-                loadpoint[CHARGERFEATUREINTEGRATEDDEVICE] = true;
-            }
-        }
-
-        return loadpoint;
-    }
-
     public function getTitle() as String { return _title; }
 
     public function isCharging() as Boolean { return _isCharging; }

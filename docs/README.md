@@ -146,7 +146,7 @@ As described above, when more than two load points are present, they may be grou
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_2loadpoint_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_2_loadpoint_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -154,13 +154,13 @@ As described above, when more than two load points are present, they may be grou
 
 The example above shows a group of integrated devices with two load points.
 
-#### Forecast View
+#### Solar Forecast View
 
-The forecast displays the remaining energy for today, tomorrow, and partially for the day after tomorrow. Since data is available for a 48-hour period, the forecast for the day after tomorrow includes values up to the current time.
+The solar forecast displays the remaining energy for today, tomorrow, and partially for the day after tomorrow. Since data is available for a 48-hour period, the forecast for the day after tomorrow includes values up to the current time.
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_3forecast_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_3_forecast_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>
@@ -170,13 +170,34 @@ The view includes an option equivalent to the "Adjust solar forecast based on re
 
 **Note for devices using the tiny glance**: These devices do not have enough memory to support the glance and background processes handling forecast data. As a result, the full state including the forecast will only be requested when the widget is opened. Since the forecast is optional, the forecast view will be added only after the response is received.
 
+#### Grid Price View
+
+The grid price view is available if your evcc installation has smart costs configured.
+
+It displays:
+
+- **NOW**: the current energy price  
+- **+1H**: the average price over the next 60 minutes  
+- **+2H**: the average price from 60 to 120 minutes from now  
+- **TDAY**: the average price for the remainder of the day  
+- **TMRW**: the average price for the next day  
+- **MIN**: the average price and time of the cheapest hour within the covered time frame
+
+<table class="layoutTable">
+  <tr>
+    <td width="33.33%"><img src="screenshots/widget_1site_4_grid_price_300px.png"/></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
 #### Statistics View
 
 The statistics view displays the percentage of solar energy relative to the total energy consumed across all load points.
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_5statistics_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_5_statistics_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>

@@ -229,7 +229,7 @@ import Toybox.Lang;
         // For battery and loadpoints we show the power only if it is not 0,
         // for all others we always show it
         if( ( icon != IconBlock.ICON_BATTERY 
-              && icon != IconBlock.ICON_CAR 
+              && icon != IconBlock.ICON_CHARGER
               && icon != IconBlock.ICON_HEATER
               && icon != IconBlock.ICON_DEVICE
             ) 
@@ -244,7 +244,7 @@ import Toybox.Lang;
     // Function to generate the line representing a charger without connected EV
     private function renderDisconnectedLoadpoint( loadpoint as Loadpoint ) as HorizontalBlock {
         var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        line.addIcon( IconBlock.ICON_CAR_DISCONNECTED, {} );
+        line.addIcon( IconBlock.ICON_CHARGER, {} );
         line.addTextWithOptions( " " + loadpoint.getTitle(), { :isTruncatable => true } );
         return line;
     }

@@ -37,8 +37,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="sun_xtiny" filename="icon_xtiny_sun.png"/>
     <bitmap scope="foreground" id="house_xtiny" filename="icon_xtiny_house.png"/>
     <bitmap scope="foreground" id="grid_xtiny" filename="icon_xtiny_grid.png"/>
-    <bitmap scope="foreground" id="car_xtiny" filename="icon_xtiny_car.png"/>
-    <bitmap scope="foreground" id="car_disconnected_xtiny" filename="icon_xtiny_car_disconnected.png"/>
+    <bitmap scope="foreground" id="charger_xtiny" filename="icon_xtiny_charger.png"/>
     <bitmap scope="foreground" id="heater_xtiny" filename="icon_xtiny_heater.png"/>
     <bitmap scope="foreground" id="device_xtiny" filename="icon_xtiny_device.png"/>
     <!-- Exceptions: icons not available in all font sizes -->
@@ -48,7 +47,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="forecast_xtiny" filename="icon_xtiny_forecast.png"/>
     <bitmap scope="foreground" id="price_xtiny" filename="icon_xtiny_price.png"/>
     <bitmap scope="foreground" id="statistics_xtiny" filename="icon_xtiny_statistics.png"/>
-    <bitmap scope="foreground" id="car_colored_xtiny" filename="icon_xtiny_car_colored.png"/>
+    <bitmap scope="foreground" id="charger_colored_xtiny" filename="icon_xtiny_charger_colored.png"/>
     <bitmap scope="foreground" id="heater_colored_xtiny" filename="icon_xtiny_heater_colored.png"/>
     <bitmap scope="foreground" id="device_colored_xtiny" filename="icon_xtiny_device_colored.png"/>
 
@@ -64,8 +63,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="sun_tiny" filename="icon_tiny_sun.png"/>
     <bitmap scope="foreground" id="house_tiny" filename="icon_tiny_house.png"/>
     <bitmap scope="foreground" id="grid_tiny" filename="icon_tiny_grid.png"/>
-    <bitmap scope="foreground" id="car_tiny" filename="icon_tiny_car.png"/>
-    <bitmap scope="foreground" id="car_disconnected_tiny" filename="icon_tiny_car_disconnected.png"/>
+    <bitmap scope="foreground" id="charger_tiny" filename="icon_tiny_charger.png"/>
     <bitmap scope="foreground" id="heater_tiny" filename="icon_tiny_heater.png"/>
     <bitmap scope="foreground" id="device_tiny" filename="icon_tiny_device.png"/>
 
@@ -81,8 +79,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="sun_small" filename="icon_small_sun.png"/>
     <bitmap scope="foreground" id="house_small" filename="icon_small_house.png"/>
     <bitmap scope="foreground" id="grid_small" filename="icon_small_grid.png"/>
-    <bitmap scope="foreground" id="car_small" filename="icon_small_car.png"/>
-    <bitmap scope="foreground" id="car_disconnected_small" filename="icon_small_car_disconnected.png"/>
+    <bitmap scope="foreground" id="charger_small" filename="icon_small_charger.png"/>
     <bitmap scope="foreground" id="heater_small" filename="icon_small_heater.png"/>
     <bitmap scope="foreground" id="device_small" filename="icon_small_device.png"/>
 
@@ -98,8 +95,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="sun_medium" filename="icon_medium_sun.png"/>
     <bitmap scope="foreground" id="house_medium" filename="icon_medium_house.png"/>
     <bitmap scope="foreground" id="grid_medium" filename="icon_medium_grid.png"/>
-    <bitmap scope="foreground" id="car_medium" filename="icon_medium_car.png"/>
-    <bitmap scope="foreground" id="car_disconnected_medium" filename="icon_medium_car_disconnected.png"/>
+    <bitmap scope="foreground" id="charger_medium" filename="icon_medium_charger.png"/>
     <bitmap scope="foreground" id="heater_medium" filename="icon_medium_heater.png"/>
     <bitmap scope="foreground" id="device_medium" filename="icon_medium_device.png"/>
     <!-- Exceptions: icons not available in all font sizes -->
@@ -107,7 +103,7 @@ It is automatically copied by generate.js into each device resource folder, sinc
     <bitmap scope="foreground" id="forecast_medium" filename="icon_medium_forecast.png"/>
     <bitmap scope="foreground" id="price_medium" filename="icon_medium_price.png"/>
     <bitmap scope="foreground" id="statistics_medium" filename="icon_medium_statistics.png"/>
-    <bitmap scope="foreground" id="car_colored_medium" filename="icon_xtiny_car_colored.png"/>
+    <bitmap scope="foreground" id="charger_colored_medium" filename="icon_xtiny_charger_colored.png"/>
     <bitmap scope="foreground" id="heater_colored_medium" filename="icon_medium_heater_colored.png"/>
     <bitmap scope="foreground" id="device_colored_medium" filename="icon_medium_device_colored.png"/>
 

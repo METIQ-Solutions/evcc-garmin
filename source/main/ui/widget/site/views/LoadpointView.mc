@@ -24,7 +24,7 @@ class LoadpointView extends EvccSiteViewBase {
     // The detail views use colored icons, therefore there are different
     // icons used than in the main view
     private static const ICON_LABEL_ITEMS as Array<[IconBlock.Icon,String]> = [
-        [ IconBlock.ICON_CAR_COLORED, "CHARGERS" ],
+        [ IconBlock.ICON_CHARGER_COLORED, "CHARGERS" ],
         [ IconBlock.ICON_HEATER_COLORED, "HEATERS" ],
         [ IconBlock.ICON_DEVICE_COLORED, "DEVICES" ]
     ];

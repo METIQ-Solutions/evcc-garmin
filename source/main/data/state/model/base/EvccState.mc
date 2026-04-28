@@ -110,7 +110,7 @@ import Toybox.Time;
     (:typecheck([disableGlanceCheck])) 
     public function getAllLoadpointsCategories() as Array<LoadpointCategory> { 
         var lpCategories = [
-            [ IconBlock.ICON_CAR, _chargers ],
+            [ IconBlock.ICON_CHARGER, _chargers ],
             [ IconBlock.ICON_HEATER, _heaters ],
             [ IconBlock.ICON_DEVICE, _integratedDevices ]
         ];

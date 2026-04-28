@@ -16,7 +16,19 @@ class LoadpointList {
 
     // Add a loadpoint
     public function add( loadpoint as Loadpoint ) as Void {
+        if( _loadpoints.size() >= 1 ) {
+            // If there is already one loadpoint in the list.
+            // we set its only-in-category field to false ...
+            if( _loadpoints.size() == 1 ) {
+                _loadpoints[0].setNotOnlyInCategory();
+            }
+            // ... and from now on set it to false for 
+            // all newly added loadpoints
+            loadpoint.setNotOnlyInCategory();
+        }
+        
         _loadpoints.add( loadpoint );
+        
         if( loadpoint.isCharging() ) {
             _chargingLoadpointCount++;
             _totalChargingPower += loadpoint.getChargePowerRounded();

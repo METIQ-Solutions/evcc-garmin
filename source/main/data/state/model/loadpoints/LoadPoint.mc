@@ -15,6 +15,7 @@ import Toybox.Lang;
     private var _activePhases as Number = 0;
     private var _mode as String? = null;
     private var _chargeRemainingDuration as Number?;
+    private var _isOnlyInCategory as Boolean = true; // Each loadpoint starts as only one in the category
 
     private const TITLE = "title";
     private const CHARGING = "charging";
@@ -93,4 +94,6 @@ import Toybox.Lang;
 
     public function getChargeRemainingDuration() as Number { return _chargeRemainingDuration != null ? _chargeRemainingDuration : 0; }
 
+    public function setNotOnlyInCategory() as Void { _isOnlyInCategory = false; }
+    public function isOnlyInCategory() as Boolean { return _isOnlyInCategory; }
 }

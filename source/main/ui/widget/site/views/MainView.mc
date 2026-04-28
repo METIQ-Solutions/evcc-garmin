@@ -139,10 +139,8 @@ import Toybox.Lang;
     private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Void {
         // Route to different rendering functions for each
         // type of loadpoint (connected vehicle, heater, integrated device)
-        if( loadpoint.isHeater() ) {
-            block.addBlock( renderHeater( loadpoint ) );
-        } else if( loadpoint.isIntegratedDevice() ) {
-            block.addBlock( renderIntegratedDevice( loadpoint ) );
+        if( loadpoint.isHeater() || loadpoint.isIntegratedDevice() ) {
+            block.addBlock( renderAuxDevice( loadpoint ) );
         } else if( loadpoint.isVehicle() ) {
             var loadpointLine = renderVehicle( loadpoint );
             block.addBlock( loadpointLine );
@@ -289,14 +287,25 @@ import Toybox.Lang;
     }
 
 
-    // Function to generate the line for heater loadpoints
-    private function renderHeater( loadpoint as Loadpoint ) as HorizontalBlock {
-        var heater = loadpoint.getHeater() as Heater;
-        var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        
-        line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );
+    // Renders a heater or integrated device
+    private function renderAuxDevice( loadpoint as Loadpoint ) as HorizontalBlock {
 
-        line.addText( " " + WidgetUiHelper.formatTemp( heater.getTemperature() ) );
+        var isHeater = loadpoint.isHeater();
+        var isOnlyInCategory = loadpoint.isOnlyInCategory();
+
+        var line = new HorizontalBlock( 
+            ! isOnlyInCategory ? { :truncateSpacing => getContentArea().truncateSpacing } : {} 
+        );
+        
+        if( isOnlyInCategory ) {
+            line.addIcon( isHeater ? IconBlock.ICON_HEATER : IconBlock.ICON_DEVICE, {} );
+        } else {
+            line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );
+        }
+
+        if( isHeater ) {
+            line.addText( " " + WidgetUiHelper.formatTemp( (loadpoint.getHeater() as Heater ).getTemperature() ) );
+        }
         
         // If the heater is operating, we show the power
         if( loadpoint.getChargePowerRounded() > 0 ) {
@@ -305,23 +314,6 @@ import Toybox.Lang;
 
         addMode( line, loadpoint );
 
-        return line;
-    }
-
-
-    // Function to generate the line for integrated device loadpoints
-    private function renderIntegratedDevice( loadpoint as Loadpoint ) as HorizontalBlock {
-        var line = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        
-        line.addTextWithOptions( loadpoint.getTitle(), { :isTruncatable => true } );
-        
-        // If the integrated device is operating, we show the power
-        if( loadpoint.getChargePowerRounded() > 0 ) {
-            addChargePower( line, loadpoint );
-        }
-
-        addMode( line, loadpoint );
-        
         return line;
     }
 

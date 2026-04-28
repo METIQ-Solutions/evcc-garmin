@@ -10,38 +10,58 @@ class SystemInfoView extends WatchUi.View {
 
     function initialize() {
         View.initialize();
+        _spacing = EvccResources.getFontHeight( WidgetResourceSet.FONT_XTINY ) / 2;
     }
 
     // Draw the content
     function onUpdate( dc as Dc ) as Void {
             WidgetUiHelper.clearDc( dc );
-            var block = new VerticalBlock( { :font => WidgetResourceSet.FONT_XTINY } );
-            block.addText( "evccg " + TextProvider.getVersion() );
+            var block = new HorizontalBlock( { :font => WidgetResourceSet.FONT_XTINY } );
+            var column1 = new VerticalBlock( {} );
+            var column2 = new VerticalBlock( {} );
 
-            _spacing = EvccResources.getFontHeight( WidgetResourceSet.FONT_XTINY ) / 2;
+            addLine( column1, column2, "APP", TextProvider.getVersion(), true );
+            addLine( column1, column2, "CIQ", "v" + Lang.format("$1$.$2$.$3$", System.getDeviceSettings().monkeyVersion ), false );
+            addLine( column1, column2, "PART", "#" + System.getDeviceSettings().partNumber, false );
 
-            var monkeyVersion = Lang.format("$1$.$2$.$3$", System.getDeviceSettings().monkeyVersion );
-
-            block.addTextWithOptions( "monkey v" + monkeyVersion, { :marginTop => _spacing } );
-
-            block.addTextWithOptions( "part # " + System.getDeviceSettings().partNumber, { :marginTop => _spacing } );
+            block.addBlock( column1 );
+            block.addBlock( column2 );
 
             // Show font mode and if icons are the correct size
-            checkFonts( block, dc );
+            //checkFonts( block, dc );
             
             block.draw( dc, dc.getWidth() / 2, dc.getHeight() / 2 );
     }
+
+    // Adds one line to the output
+    private function addLine( column1 as VerticalBlock, column2 as VerticalBlock, label as String, content as String, first as Boolean ) as Void {
+        var spacing = first ? 0 : _spacing;
+        column1.addTextWithOptions( 
+            label + ":", 
+            { :relativeFont => 1, 
+              :color => EvccColors.ACCENT, 
+              :justify => Graphics.TEXT_JUSTIFY_RIGHT,
+              :verticalJustifyToBaseFont => true,
+              :marginTop => spacing } 
+        );
+        column2.addTextWithOptions(
+            " " + content,
+            { :color => EvccColors.CONTENT,
+              :justify => Graphics.TEXT_JUSTIFY_LEFT,
+              :marginTop => spacing } 
+        );
+    } 
 
     // The checkFonts functions checks if the icon sizes match the
     // font sizes choosen by the app, and in any case outputs the 
     // correct icon sizes on the debug console
     
     // in :release scope, checkFonts is only a dummy
-    (:release) function checkFonts( block as VerticalBlock, dc as Dc ) as Void {}
+    (:release) private function checkFonts( block as VerticalBlock, dc as Dc ) as Void {}
 
     (:debug) private var _debugDone as Boolean = false;
     // For full-glance devices we also check the glance icons
-    (:debug) function checkFonts( block as VerticalBlock, dc as Dc ) as Void {
+    (:debug) private function checkFonts( block as VerticalBlock, dc as Dc ) as Void {
         if( ! _debugDone ) { Logger.info( "Icon sizes:" ); }
         block.addTextWithOptions( "fonts: " + fontMode(), { :marginTop => _spacing } );
         checkFontsDeviceSpecific( block, dc );
@@ -52,7 +72,7 @@ class SystemInfoView extends WatchUi.View {
     // Note that GlanceResourceSet does not exist for tiny glance devices
     // Therefore it is added at the end of this class, only for tiny glance and in
     // debug scope
-    (:debug) function checkFontsDeviceSpecific( block as VerticalBlock, dc as Dc ) as Void {
+    (:debug) private function checkFontsDeviceSpecific( block as VerticalBlock, dc as Dc ) as Void {
         checkIcons( new WidgetResourceSet(), block, dc );
         checkIcons( new GlanceResourceSet(), block, dc );
     }
@@ -61,10 +81,10 @@ class SystemInfoView extends WatchUi.View {
     // We don't use the standard type ResourceSet, because we
     // for tiny glances we create our own debug resource set, which
     // is not included in that type
-    (:debug) function checkIcons( uiLib as WidgetResourceSet or GlanceResourceSet, block as VerticalBlock, dc as Dc ) as Void {
+    (:debug) private function checkIcons( uiLib as WidgetResourceSet or GlanceResourceSet, block as VerticalBlock, dc as Dc ) as Void {
         var fonts = uiLib.fonts as ArrayOfGarminFonts;
         var icons = uiLib.icons as EvccIcons;
-        var text = "icons: OK";
+        var text = "ICONS: OK";
         var fontSizeNames = new Array<String>[0];
         var prefix = "";
 

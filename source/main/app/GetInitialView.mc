@@ -45,11 +45,6 @@ class GetInitialView {
                 var activeSite = siteCount == 1 ? 0 : breadCrumb.getSelectedChild( siteCount );
                 
                 // We start the state request registry
-                // If the device supports pre-rendered views, then this function will start ALL 
-                // state requests. With pre-rendered views state requests for ALL sites are active 
-                // and updating all the views, even if they are not shown
-                // For the other implementations of WebRequestRegistry, the start
-                // function is just a dummy
                 WebRequestRegistry.start( activeSite );
 
                 var views = MainView.getAllSiteViews();

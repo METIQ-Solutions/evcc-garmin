@@ -25,6 +25,9 @@ import Toybox.Application.Properties;
     // During scrolling, each update simply draws from the cached BufferedBitmap.
     private var _buffer as BufferedBitmap?;
 
+    // Stores any exception occuring during pre-rendering of the glance
+    private var _exception as Exception?;
+
     // The state request for showing evcc data
     private var _stateRequest as TimedWebRequest;
 
@@ -173,6 +176,7 @@ import Toybox.Application.Properties;
             drawGlance();
 
         } catch ( ex ) {
+            _exception = ex;
             Logger.debugException( ex );
         }
     }
@@ -191,7 +195,10 @@ import Toybox.Application.Properties;
         if( _buffer != null ) {
             dc.drawBitmap( 0, 0, _buffer );
         } else {
-            GlanceErrorView.drawGlanceError( new GlanceBufferException(), dc );
+            GlanceErrorView.drawGlanceError( 
+                _exception != null ? _exception : new GlanceBufferException(), 
+                dc 
+            );
         }
     }
 }

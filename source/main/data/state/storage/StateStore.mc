@@ -35,10 +35,7 @@ class StateStore {
     // The standard getState returns buffered states if available ...
     // Note that this function returns the state regardless of timestamp
     // If you want state only if it is current, check WebRequest.hasLoaded
-    function getState() as EvccState? {
-        if( _state == null ) {
-            _state = getStateFromStorage();
-        }
+    public function getStateFromMemory() as EvccState? {
         return _state;
     }
 
@@ -46,23 +43,21 @@ class StateStore {
     // ... getStateFromStorage goes directly to the persistant storage
     // this is used in situations where the data is put in storage by
     // the background service (e.g. the tiny glance)
-    function getStateFromStorage() as EvccState? {
+    public function getStateFromStorage() as EvccState? {
         // Logger.debug( "StateStore: reading site " + _siteIndex );
         var siteData = Storage.getValue( Constants.STORAGE_SITE_PREFIX + _siteIndex ) as Dictionary<String,Object>;
-        var state = null;
 
         if( siteData != null ) {
             var stateData = siteData[NAME_DATA] as JsonObject;
             if( stateData != null ) {
                 var siteTitle = stateData[EvccState.SITETITLE] as String?;
                 if( siteTitle != null && ! siteTitle.equals( "" ) ) {
-                    state = new EvccState( new JsonAdapter( stateData ), new Moment( siteData[NAME_DATATIMESTAMP] as Number ) );
+                    _state = new EvccState( new JsonAdapter( stateData ), new Moment( siteData[NAME_DATATIMESTAMP] as Number ) );
                 }
             }
         }
-        return state;
+        return _state;
     }
-
 
     public function setState( json as JsonObject ) as Void {
         // Logger.debug( "StateStore: storing site " + _siteIndex );

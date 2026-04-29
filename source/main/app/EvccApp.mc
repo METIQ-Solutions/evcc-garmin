@@ -44,7 +44,6 @@ import Toybox.Math;
     // we clear the storage, just in case the new
     // version is using a new structure for storing
     // data
-    (:release) 
     public function onAppUpdate() as Void {
         try {
             // Logger.debug( "EvccApp: onAppUpdate" );

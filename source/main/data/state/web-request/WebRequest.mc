@@ -71,8 +71,7 @@ class WebRequest {
     public function hasCurrentState() as Boolean { return _hasCurrentState; }
 
     // hasState is true if a state is available, even if it is expired
-    // this can be used for decision 
-    public function hasState() as Boolean { return _stateStore.getState() != null; }
+    public function hasState() as Boolean { return _stateStore.getStateFromMemory() != null; }
 
     // Accessor for error case
     public function getErrorMessage() as String { return _errorMessage; }
@@ -85,7 +84,7 @@ class WebRequest {
     public function getSiteIndex() as Number { return _siteIndex; }
 
     // Accessor for the state
-    public function getState() as EvccState { return _stateStore.getState() as EvccState; }
+    public function getState() as EvccState { return _stateStore.getStateFromMemory() as EvccState; }
 
     // True if an error has occured
     public function hasError() as Boolean { return _error; }
@@ -93,7 +92,7 @@ class WebRequest {
     // Indicates to the parent class that a previousy valid state is available and
     // therefore errors do not yet need to be reported
     public function hasPreviousValidState() as Boolean { 
-        var state = _stateStore.getState();
+        var state = _stateStore.getStateFromMemory();
         return 
             state != null && Time.now().compare( state.getTimestamp() ) <= _dataExpiry; 
     }
@@ -129,34 +128,54 @@ class WebRequest {
 
     // Loads the initial state from storage
     // If none is available or it is outdated, makes an immediate web request
+    // Exceptions occuring in this method are not thrown, but instead the
+    // error flag and error message of this state request is set.
     public function loadInitialState() as Void {
         // Logger.debug("WebRequest: loadInitialState site=" + _siteIndex );
+
+        var state = null;
+
+        // We use two try/catch blocks, because even when
+        // loading the state from storage fails, we
+        // still want to start the web request.
 
         // Only when this state request is started we load the state data
         // We cannot load the state in initialize, because on some devices,
         // there is not enough memory for having all the states in memory
-        var state = _stateStore.getState() as EvccState?;
+        try {
+            state = _stateStore.getStateFromStorage();
+        } catch( ex ) {
+            _error = true;
+            var errorMessage = ex.getErrorMessage();
+            _errorMessage = errorMessage != null ? errorMessage : "Unknown error when loading state from storage.";
+        }
         
-        // If no stored data is found a request is made immediately
-        if( state == null ) {
-            // Logger.debug( "WebRequest: no stored data found");
-            makeRequest(); 
-        } else { 
-            var dataAge = Time.now().compare( state.getTimestamp() );
-            // If the persisted data is older than the expiry time it is not used and a request is made immediately
-            if( dataAge > _dataExpiry ) {
-                // Logger.debug( "WebRequest: stored data too old!" ); 
+        try {
+            // If no stored data is found a request is made immediately
+            if( state == null ) {
+                // Logger.debug( "WebRequest: no stored data found");
                 makeRequest(); 
             } else { 
-                // otherwise the data is used, but if it is older than refreshInterval, a request is made immediately^
-                // if the device is using tiny glance, then also a request is made immediately, because the data obtained by
-                // the tiny glance may be incomplete due to memory restrictions in the tiny glance's background service. 
-                // Logger.debug( "WebRequest: using stored data" );
-                _hasCurrentState = true;
-                if( dataAge > _refreshInterval ) {
+                var dataAge = Time.now().compare( state.getTimestamp() );
+                // If the persisted data is older than the expiry time it is not used and a request is made immediately
+                if( dataAge > _dataExpiry ) {
+                    // Logger.debug( "WebRequest: stored data too old!" ); 
                     makeRequest(); 
+                } else { 
+                    // otherwise the data is used, but if it is older than refreshInterval, a request is made immediately^
+                    // if the device is using tiny glance, then also a request is made immediately, because the data obtained by
+                    // the tiny glance may be incomplete due to memory restrictions in the tiny glance's background service. 
+                    // Logger.debug( "WebRequest: using stored data" );
+                    _hasCurrentState = true;
+                    if( dataAge > _refreshInterval ) {
+                        makeRequest(); 
+                    }
                 }
             }
+        } catch( ex ) {
+            _error = true;
+            var errorMessage = ex.getErrorMessage();
+            _errorMessage = "Failed to initiate web request" + ( errorMessage != null ? ": " + errorMessage : "." );
         }
     }
 

@@ -24,7 +24,6 @@ public class WebRequestRegistry {
     }
 
     // Get the state request for a specific site
-    // If the array is still empty, we instantiate all state requests
     public static function getWebRequest( site as Number ) as WebRequest {
         return _stateRequests[site];
     }

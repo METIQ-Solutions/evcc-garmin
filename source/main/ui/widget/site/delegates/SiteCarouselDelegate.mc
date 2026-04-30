@@ -186,11 +186,13 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
     // It either switches to the first view in the carousel or of there
     // is none left then to the parent view.
     public function switchToFirstOrParent() as Void {
-        // Logger.debug("SiteCarouselDelegate: switchToFirstOrParent");
+        Logger.debug("SiteCarouselDelegate: switchToFirstOrParent");
         if( _views.size() == 0 ) {
+            Logger.debug("SiteCarouselDelegate: switching to parent");
             // If there is no view left, we go one level up
             onBack();
         } else {
+            Logger.debug("SiteCarouselDelegate: switching to first");
             // Otherwise we switch to the first view in the carousel
             ViewStack.switchToView( _views[0], self, WatchUi.SLIDE_DOWN );
             _breadCrumb.setSelectedChild( 0 );

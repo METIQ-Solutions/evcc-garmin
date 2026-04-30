@@ -3,9 +3,7 @@ import Toybox.Lang;
 
 // This class extends WebRequest with a timer that regularly
 // requests a new state. 
-// It is to be used where only one concurrent timed state request is needed. 
-// For devices with pre-rendered views, multiple state requests are active 
-// at the same time, and that is managed in a the separate class MultiWebRequestsHandler.
+// It is used in the glance, where only one concurrent timed state request is needed. 
 
 (:glance)
 class TimedWebRequest extends WebRequest {

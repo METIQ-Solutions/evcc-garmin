@@ -243,10 +243,10 @@ class DetailViewManager {
 
             if( view instanceof EvccSiteViewBase && view.isActiveView() && view.isDisposed() ) {
                 if( delegate instanceof SiteCarouselDelegate ) {
-                    // Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view or parent view." );
+                    Logger.debug( "EvccSiteViewBase.dispose: view is active, switching to first view or parent view." );
                     delegate.switchToFirstOrParent();
                 } else if( delegate instanceof SiteSimpleDelegate ) {
-                    // Logger.debug( "EvccSiteViewBase.dispose: single view is active, switching to parent view." );
+                    Logger.debug( "EvccSiteViewBase.dispose: single view is active, switching to parent view." );
                     delegate.onBack();
                 }
             }

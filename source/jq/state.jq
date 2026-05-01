@@ -1,3 +1,6 @@
+# FUNCTIONS
+
+# Calculates the average from a list of values
 def avg:
     if length > 0 then
         add / length
@@ -5,6 +8,8 @@ def avg:
         null
     end;
 
+# Calculates the average of values that fall between
+# two timestamps
 def grid_avg_between($grid; $from; $to):
     [
         ($grid // [])[]
@@ -13,15 +18,22 @@ def grid_avg_between($grid; $from; $to):
     ]
     | avg;
 
+# Adds the given number of days to the current timestamp
+# and outputs the date of the resulting timestamp
 def local_day($offset):
     (now + $offset)
     | strflocaltime("%Y-%m-%d");
 
+# Adds the given number of seconds to the current timestamp
+# and outputs the resulting timestamp
 def localtime_after($seconds):
     (now + $seconds)
     | strflocaltime("%Y-%m-%dT%H:%M:%S%z")
     | sub("(..)$"; ":\\1");
 
+# For every time series entries, calculates the average
+# of all entries within an hour of that timestamp, and
+# then selects the cheapest hour across the whole series
 def cheapest_hour:
     localtime_after(0) as $from
     | [ .[] | select(.start >= $from) ] as $entries
@@ -36,6 +48,8 @@ def cheapest_hour:
     ]
     | min_by(.average);
    
+# MAIN FILTER
+
 . as $root
     # The filter supports either the legacy structure
     # with a "result" root element or the new one without
@@ -53,6 +67,9 @@ def cheapest_hour:
                 null
             end,
         forecast: {
+            # For grid, evcc delivers only time series, which is too large
+            # to be processed within the app. Therefore we use JQ to aggregate
+            # all values that are displayed already on the server-side
             grid: {
                 next60MinutesAverage: (
                     localtime_after(0) as $from
@@ -140,6 +157,7 @@ def cheapest_hour:
             | map_values({ title })
         )
     }
+    # This final function removes any empty objects or arrays
     | walk(
         if type == "object" then
             with_entries(select(.value != null and .value != {} and .value != []))

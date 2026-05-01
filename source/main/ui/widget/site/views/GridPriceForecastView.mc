@@ -146,7 +146,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
     private function formatPrice( price as Float? ) as String {
         return 
             price != null 
-                ? Math.round( price * 100.0 ).format( "%u" )
+                ? Math.round( price * 100.0 ).format( "%d" )
                 : NA;
     }
 }

@@ -5,6 +5,14 @@ def avg:
         null
     end;
 
+def grid_avg_between($grid; $from; $to):
+    [
+        ($grid // [])[]
+        | select(.start >= $from and .start < $to)
+        | .value
+    ]
+    | avg;
+
 def local_day($offset):
     (now + $offset)
     | strflocaltime("%Y-%m-%d");
@@ -15,7 +23,8 @@ def localtime_after($seconds):
     | sub("(..)$"; ":\\1");
 
 def cheapest_hour:
-    . as $entries
+    localtime_after(0) as $from
+    | [ .[] | select(.start >= $from) ] as $entries
     | [
         range(0; ($entries | length) - 3) as $i
         | ($entries[$i:$i + 4]) as $window
@@ -26,7 +35,7 @@ def cheapest_hour:
         }
     ]
     | min_by(.average);
-    
+   
 . as $root
     # The filter supports either the legacy structure
     # with a "result" root element or the new one without
@@ -48,22 +57,12 @@ def cheapest_hour:
                 next60MinutesAverage: (
                     localtime_after(0) as $from
                     | localtime_after(3600) as $to
-                    | [
-                        ($data.forecast.grid // [])[]
-                        | select(.start >= $from and .start < $to)
-                        | .value
-                    ]
-                    | avg
+                    | grid_avg_between($data.forecast.grid; $from; $to)
                 ),
                 next60To120MinutesAverage: (
                     localtime_after(3600) as $from
                     | localtime_after(7200) as $to
-                    | [
-                        ($data.forecast.grid // [])[]
-                        | select(.start >= $from and .start < $to)
-                        | .value
-                    ]
-                    | avg
+                    | grid_avg_between($data.forecast.grid; $from; $to)
                 ),
                 remainingTodayAverage: (
                     localtime_after(0) as $from
@@ -74,7 +73,6 @@ def cheapest_hour:
                         | .value
                     ]
                     | avg
-                    | if . != null then (.*1000 | round / 1000) else null end
                 ),
                 tomorrowAverage: (
                     local_day(86400) as $day
@@ -84,7 +82,6 @@ def cheapest_hour:
                         | .value
                     ]
                     | avg
-                    | if . != null then (.*1000 | round / 1000) else null end
                 ),
                 cheapestHour: (
                     ($data.forecast.grid // [])

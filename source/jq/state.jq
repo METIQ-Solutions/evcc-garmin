@@ -47,33 +47,60 @@ def localtime_after($seconds):
 #        }
 #    ]
 #    | min_by(.average);
+
+#def cheapest_period:
+#    localtime_after(0) as $from
+#    | [ .[] | select(.start >= $from) ] as $entries
+#    | [
+#        range(0; ($entries | length) - 3) as $i
+#        | ($entries[$i:$i + 4]) as $window
+#        | {
+#            index: $i,
+#            start: $window[0].start,
+#            end: $window[3].end,
+#            average: (($window | map(.value) | add) / 4)
+#        }
+#    ]
+#    | min_by(.average) as $cheapest
+#    | (
+#        [
+#            range($cheapest.index + 4; $entries | length) as $i
+#            | select($entries[$i].value > $cheapest.average)
+#            | $i
+#        ][0] // ($entries | length)
+#    ) as $endIndex
+#    | {
+#        start: $cheapest.start,
+#        end: $entries[$endIndex - 1].end,
+#        average: $cheapest.average
+#    };
+
 def cheapest_period:
     localtime_after(0) as $from
     | [ .[] | select(.start >= $from) ] as $entries
+    | ($entries | map(.value) | avg) as $overallAverage
     | [
-        range(0; ($entries | length) - 3) as $i
-        | ($entries[$i:$i + 4]) as $window
+        $entries[]
+        | select(.value <= $overallAverage)
+    ]
+    | reduce .[] as $entry (
+        [];
+        if length == 0 or .[-1][-1].end != $entry.start then
+            . + [[ $entry ]]
+        else
+            .[0:-1] + [ .[-1] + [ $entry ] ]
+        end
+    )
+    | [
+        .[]
+        | select(length >= 4)
         | {
-            index: $i,
-            start: $window[0].start,
-            end: $window[3].end,
-            average: (($window | map(.value) | add) / 4)
+            start: .[0].start,
+            end: .[-1].end,
+            average: (map(.value) | avg)
         }
     ]
-    | min_by(.average) as $cheapest
-    | (
-        [
-            range($cheapest.index + 4; $entries | length) as $i
-            | select($entries[$i].value > $cheapest.average)
-            | $i
-        ][0] // ($entries | length)
-    ) as $endIndex
-    | {
-        start: $cheapest.start,
-        end: $entries[$endIndex - 1].end,
-        average: $cheapest.average
-    };
-
+    | min_by(.average);
 
 # MAIN FILTER
 

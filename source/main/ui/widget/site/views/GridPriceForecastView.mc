@@ -41,10 +41,10 @@ class GridPriceForecastView extends EvccSiteViewBase {
                 block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
                 var cheapestHour = forecast.getCheapestPeriod();
                 if( cheapestHour != null ) {
-                    addSingle( block, "MIN", cheapestHour.getCheapestPeriodAverage() );
+                    addSingle( block, "BEST", cheapestHour.getCheapestPeriodAverage() );
                     addCheapestPeriod( block, cheapestHour.getCheapestPeriodStart(), cheapestHour.getCheapestPeriodEnd() );
                 } else {
-                    addSingle( block, "MIN", null );
+                    addSingle( block, "BEST", null );
                 }
             }
         }

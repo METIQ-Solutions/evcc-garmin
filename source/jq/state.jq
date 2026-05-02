@@ -34,20 +34,47 @@ def localtime_after($seconds):
 # For every time series entries, calculates the average
 # of all entries within an hour of that timestamp, and
 # then selects the cheapest hour across the whole series
-def cheapest_hour:
+#def cheapest_hour:
+#    localtime_after(0) as $from
+#    | [ .[] | select(.start >= $from) ] as $entries
+#    | [
+#        range(0; ($entries | length) - 3) as $i
+#        | ($entries[$i:$i + 4]) as $window
+#        | {
+#            start: $window[0].start,
+#            end: $window[3].end,
+#            average: (($window | map(.value) | add) / 4)
+#        }
+#    ]
+#    | min_by(.average);
+def cheapest_period:
     localtime_after(0) as $from
     | [ .[] | select(.start >= $from) ] as $entries
     | [
         range(0; ($entries | length) - 3) as $i
         | ($entries[$i:$i + 4]) as $window
         | {
+            index: $i,
             start: $window[0].start,
             end: $window[3].end,
             average: (($window | map(.value) | add) / 4)
         }
     ]
-    | min_by(.average);
-   
+    | min_by(.average) as $cheapest
+    | (
+        [
+            range($cheapest.index + 4; $entries | length) as $i
+            | select($entries[$i].value > $cheapest.average)
+            | $i
+        ][0] // ($entries | length)
+    ) as $endIndex
+    | {
+        start: $cheapest.start,
+        end: $entries[$endIndex - 1].end,
+        average: $cheapest.average
+    };
+
+
 # MAIN FILTER
 
 . as $root
@@ -100,9 +127,9 @@ def cheapest_hour:
                     ]
                     | avg
                 ),
-                cheapestHour: (
+                cheapestPeriod: (
                     ($data.forecast.grid // [])
-                    | if length >= 4 then cheapest_hour else null end
+                    | if length >= 4 then cheapest_period else null end
                 )
             },
             solar: (

@@ -39,10 +39,10 @@ class GridPriceForecastView extends EvccSiteViewBase {
             if( forecast != null ) {
                 addAverages( block, forecast.getAveragePrices() );
                 block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
-                var cheapestHour = forecast.getCheapestHour();
+                var cheapestHour = forecast.getCheapestPeriod();
                 if( cheapestHour != null ) {
-                    addSingle( block, "MIN", cheapestHour.getCheapestHourAverage() );
-                    addCheapestHour( block, cheapestHour.getCheapestHourStart(), cheapestHour.getCheapestHourEnd() );
+                    addSingle( block, "MIN", cheapestHour.getCheapestPeriodAverage() );
+                    addCheapestPeriod( block, cheapestHour.getCheapestPeriodStart(), cheapestHour.getCheapestPeriodEnd() );
                 } else {
                     addSingle( block, "MIN", null );
                 }
@@ -56,15 +56,16 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
     
     // Assemble one row of the table
-    private function addCheapestHour( block as VerticalBlock, start as Moment, end as Moment ) as Void {
+    private function addCheapestPeriod( block as VerticalBlock, start as Moment, end as Moment ) as Void {
         var startInfo = Gregorian.info( start, Time.FORMAT_MEDIUM );
         var endInfo = Gregorian.info( end, Time.FORMAT_MEDIUM );
         block.addTextWithOptions( 
-            startInfo.day_of_week.toString().toUpper()
-                + " " + StringFormatter.pad2( startInfo.hour ) 
-                + ":" + StringFormatter.pad2( startInfo.min )
-                + "-" + StringFormatter.pad2( endInfo.hour ) 
-                + ":" + StringFormatter.pad2( endInfo.min ), 
+                startInfo.day_of_week.toString().toUpper() + " " 
+                + StringFormatter.pad2( startInfo.hour ) + ":"
+                + StringFormatter.pad2( startInfo.min ) + "-"
+                + ( endInfo.day == startInfo.day ? "" : endInfo.day_of_week.toString().toUpper() + " " )
+                + StringFormatter.pad2( endInfo.hour ) + ":" 
+                + StringFormatter.pad2( endInfo.min ), 
             { :relativeFont => 4 } 
         );
     }

@@ -181,7 +181,7 @@ It displays:
 - **+2H**: the average price from 60 to 120 minutes from now  
 - **TDAY**: the average price for the remainder of the day  
 - **TMRW**: the average price for the next day  
-- **MIN**: the average price and time of the cheapest hour within the covered time frame
+- **BEST 1H**: the average price and time of the cheapest hour within the covered time frame
 
 <table class="layoutTable">
   <tr>

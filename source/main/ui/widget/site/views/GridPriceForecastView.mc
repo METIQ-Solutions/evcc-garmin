@@ -7,6 +7,8 @@ class GridPriceForecastView extends EvccSiteViewBase {
     private const LABELS = [ "+1H", "+2H", "TDAY", "TMRW" ];
     private const UNIT = " ct";
     private const NA = "--";
+    private const NOW = "NOW";
+    private const CHEAPEST_PERIOD = "BEST 1H";
     
     function initialize( options as EvccSiteViewBase.Options ) {
         EvccSiteViewBase.initialize( options );
@@ -31,7 +33,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
         var dcHeight = calcDc.getHeight();
 
         var now = state.getGridTariff();
-        addSingle( block, "NOW", now );
+        addSingle( block, NOW, now );
         block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
 
         if( state != null && state.hasGridPriceForecast() ) {
@@ -41,10 +43,10 @@ class GridPriceForecastView extends EvccSiteViewBase {
                 block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
                 var cheapestHour = forecast.getCheapestPeriod();
                 if( cheapestHour != null ) {
-                    addSingle( block, "BEST", cheapestHour.getCheapestPeriodAverage() );
+                    addSingle( block, CHEAPEST_PERIOD, cheapestHour.getCheapestPeriodAverage() );
                     addCheapestPeriod( block, cheapestHour.getCheapestPeriodStart(), cheapestHour.getCheapestPeriodEnd() );
                 } else {
-                    addSingle( block, "BEST", null );
+                    addSingle( block, CHEAPEST_PERIOD, null );
                 }
             }
         }

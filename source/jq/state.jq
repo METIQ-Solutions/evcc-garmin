@@ -31,22 +31,30 @@ def localtime_after($seconds):
     | strflocaltime("%Y-%m-%dT%H:%M:%S%z")
     | sub("(..)$"; ":\\1");
 
-# For every time series entries, calculates the average
-# of all entries within an hour of that timestamp, and
-# then selects the cheapest hour across the whole series
-def cheapest_period:
+# Find the window with the given length ($slots) where
+# the average price is the lowest ($mode="min") or 
+# highest ($mode="max")
+def price_period($slots; $mode):
     localtime_after(0) as $from
     | [ .[] | select(.start >= $from) ] as $entries
-    | [
-        range(0; ($entries | length) - 3) as $i
-        | ($entries[$i:$i + 4]) as $window
-        | {
-            start: $window[0].start,
-            end: $window[3].end,
-            average: (($window | map(.value) | add) / 4)
-        }
-    ]
-    | min_by(.average);
+    | if ($entries | length) >= $slots then
+        [
+            range(0; ($entries | length) - $slots + 1) as $i
+            | ($entries[$i:$i + $slots]) as $window
+            | {
+                start: $window[0].start,
+                end: $window[-1].end,
+                average: (($window | map(.value) | add) / $slots)
+            }
+        ]
+        | if $mode == "max" then
+            max_by(.average)
+          else
+            min_by(.average)
+          end
+      else
+        null
+      end;
 
 # MAIN FILTER
 
@@ -70,41 +78,61 @@ def cheapest_period:
             # For grid, evcc delivers only time series, which is too large
             # to be processed within the app. Therefore we use JQ to aggregate
             # all values that are displayed already on the server-side
-            grid: {
-                next60MinutesAverage: (
-                    localtime_after(0) as $from
-                    | localtime_after(3600) as $to
-                    | grid_avg_between($data.forecast.grid; $from; $to)
-                ),
-                next60To120MinutesAverage: (
-                    localtime_after(3600) as $from
-                    | localtime_after(7200) as $to
-                    | grid_avg_between($data.forecast.grid; $from; $to)
-                ),
-                remainingTodayAverage: (
-                    localtime_after(0) as $from
-                    | local_day(86400) as $nextDay
-                    | [
-                        ($data.forecast.grid // [])[]
-                        | select(.start >= $from and (.start | startswith($nextDay) | not))
-                        | .value
-                    ]
-                    | avg
-                ),
-                tomorrowAverage: (
-                    local_day(86400) as $day
-                    | [
-                        ($data.forecast.grid // [])[]
-                        | select(.start | startswith($day))
-                        | .value
-                    ]
-                    | avg
-                ),
-                cheapestPeriod: (
-                    ($data.forecast.grid // [])
-                    | if length >= 4 then cheapest_period else null end
-                )
-            },
+            grid: 
+                # Use this when testing grid price forecast on an instance without
+                # smart costs enabled
+                # if true then 
+                if $data.smartCostAvailable then 
+                    {
+                        next60MinutesAverage: (
+                            localtime_after(0) as $from
+                            | localtime_after(3600) as $to
+                            | grid_avg_between($data.forecast.grid; $from; $to)
+                        ),
+                        next60To120MinutesAverage: (
+                            localtime_after(3600) as $from
+                            | localtime_after(7200) as $to
+                            | grid_avg_between($data.forecast.grid; $from; $to)
+                        ),
+                        remainingTodayAverage: (
+                            localtime_after(0) as $from
+                            | local_day(86400) as $nextDay
+                            | [
+                                ($data.forecast.grid // [])[]
+                                | select(.start >= $from and (.start | startswith($nextDay) | not))
+                                | .value
+                            ]
+                            | avg
+                        ),
+                        tomorrowAverage: (
+                            local_day(86400) as $day
+                            | [
+                                ($data.forecast.grid // [])[]
+                                | select(.start | startswith($day))
+                                | .value
+                            ]
+                            | avg
+                        ),
+                        cheapest1h: (
+                            ($data.forecast.grid // [])
+                            | price_period(4; "min")
+                        ),
+                        cheapest2h: (
+                            ($data.forecast.grid // [])
+                            | price_period(8; "min")
+                        ),
+                        cheapest3h: (
+                            ($data.forecast.grid // [])
+                            | price_period(12; "min")
+                        ),
+                        mostExpensive1h: (
+                            ($data.forecast.grid // [])
+                            | price_period(4; "max")
+                        ) 
+                    }
+                else
+                    null
+                end,
             solar: (
                 $data.forecast.solar
                 | {

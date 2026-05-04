@@ -15,7 +15,7 @@ class DetailViewManager {
 
     // References to forecast/statistics detail views
     var _solarForecastView as SolarForecastView?;
-    var _gridPriceForecastView as GridPriceForecastView?;
+    var _gridPriceForecastView as Array<GridPriceForecastView>?;
     var _statisticsView as StatisticsView?;
 
 
@@ -29,7 +29,7 @@ class DetailViewManager {
     // and the parent view as the second element. The target may refer to
     // either sibling or child views, depending on where the detail views
     // (statistics, forecast, ...) should be added.
-    var _detailViewTarget as [ArrayOfSiteViews, EvccSiteViewBase?];
+    var _detailViewTarget as [SiteViewCarousel, EvccSiteViewBase?];
 
 
     // Constructor
@@ -67,10 +67,16 @@ class DetailViewManager {
     // Adds a detail view to the target list of views,
     // and sets the added view's page index. Null values
     // are accepted but not added to the list.
-    public function addDetailView( view as EvccSiteViewBase? ) as Void {
+    public function addDetailView( view as SiteViewCarouselItem? ) as Void {
         if( view != null ) {
             var detailViews = _detailViewTarget[0];
-            view.setPageIndex( detailViews.size() );
+            if( view instanceof EvccSiteViewBase ) {
+                view.setPageIndex( detailViews.size() );
+            } else {
+                for( var i = 0; i < view.size(); i++ ) {
+                    view[i].setPageIndex( detailViews.size() );
+                }
+            }
             detailViews.add( view );
         }
     }
@@ -160,8 +166,25 @@ class DetailViewManager {
             // We check the forecast and statistic and update
             // the view accordingly
             _solarForecastView = ensureDetailView( state.hasSolarForecast(), _solarForecastView, SolarForecastView, calledDuringAppStartup ) as SolarForecastView?;
-            _gridPriceForecastView = ensureDetailView( state.hasGridPriceForecast(), _gridPriceForecastView, GridPriceForecastView, calledDuringAppStartup ) as GridPriceForecastView?;
             _statisticsView = ensureDetailView( state.hasStatistics(), _statisticsView, StatisticsView, calledDuringAppStartup ) as StatisticsView?;
+
+            if( state.hasGridPriceForecast() ) {
+                if( _gridPriceForecastView == null ) {
+                    _gridPriceForecastView = [];
+                    for( var i = 0; i < GridPriceForecastView.PRICE_PERIODS_LABELS.size(); i++ ) {
+                        _gridPriceForecastView.add( 
+                            initDetailView( 
+                                GridPriceForecastView, 
+                                { :pricePeriod => i }, 
+                                calledDuringAppStartup 
+                            ) as GridPriceForecastView
+                        );
+                    }
+                }
+            } else {
+                _gridPriceForecastView = null;
+            }
+
 
             // The list of detail views is re-assembled
             // on every execution from scratch
@@ -230,7 +253,7 @@ class DetailViewManager {
 
             // In the end, we add the forecast and statistics view
             addDetailView( _solarForecastView );
-            addDetailView( _gridPriceForecastView );
+            addDetailView( _gridPriceForecastView as Array<EvccSiteViewBase> );
             addDetailView( _statisticsView );
 
             // Once the new array has been defined, check whether the current view

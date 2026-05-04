@@ -18,13 +18,16 @@ import Toybox.Math;
 // - Members and function specific to devices with pre-rendering of views
 
 // Type for arrays of site views
-typedef ArrayOfSiteViews as Array<EvccSiteViewBase>;
+typedef SiteViewList as Array<EvccSiteViewBase>;
+// Type for the view carousel
+typedef SiteViewCarouselItem as EvccSiteViewBase or SiteViewList;
+typedef SiteViewCarousel as Array<SiteViewCarouselItem>;
 
 class EvccSiteViewBase extends WatchUi.View {
 
     // Options for constructor
     typedef Options as {
-        :views as ArrayOfSiteViews, 
+        :views as SiteViewCarousel, 
         :parentView as EvccSiteViewBase?, 
         :siteIndex as Number,
         :pageIndex as Number?
@@ -39,7 +42,7 @@ class EvccSiteViewBase extends WatchUi.View {
 
         _siteIndex = options[:siteIndex] as Number;
         _parentView = options[:parentView] as EvccSiteViewBase;
-        _sameLevelViews = options[:views] as ArrayOfSiteViews;
+        _sameLevelViews = options[:views] as SiteViewCarousel;
 
         var pageIndex = options[:pageIndex];
         if( pageIndex instanceof Number ) {
@@ -86,19 +89,25 @@ class EvccSiteViewBase extends WatchUi.View {
     function getParentView() as EvccSiteViewBase? { return _parentView; }
 
     // Other views on the same level
-    private var _sameLevelViews as ArrayOfSiteViews;
+    private var _sameLevelViews as SiteViewCarousel;
     private var _pageIndex as Number = 0; // index of this view in the array
-    public function getSameLevelViews() as ArrayOfSiteViews { return _sameLevelViews; }
+    public function getSameLevelViews() as SiteViewCarousel { return _sameLevelViews; }
     public function getSameLevelViewCount() as Number { return _sameLevelViews.size(); }
     public function getPageIndex() as Number { return _pageIndex; }
     public function setPageIndex( pageIndex as Number ) as Void { _pageIndex = pageIndex; }
 
     // Views on the lower level
-    private var _lowerLevelViews as ArrayOfSiteViews = new ArrayOfSiteViews[0];
-    public function addLowerLevelViews( views as ArrayOfSiteViews ) as Void { _lowerLevelViews.addAll( views ); }
-    public function getLowerLevelViews() as ArrayOfSiteViews { return _lowerLevelViews; }
+    private var _lowerLevelViews as SiteViewCarousel = new SiteViewCarousel[0];
+    public function addLowerLevelViews( views as SiteViewCarousel ) as Void { _lowerLevelViews.addAll( views ); }
+    public function getLowerLevelViews() as SiteViewCarousel { return _lowerLevelViews; }
     public function getLowerLevelViewCount() as Number { return _lowerLevelViews.size(); }
 
+    // The view is selectable if it either has lower level views, or there
+    // is part of a view option array.
+    public function isSelectable() as Boolean {
+        return _lowerLevelViews.size() > 0 || _sameLevelViews[_pageIndex] instanceof Array;
+    }
+    
     // Definition of the content area, see ContentArea further above for details
     private var _ca as ContentArea = new ContentArea();
     public function getContentArea() as ContentArea { return _ca; }

@@ -55,7 +55,7 @@ class GetInitialView {
                 var delegate = new SiteCarouselDelegate( views, breadCrumb );
                 
                 // Start with the active page
-                return [views[activeView], delegate];
+                return [delegate.getView( activeView ), delegate];
             }
         } catch ( ex ) {
             Logger.debugException( ex );

@@ -8,7 +8,7 @@ class LoadpointView extends EvccSiteViewBase {
 
     // Options for constructor
     typedef Options as {
-        :views as ArrayOfSiteViews, 
+        :views as SiteViewList, 
         :parentView as EvccSiteViewBase?, 
         :siteIndex as Number,
         :pageIndex as Number,

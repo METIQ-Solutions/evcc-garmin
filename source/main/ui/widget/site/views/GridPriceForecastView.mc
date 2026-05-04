@@ -4,13 +4,29 @@ import Toybox.Time;
 
 // View showing grid price forecast data
 class GridPriceForecastView extends EvccSiteViewBase {
-    private const LABELS = [ "+1H", "+2H", "TDAY", "TMRW" ];
-    private const UNIT = " ct";
-    private const NA = "--";
-    private const NOW = "NOW";
-    private const CHEAPEST_PERIOD = "BEST 1H";
+
+    // Options for constructor
+    typedef Options as {
+        :views as SiteViewCarousel, 
+        :parentView as EvccSiteViewBase?, 
+        :siteIndex as Number,
+        :pageIndex as Number?,
+        :pricePeriod as Number,
+    };
+
+    private static const AVERAGES_LABELS = [ "+1H", "+2H", "TDAY", "TMRW" ];
+    public static const PRICE_PERIODS_LABELS = [ "BEST 1H", "BEST 2H", "BEST 3H", "WORST 1H" ];
+
+    private static const UNIT = " ct";
+    private static const NA = "--";
+    private static const NOW = "NOW";
+
+    private var _pricePeriod as Number;
+    private var _pricePeriodLabel as String;
     
-    function initialize( options as EvccSiteViewBase.Options ) {
+    function initialize( options as Options ) {
+        _pricePeriod = options[:pricePeriod] as Number;
+        _pricePeriodLabel = PRICE_PERIODS_LABELS[_pricePeriod];
         EvccSiteViewBase.initialize( options );
     }
 
@@ -41,12 +57,12 @@ class GridPriceForecastView extends EvccSiteViewBase {
             if( forecast != null ) {
                 addAverages( block, forecast.getAveragePrices() );
                 block.addBlock( new SpacerBlock( { :relativeToFontHeight => 0.20 } ) );
-                var cheapestHour = forecast.getCheapestPeriod();
-                if( cheapestHour != null ) {
-                    addSingle( block, CHEAPEST_PERIOD, cheapestHour.getCheapestPeriodAverage() );
-                    addCheapestPeriod( block, cheapestHour.getCheapestPeriodStart(), cheapestHour.getCheapestPeriodEnd() );
+                var pricePeriod = forecast.getPricePeriods()[_pricePeriod];
+                if( pricePeriod != null ) {
+                    addSingle( block, _pricePeriodLabel, pricePeriod.getAverage() );
+                    addPricePeriod( block, pricePeriod.getStart(), pricePeriod.getEnd() );
                 } else {
-                    addSingle( block, CHEAPEST_PERIOD, null );
+                    addSingle( block, _pricePeriodLabel, null );
                 }
             }
         }
@@ -58,7 +74,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
 
     
     // Assemble one row of the table
-    private function addCheapestPeriod( block as VerticalBlock, start as Moment, end as Moment ) as Void {
+    private function addPricePeriod( block as VerticalBlock, start as Moment, end as Moment ) as Void {
         var startInfo = Gregorian.info( start, Time.FORMAT_MEDIUM );
         var endInfo = Gregorian.info( end, Time.FORMAT_MEDIUM );
         block.addTextWithOptions( 
@@ -107,7 +123,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
         for( var pi = 0; pi < prices.size(); pi++ ) {
             // Start with the label
             columns[ci][0].addTextWithOptions( 
-                ( ci == 1 ? "      " : "" ) + LABELS[pi] + ":", 
+                ( ci == 1 ? "      " : "" ) + AVERAGES_LABELS[pi] + ":", 
                 { 
                     :relativeFont => 2, 
                     :verticalJustifyToBaseFont => true, 

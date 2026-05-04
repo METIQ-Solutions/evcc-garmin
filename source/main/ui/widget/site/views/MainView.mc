@@ -13,7 +13,7 @@ import Toybox.Lang;
 
     // Options for constructor
     typedef Options as {
-        :views as ArrayOfSiteViews, 
+        :views as SiteViewCarousel, 
         :parentView as EvccSiteViewBase?, 
         :siteIndex as Number,
         :actsAsGlance as Boolean
@@ -24,8 +24,8 @@ import Toybox.Lang;
 
 
     // This function returns a list of views for all sites
-    public static function getAllSiteViews() as ArrayOfSiteViews {
-        var views = new ArrayOfSiteViews[0];
+    public static function getAllSiteViews() as SiteViewCarousel {
+        var views = new SiteViewCarousel[0];
         var siteCount = SiteConfigRepository.getSiteCount();
         for( var i = 0; i < siteCount; i++ ) {
             // The main view adds itself to views
@@ -46,7 +46,7 @@ import Toybox.Lang;
     // Constructor
     public function initialize( options as Options ) {
 
-        var views = options[:views] as ArrayOfSiteViews;
+        var views = options[:views] as SiteViewCarousel;
         options[:pageIndex] = views.size();
         views.add( self );
 

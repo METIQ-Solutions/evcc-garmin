@@ -27,7 +27,6 @@ import Toybox.Time;
     private const FORECAST_GRID = "grid";
     private const STATISTICS = "statistics";
     private const TARIFF_GRID = "tariffGrid";
-    private const SMART_COST_AVAILABLE = "smartCostAvailable";
 
 
     /******** MEMBERS AND ACCESSORS ********/
@@ -135,7 +134,6 @@ import Toybox.Time;
 
     // Grid price, current and forecast
     private var _tariffGrid as Float?;
-    private var _smartCostAvailable as Boolean;
     private var _gridPrices as GridPriceForecast?;
     public function getGridTariff() as Float? { return _tariffGrid; }
     public function getGridPriceForecast() as GridPriceForecast? { return _gridPrices; }
@@ -216,7 +214,6 @@ import Toybox.Time;
         }
 
         _tariffGrid = result.getFloatOrNull( TARIFF_GRID );
-        _smartCostAvailable = result.getBooleanOrFalse( SMART_COST_AVAILABLE );
 
         var forecast = result.getJsonObjectOrNull( FORECAST );
         if( forecast != null ) {
@@ -224,11 +221,9 @@ import Toybox.Time;
             if( solarForecast != null) {
                 _solarForecast = new SolarForecast( solarForecast );
             }
-            if( _smartCostAvailable ) {
-                var gridPrices = forecast.getJsonObjectOrNull( FORECAST_GRID );
-                if( gridPrices != null ) {
-                    _gridPrices = new GridPriceForecast( gridPrices );
-                }
+            var gridPrices = forecast.getJsonObjectOrNull( FORECAST_GRID );
+            if( gridPrices != null ) {
+                _gridPrices = new GridPriceForecast( gridPrices );
             }
         }
         var statistics = result.getJsonObjectOrNull( STATISTICS );

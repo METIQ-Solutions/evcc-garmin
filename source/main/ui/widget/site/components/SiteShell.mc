@@ -139,7 +139,7 @@ class SiteShell {
         // If there are lower level views, draw the select indicator
         var siSpacing = 0;        
         _selectIndicator = null;
-        if( _view.getLowerLevelViewCount() > 0 ) {
+        if( _view.isSelectable() ) {
             _selectIndicator = new SelectIndicator();
             siSpacing = ( _selectIndicator as SelectIndicator ).getSpacing( calcDc ) as Number;
         }

@@ -15,7 +15,7 @@ import Toybox.Application;
 // Standard derivate, that just implements onSwipe for swipe left
 (:exclForSwipeLeftOverride) 
 class SiteCarouselDelegate extends ViewCarouselDelegateBase {
-    function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
+    function initialize( views as SiteViewCarousel, breadCrumb as BreadCrumb ) {
         ViewCarouselDelegateBase.initialize( views, breadCrumb );
     }
     public function onSwipe( swipeEvent ) as Boolean {
@@ -35,9 +35,10 @@ class SiteCarouselDelegate extends ViewCarouselDelegateBase {
 // be called, because onNextPage() is called first.
 // To circumvent this, excplicitly does not handle onNextPage(), and instead
 // uses onKey() and onSwipe()
-(:exclForSwipeLeftDefault) class SiteCarouselDelegate extends ViewCarouselDelegateBase {
+(:exclForSwipeLeftDefault) 
+class SiteCarouselDelegate extends ViewCarouselDelegateBase {
     private var _onNextPage as Boolean = false;
-    function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
+    function initialize( views as SiteViewCarousel, breadCrumb as BreadCrumb ) {
         ViewCarouselDelegateBase.initialize( views, breadCrumb );
     }
     // We call onNextPage again if it was the original behavior,
@@ -82,13 +83,28 @@ class SiteCarouselDelegate extends ViewCarouselDelegateBase {
 
 // Main class implementing most of the delegate functionality
 class ViewCarouselDelegateBase extends SiteSimpleDelegate {
-    private var _views as ArrayOfSiteViews;
+    private var _views as SiteViewCarousel;
     private var _breadCrumb as BreadCrumb;
 
-    function initialize( views as ArrayOfSiteViews, breadCrumb as BreadCrumb ) {
+    public function initialize( views as SiteViewCarousel, breadCrumb as BreadCrumb ) {
         SiteSimpleDelegate.initialize();
         _views = views;
         _breadCrumb = breadCrumb;
+    }
+
+    // For the given index, returns either the view at that position
+    // in the carousel or, if that position contains multiple view options,
+    // the currently selected view based on the breadcrumb for that position.
+    public function getView( index as Number ) as EvccSiteViewBase {
+        var nextView = _views[index];
+        return  
+            nextView instanceof EvccSiteViewBase
+                ? nextView
+                : nextView[
+                    _breadCrumb
+                        .getChild(index)
+                        .getSelectedChild(nextView.size())
+                    ];
     }
 
     // For enter key and swipe left we trigger the onSelect
@@ -102,41 +118,50 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
         return false;
     }
 
-    // When the select action is triggered, we open the active sub view
+    // When the select action is triggered, we either open the 
+    // the (active) lower level view or cycle through the view options
     public function onSelect() as Boolean {
         try {
             // Logger.debug("SiteCarouselDelegate: onSelect");
 
-            // For devices that do not have glances, this view
-            // acts as glance, displaying only the selected site
-            // In this case, we reuse the bread crumb and
-            // keep the activeView at 0
-            var activeView = 0;
-            var childCrumb = _breadCrumb;
-            // If we are not in glance mode, we determine the child
-            // that was previously selected and obtain the bread
-            // crumb for that child
-            if( ! _views[0].actsAsGlance() ) {
-                activeView = _breadCrumb.getSelectedChild( _views.size() );
-                childCrumb = _breadCrumb.getChild( activeView );
-            }
+            // We determine the child that was previously selected 
+            // and obtain the bread crumb for that child
+            var activeViewIndex = _breadCrumb.getSelectedChild( _views.size() );
+            var activeView = _views[activeViewIndex];
+            var childCrumb = _breadCrumb.getChild( activeViewIndex );
 
-            var lowerLevelViews = _views[activeView].getLowerLevelViews();
-            var activeSubView = childCrumb.getSelectedChild( lowerLevelViews.size() );
+            // If the current view is a single view, we check if there
+            // are lower level views and if yes, open the active one
+            if( activeView instanceof EvccSiteViewBase ) {
+                var lowerLevelViews = activeView.getLowerLevelViews();
+                var activeLowerLevelViewIndex = childCrumb.getSelectedChild( lowerLevelViews.size() );
 
-            if( lowerLevelViews.size() > 0 ) {
-                activeSubView = activeSubView < lowerLevelViews.size() ? activeSubView : 0;
-                var delegate;
-                if( lowerLevelViews.size() == 1 ) {
-                    delegate = new SiteSimpleDelegate();
-                } else {
-                    if( ! _views[0].actsAsGlance() ) {
-                        childCrumb = _breadCrumb.getChild( activeView );
-                    }
-                    delegate = new SiteCarouselDelegate( lowerLevelViews, childCrumb );
+                if( lowerLevelViews.size() > 0 ) {
+                    activeLowerLevelViewIndex = activeLowerLevelViewIndex < lowerLevelViews.size() ? activeLowerLevelViewIndex : 0;
+                    var delegate = new SiteCarouselDelegate( lowerLevelViews, childCrumb );
+                    
+                    ViewStack.pushView( 
+                        delegate.getView( activeLowerLevelViewIndex ), 
+                        delegate, 
+                        WatchUi.SLIDE_LEFT 
+                    );
                 }
-                ViewStack.pushView( lowerLevelViews[activeSubView], delegate, WatchUi.SLIDE_LEFT );
+            } else {
+                // If for the current index there is actually an array
+                // of view options, we instead cycle through those 
+                var totalOptions = activeView.size();
+                var nextOptionIndex = childCrumb.getSelectedChild( totalOptions ) + 1;
+                if( nextOptionIndex >= totalOptions ) {
+                    nextOptionIndex = 0;
+                }
+                ViewStack.switchToView( 
+                    activeView[nextOptionIndex], 
+                    self,
+                    WatchUi.SLIDE_IMMEDIATE 
+                );
+                childCrumb.setSelectedChild( nextOptionIndex );
             }
+
             return true;
         } catch ( ex ) {
             Logger.debugException( ex );
@@ -153,10 +178,10 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
             // In case of errors, there may be only one view
             // present and we do not need to execute tha page change
             if( _views.size() > 1 ) {
-                var activeView = _breadCrumb.getSelectedChild( _views.size() );
-                activeView = activeView == _views.size() - 1 ? 0 : activeView + 1;
-                ViewStack.switchToView( _views[activeView], self, WatchUi.SLIDE_UP );
-                _breadCrumb.setSelectedChild( activeView );
+                var activeViewIndex = _breadCrumb.getSelectedChild( _views.size() );
+                activeViewIndex = activeViewIndex == _views.size() - 1 ? 0 : activeViewIndex + 1;
+                ViewStack.switchToView( getView(activeViewIndex), self, WatchUi.SLIDE_UP );
+                _breadCrumb.setSelectedChild( activeViewIndex );
             }
             return true;
         } catch ( ex ) {
@@ -170,10 +195,10 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
             // In case of errors, there may be only one view
             // present and we do not need to execute tha page change
             if( _views.size() > 1 ) {
-                var activeView = _breadCrumb.getSelectedChild( _views.size() );
-                activeView = activeView == 0 ? _views.size() - 1 : activeView - 1;
-                ViewStack.switchToView( _views[activeView], self, WatchUi.SLIDE_DOWN );
-                _breadCrumb.setSelectedChild( activeView );
+                var activeViewIndex = _breadCrumb.getSelectedChild( _views.size() );
+                activeViewIndex = activeViewIndex == 0 ? _views.size() - 1 : activeViewIndex - 1;
+                ViewStack.switchToView( getView(activeViewIndex), self, WatchUi.SLIDE_DOWN );
+                _breadCrumb.setSelectedChild( activeViewIndex );
             }
             return true;
         } catch ( ex ) {
@@ -194,7 +219,7 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
         } else {
             Logger.debug("SiteCarouselDelegate: switching to first");
             // Otherwise we switch to the first view in the carousel
-            ViewStack.switchToView( _views[0], self, WatchUi.SLIDE_DOWN );
+            ViewStack.switchToView( getView( 0 ), self, WatchUi.SLIDE_DOWN );
             _breadCrumb.setSelectedChild( 0 );
         }
     }

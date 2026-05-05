@@ -146,7 +146,7 @@ As described above, when more than two load points are present, they may be grou
 
 <table class="layoutTable">
   <tr>
-    <td width="33.33%"><img src="screenshots/widget_1site_2_loadpoint_300px.png"/></td>
+    <td width="33.33%"><img src="screenshots/widget_1site_2_loadpoints_300px.png"/></td>
     <td></td>
     <td></td>
   </tr>

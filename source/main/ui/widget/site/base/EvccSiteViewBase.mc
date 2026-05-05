@@ -5,17 +5,29 @@ import Toybox.Timer;
 import Toybox.Application.Properties;
 import Toybox.Math;
 
-// This is the base view for all views using and showing data from the state of a site. 
-
-// It handles:
-// - State request
-// - Same level and lower level views
-// - Preparation and drawing of shell (header, logo, page and select indicator) and content
-
-// There are three sections in the class
-// - It starts with general members and functions, then there are the
-// - Members and functions specific to devices without pre-rendering of views, which is followed by the
-// - Members and function specific to devices with pre-rendering of views
+/* Base view class for all views that display data derived from a site state.
+ *
+ * It manages the position of a view within the main view carousel, references
+ * to potential child views, and optional view variants.
+ *
+ * Views are organized in a hierarchical carousel structure:
+ * - The top level consists of a carousel of primary views.
+ * - Each view may define a set of child views. When such a view is selected,
+ *   a secondary carousel is opened to navigate those child views.
+ * - Alternatively, a single carousel position may contain multiple view
+ *   variants. These are stored as an array and can be cycled
+ *   through using the select action. An indicator visualizes the current option.
+ *
+ * In addition to structural responsibilities, this class renders the common
+ * UI shell, including header, logo, page indicator, and enter indicator.
+ *
+ * Subclasses are responsible for providing the actual content, which is
+ * requested and rendered by this base class.
+ *
+ * The class also handles updates from state requests. Upon receiving new data,
+ * it triggers a content refresh, either synchronously or asynchronously,
+ * depending on the context, again delegating content generation to subclasses.
+ */
 
 // Type for arrays of site views
 typedef SiteViewList as Array<EvccSiteViewBase>;
@@ -30,7 +42,8 @@ class EvccSiteViewBase extends WatchUi.View {
         :views as SiteViewCarousel, 
         :parentView as EvccSiteViewBase?, 
         :siteIndex as Number,
-        :pageIndex as Number?
+        :pageIndex as Number?,
+        :optionIndex as Number?
     };
 
     // Constructor
@@ -46,7 +59,12 @@ class EvccSiteViewBase extends WatchUi.View {
 
         var pageIndex = options[:pageIndex];
         if( pageIndex instanceof Number ) {
-            _pageIndex = pageIndex as Number;
+            _pageIndex = pageIndex;
+        }
+
+        var optionIndex = options[:optionIndex];
+        if( optionIndex instanceof Number ) {
+            _variantIndex = optionIndex;
         }
 
         // This part is special for pre-rendering
@@ -93,6 +111,7 @@ class EvccSiteViewBase extends WatchUi.View {
     private var _pageIndex as Number = 0; // index of this view in the array
     public function getSameLevelViews() as SiteViewCarousel { return _sameLevelViews; }
     public function getSameLevelViewCount() as Number { return _sameLevelViews.size(); }
+    public function showPageIndicator() as Boolean { return _sameLevelViews.size() > 1; }
     public function getPageIndex() as Number { return _pageIndex; }
     public function setPageIndex( pageIndex as Number ) as Void { _pageIndex = pageIndex; }
 
@@ -100,13 +119,20 @@ class EvccSiteViewBase extends WatchUi.View {
     private var _lowerLevelViews as SiteViewCarousel = new SiteViewCarousel[0];
     public function addLowerLevelViews( views as SiteViewCarousel ) as Void { _lowerLevelViews.addAll( views ); }
     public function getLowerLevelViews() as SiteViewCarousel { return _lowerLevelViews; }
-    public function getLowerLevelViewCount() as Number { return _lowerLevelViews.size(); }
+    public function showSelectIndicator() as Boolean { return _lowerLevelViews.size() > 0; }
 
-    // The view is selectable if it either has lower level views, or there
-    // is part of a view option array.
-    public function isSelectable() as Boolean {
-        return _lowerLevelViews.size() > 0 || _sameLevelViews[_pageIndex] instanceof Array;
+    // Variants of this view
+    private var _variantIndex as Number = 0;
+    public function getVariantCount() as Number {
+        var view = _sameLevelViews[_pageIndex];
+        if( view instanceof Array ) {
+            return view.size();
+        } else {
+            return 0;
+        }
     }
+    public function getVariantIndex() as Number { return _variantIndex; }
+    public function showVariantIndicator() as Boolean { return _sameLevelViews[_pageIndex] instanceof Array; }
     
     // Definition of the content area, see ContentArea further above for details
     private var _ca as ContentArea = new ContentArea();

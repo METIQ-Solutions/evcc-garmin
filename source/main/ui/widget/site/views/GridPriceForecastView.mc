@@ -11,7 +11,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
         :parentView as EvccSiteViewBase?, 
         :siteIndex as Number,
         :pageIndex as Number?,
-        :pricePeriod as Number,
+        :optionIndex as Number,
     };
 
     private static const AVERAGES_LABELS = [ "+1H", "+2H", "TDAY", "TMRW" ];
@@ -25,7 +25,7 @@ class GridPriceForecastView extends EvccSiteViewBase {
     private var _pricePeriodLabel as String;
     
     function initialize( options as Options ) {
-        _pricePeriod = options[:pricePeriod] as Number;
+        _pricePeriod = options[:optionIndex] as Number;
         _pricePeriodLabel = PRICE_PERIODS_LABELS[_pricePeriod];
         EvccSiteViewBase.initialize( options );
     }

@@ -10,6 +10,13 @@ class WidgetUiHelper extends GlanceUiHelper {
         dc.clear();
     }
 
+    // Activates anti-aliasing on a given Dc, but
+    // only if it is supported by the SDK version
+    public static function activateAntiAlias( dc as Dc ) as Void {
+        if( dc has :setAntiAlias ) {
+            dc.setAntiAlias( true );
+        }
+    }
 
     // Function to format power values for the main view
     public static function formatPower( power as Number? ) as String {

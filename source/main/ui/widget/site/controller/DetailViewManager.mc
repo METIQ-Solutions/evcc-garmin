@@ -175,7 +175,7 @@ class DetailViewManager {
                         _gridPriceForecastView.add( 
                             initDetailView( 
                                 GridPriceForecastView, 
-                                { :pricePeriod => i }, 
+                                { :optionIndex => i }, 
                                 calledDuringAppStartup 
                             ) as GridPriceForecastView
                         );

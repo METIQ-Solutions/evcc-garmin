@@ -93,7 +93,7 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
     }
 
     // For the given index, returns either the view at that position
-    // in the carousel or, if that position contains multiple view options,
+    // in the carousel or, if that position contains multiple view variants,
     // the currently selected view based on the breadcrumb for that position.
     public function getView( index as Number ) as EvccSiteViewBase {
         var nextView = _views[index];
@@ -119,7 +119,7 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
     }
 
     // When the select action is triggered, we either open the 
-    // the (active) lower level view or cycle through the view options
+    // the (active) lower level view or cycle through the view variants
     public function onSelect() as Boolean {
         try {
             // Logger.debug("SiteCarouselDelegate: onSelect");
@@ -148,18 +148,18 @@ class ViewCarouselDelegateBase extends SiteSimpleDelegate {
                 }
             } else {
                 // If for the current index there is actually an array
-                // of view options, we instead cycle through those 
-                var totalOptions = activeView.size();
-                var nextOptionIndex = childCrumb.getSelectedChild( totalOptions ) + 1;
-                if( nextOptionIndex >= totalOptions ) {
-                    nextOptionIndex = 0;
+                // of view variants, we instead cycle through those 
+                var totalVariants = activeView.size();
+                var nextVariantIndex = childCrumb.getSelectedChild( totalVariants ) + 1;
+                if( nextVariantIndex >= totalVariants ) {
+                    nextVariantIndex = 0;
                 }
                 ViewStack.switchToView( 
-                    activeView[nextOptionIndex], 
+                    activeView[nextVariantIndex], 
                     self,
                     WatchUi.SLIDE_IMMEDIATE 
                 );
-                childCrumb.setSelectedChild( nextOptionIndex );
+                childCrumb.setSelectedChild( nextVariantIndex );
             }
 
             return true;

@@ -29,7 +29,7 @@ class SiteShell {
     private var _header as VerticalBlock?;
     private var _logo as BitmapBlock?;
     private var _pageIndicator as PageIndicator?;
-    private var _selectIndicator as SelectIndicator?;
+    private var _selectIndicator as BaseEnterButtonIndicator?;
 
     public function initialize( view as EvccSiteViewBase ) {
         _view = view;
@@ -131,7 +131,7 @@ class SiteShell {
         // If there is more than one view on the same level, draw the page indicator
         var piSpacing = 0;
         _pageIndicator = null;
-        if( _view.getSameLevelViewCount() > 1 ) {
+        if( _view.showPageIndicator() ) {
             _pageIndicator = new PageIndicator( _view.getPageIndex(), _view.getSameLevelViewCount(), calcDc );
             piSpacing = _pageIndicator.getSpacing();
         }
@@ -139,9 +139,13 @@ class SiteShell {
         // If there are lower level views, draw the select indicator
         var siSpacing = 0;        
         _selectIndicator = null;
-        if( _view.isSelectable() ) {
-            _selectIndicator = new SelectIndicator();
-            siSpacing = ( _selectIndicator as SelectIndicator ).getSpacing( calcDc ) as Number;
+        if( _view.showSelectIndicator() ) {
+            _selectIndicator = new EnterIndicator();
+        } else if( _view.showVariantIndicator() ) {
+            _selectIndicator = new EnterVariantsIndicator( _view.getVariantIndex(), _view.getVariantCount() );
+        }
+        if( _selectIndicator != null ) {
+            siSpacing = _selectIndicator.getSpacing( calcDc );
         }
 
         // Calculate the dimensions of the content area

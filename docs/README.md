@@ -181,7 +181,11 @@ It displays:
 - **+2H**: the average price from 60 to 120 minutes from now  
 - **TDAY**: the average price for the remainder of the day  
 - **TMRW**: the average price for the next day  
-- **BEST 1H**: the average price and time of the cheapest hour within the covered time frame
+
+Additionally, you can press the enter button or tap the screen to cycle through the following price periods:
+
+- **BEST 1H / 2H / 3H**: the average price and time of the cheapest one-, two-, or three-hour window within the covered time frame  
+- **WORST 1H**: the average price and time of the most expensive one-hour window within the covered time frame
 
 <table class="layoutTable">
   <tr>

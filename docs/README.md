@@ -112,7 +112,7 @@ The following inputs are supported within the widget:
 | Input | Action |
 |-------|--------|
 | up/down&nbsp;key<br>touchscreen&nbsp;swipe&nbsp;up/down| Cycle through views at the same level in a carousel format. Page dots represent the total number of views in the carousel and highlight the currently active view. |
-| select/enter&nbsp;key<br>touchscreen&nbsp;tap/swipe&nbsp;left| Opens lower-level views—see the sections below for details. When a lower-level view is available, an arc next to the corresponding key indicates it:<br><img src="screenshots/input_arc_44px.png"/><br>This arc is shown on both touch and non-touch devices. On touch devices, you can also use tap input or swipe left. |
+| select/enter&nbsp;key<br>touchscreen&nbsp;tap/swipe&nbsp;left| A solid indicator next to the enter key indicates that lower-level views are available and can be opened by pressing the key.<br>A dotted indicator shows that multiple variants exist for the current view. Pressing the key cycles through the variants, with the active one highlighted in the indicator.<br>The indicators are shown on both touch and non-touch devices. On touch devices, you can also tap the screen or swipe left.<br><img src="screenshots/input_enter_simple_44px.png"/><br><img src="screenshots/input_enter_variants_44px.png"/> |
 | back&nbsp;key | Navigates back to the previous higher-level view. |
 | menu&nbsp;key<br>touchscreen&nbsp;hold | Pressing the menu key opens the [System Info](#system-info-view) view, if supported by your device. On touchscreen devices, you can also tap and hold the screen to access it. This is especially important for devices without a menu key, such as the **Vivoactive 6**. |
 
@@ -224,26 +224,26 @@ For sites with detail views, an arc indicates the select button to press for acc
     <td></td>
   </tr>
   <tr>
-    <td><img src="screenshots/widget_2site_1_main_300px.png"/></td>
-    <td><img src="screenshots/widget_2site_1_forecast_300px.png"/></td>
+    <td><img src="screenshots/widget_2site_1_1_main_300px.png"/></td>
+    <td><img src="screenshots/widget_2site_1_2_forecast_300px.png"/></td>
     <td></td>
   </tr>
   <tr>
     <td></td>
     <td style="padding-bottom: 20px" align="center" valign="top">
-      <img src="screenshots/widget_2site_1_statistics_300px.png"/>
+      <img src="screenshots/widget_2site_1_3_statistics_300px.png"/>
     </td>
     <td></td>
   </tr>
   <tr>
-    <td><img src="screenshots/widget_2site_2_main_300px.png"/></td>
-    <td><img src="screenshots/widget_2site_2_loadpoint_300px.png"/></td>
+    <td><img src="screenshots/widget_2site_2_1_main_300px.png"/></td>
+    <td><img src="screenshots/widget_2site_2_2_loadpoints_300px.png"/></td>
     <td></td>
   </tr>
   <tr>
     <td></td>
     <td style="padding-bottom: 20px" align="center" valign="top">
-      <img src="screenshots/widget_2site_2_statistics_300px.png"/>
+      <img src="screenshots/widget_2site_2_3_statistics_300px.png"/>
     </td>
     <td></td>
   </tr>

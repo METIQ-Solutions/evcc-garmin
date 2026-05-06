@@ -35,7 +35,7 @@ This README covers the following topics:
       - [1. Vector Font Mode (Modern Devices)](#1-vector-font-mode-modern-devices)
       - [2. Static Mode](#2-static-mode)
       - [3. Static Optimized Mode](#3-static-optimized-mode)
-    - [Generatinc Icons for a New Device](#generating-icons-for-a-new-device)
+    - [Generating Icons for a New Device](#generating-icons-for-a-new-device)
     - [Adding, Removing or Modifying Icons](#adding-removing-or-modifying-icons)
       - [1. `generate.json`](#1-generatejson)
       - [2. `drawables*.xml`](#2-drawablesxml)
@@ -166,8 +166,6 @@ At runtime, the app dynamically selects the appropriate font size based on the d
 - `generate.js`: JavaScript script, run by `generate.bat` using Windows Scripting Host
 
 For more information on these files, see [To Generate the Device-Specific Icons](#to-generate-the-device-specific-icons).
-
-<br>
 
 ### Folder `/scripts/generate-jq`
 

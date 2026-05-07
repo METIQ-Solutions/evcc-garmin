@@ -10,7 +10,7 @@ class SiteSimpleDelegate extends WatchUi.BehaviorDelegate {
     }
 
     public function onBack() as Boolean {
-        ViewStack.popView( WatchUi.SLIDE_BLINK );
+        ViewStack.popView( WatchUi.SLIDE_RIGHT );
         return true;
     }
 

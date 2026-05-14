@@ -172,6 +172,12 @@ fr955.sourcePath = $(base.sourcePath);$(sourceProperties)/fr955
 fr965.resourcePath = $(fenix847mm.resourcePath)
 fr965.excludeAnnotations = $(fr265.excludeAnnotations)
 fr970.resourcePath = $(fenix847mm.resourcePath)
+fr70.excludeAnnotations = $(fontsVector);$(screenRound);$(hasSelect);$(swipeLeftDefault)
+fr70.resourcePath = $(fr165.resourcePath)
+fr170.excludeAnnotations = $(fr70.excludeAnnotations)
+fr170.resourcePath = $(fr165.resourcePath)
+fr170m.excludeAnnotations = $(fr70.excludeAnnotations)
+fr170m.resourcePath = $(fr165.resourcePath)
 
 # Instinct series
 instinct3amoled45mm.resourcePath = $(resourceBase);$(resourceDrawables)/instinct3amoled45mm

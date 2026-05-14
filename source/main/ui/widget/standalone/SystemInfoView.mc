@@ -28,7 +28,7 @@ class SystemInfoView extends WatchUi.View {
             block.addBlock( column2 );
 
             // Show font mode and if icons are the correct size
-            //checkFonts( block, dc );
+            checkFonts( column1, column2, dc );
             
             block.draw( dc, dc.getWidth() / 2, dc.getHeight() / 2 );
     }
@@ -61,45 +61,37 @@ class SystemInfoView extends WatchUi.View {
 
     (:debug) private var _debugDone as Boolean = false;
     // For full-glance devices we also check the glance icons
-    (:debug) private function checkFonts( block as VerticalBlock, dc as Dc ) as Void {
+    (:debug) private function checkFonts( column1 as VerticalBlock, column2 as VerticalBlock, dc as Dc ) as Void {
         if( ! _debugDone ) { Logger.info( "Icon sizes:" ); }
-        block.addTextWithOptions( "fonts: " + fontMode(), { :marginTop => _spacing } );
-        checkFontsDeviceSpecific( block, dc );
+        addLine( column1, column2, "FONTS", fontMode(), false );
+        checkIcons( new WidgetResourceSet(), column1, column2, dc );
+        checkIcons( new GlanceResourceSet(), column1, column2, dc );
         _debugDone = true;
-    }
-
-    // For glance devices we also check the glance icons
-    // Note that GlanceResourceSet does not exist for tiny glance devices
-    // Therefore it is added at the end of this class, only for tiny glance and in
-    // debug scope
-    (:debug) private function checkFontsDeviceSpecific( block as VerticalBlock, dc as Dc ) as Void {
-        checkIcons( new WidgetResourceSet(), block, dc );
-        checkIcons( new GlanceResourceSet(), block, dc );
     }
 
     // Checking the icons for a given UI lib (glance or widget)
     // We don't use the standard type ResourceSet, because we
     // for tiny glances we create our own debug resource set, which
     // is not included in that type
-    (:debug) private function checkIcons( uiLib as WidgetResourceSet or GlanceResourceSet, block as VerticalBlock, dc as Dc ) as Void {
+    (:debug) private function checkIcons( uiLib as WidgetResourceSet or GlanceResourceSet, column1 as VerticalBlock, column2 as VerticalBlock, dc as Dc ) as Void {
         var fonts = uiLib.fonts as ArrayOfGarminFonts;
         var icons = uiLib.icons as EvccIcons;
-        var text = "ICONS: OK";
         var fontSizeNames = new Array<String>[0];
-        var prefix = "";
+        var label = "";
+        var state = "OK";
 
         // Define font names and prefix for debug output for
         // widget and glance
         if( uiLib instanceof WidgetResourceSet ) {
             fontSizeNames = [ "medium", "small", "tiny", "xtiny", "micro" ];
-            prefix = "w";
+            label = "WG ICONS";
             // For widget, we also derive a recommendation for the logo size from the xtiny font size
             if( ! _debugDone ) { 
                 Logger.info( "logo_evcc=" + Math.round( dc.getFontHeight( fonts[3]) * 0.60 ).toNumber() + " (recommendation only)" );
             }
         } else {
             fontSizeNames = [ "glance" ];
-            prefix = "g";
+            label = "GL ICONS";
         }
 
         // Cycle through all font sizes and compare them with
@@ -119,18 +111,18 @@ class SystemInfoView extends WatchUi.View {
                 var bmHeight = bitmap.getHeight();
                 if( bmHeight != fontHeight ) {
                     debug += " (mismatch! icon size=" + bmHeight + ")";
-                    text = "icons: mismatch";
+                    state = "MISMATCH";
                 }
             } else {
-                text = "icons: icon missing";
+                state = "MISSING";
             }
             if( ! _debugDone ) { Logger.info( debug ); }
         } 
-        block.addText( prefix + "-" + text );
+        addLine( column1, column2, label, state, true );
     }
 
-    (:debug :exclForFontsStatic :exclForFontsStaticOptimized) function fontMode() as String { return "vector"; }
-    (:debug :exclForFontsVector :exclForFontsStatic) function fontMode() as String { return "static-opt"; }
-    (:debug :exclForFontsVector :exclForFontsStaticOptimized) function fontMode() as String { return "static"; }
+    (:debug :exclForFontsStatic :exclForFontsStaticOptimized) function fontMode() as String { return "VECTOR"; }
+    (:debug :exclForFontsVector :exclForFontsStatic) function fontMode() as String { return "STATIC-OPT"; }
+    (:debug :exclForFontsVector :exclForFontsStaticOptimized) function fontMode() as String { return "STATIC"; }
 
 }

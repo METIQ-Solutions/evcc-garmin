@@ -57,7 +57,7 @@ class SystemInfoView extends WatchUi.View {
     // correct icon sizes on the debug console
     
     // in :release scope, checkFonts is only a dummy
-    (:release) private function checkFonts( block as VerticalBlock, dc as Dc ) as Void {}
+    (:release) private function checkFonts( column1 as VerticalBlock, column2 as VerticalBlock, dc as Dc ) as Void {}
 
     (:debug) private var _debugDone as Boolean = false;
     // For full-glance devices we also check the glance icons

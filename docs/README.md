@@ -29,10 +29,64 @@ If you still have questions after reading this guide, check the [Support](#help-
 
 - [GitHub](#github)
 
-
 # Connectivity
 
-Garmin watches rely on your smartphone to connect to the local network or the Internet. If you use a VPN solution like Tailscale on your phone to access evcc, it will also work with the watch. However, due to limitations in the Garmin Connect IQ SDK, the evcc HTTP interface is only accessible on iOS devices. Android users must use an HTTPS endpoint with a valid certificate. To set up an HTTPS endpoint for evcc, you can for example use a reverse proxy such as NGINX or the built-in option on Synology DiskStations, along with a certificate from Let's Encrypt.
+Garmin watches rely on your smartphone for network access. This means the watch uses the phone's connectivity to access your local network or the Internet. If you use a VPN solution such as [Tailscale](https://tailscale.com) on your phone to reach evcc, it will also work for the watch.
+
+However, due to limitations of the Garmin Connect IQ SDK, direct access to the local evcc HTTP interface is only possible when the watch is paired with an iPhone. When paired with an Android phone, Garmin requires the use of HTTPS with a valid certificate.
+
+## Access Options on Android
+
+There are several ways to provide HTTPS access to evcc on Android. While the first option is still experimental at the time of writing, it is currently the easiest and recommended approach.
+
+The other options involve either setting up your own reverse proxy or using a local TCP relay on the phone. These approaches require additional setup effort and are primarily intended for more advanced users.
+
+### evcc Remote Access
+
+evcc includes a remote access feature that provides access to both the web interface and the REST API through a cloud-based reverse proxy. The connection is secured using HTTPS with a valid certificate.
+
+At the time of writing, this feature is still experimental and must first be enabled using an environment variable. See the following pull request for details:
+
+https://github.com/evcc-io/evcc/pull/28688
+
+Once enabled, setup is done directly through the evcc UI:
+
+1. Open the **Configuration** screen
+2. Scroll to **Integrations** and open **Remote Access**
+3. Enable the **Remote access** switch
+4. Note the displayed **Public URL**
+5. Add a client, for example named `garmin`
+6. Note the generated username and password
+7. Configure the Garmin app's [Settings](#settings) using the Public URL, username, and password
+
+### Reverse Proxy
+
+Another option is to set up your own HTTPS reverse proxy in front of evcc.
+
+This can be done using software such as:
+- [NGINX](https://nginx.org)
+- [Caddy](https://caddyserver.com)
+- the built-in reverse proxy functionality available on Synology NAS systems
+
+Typically, this setup is combined with a free TLS certificate from [Let's Encrypt](https://letsencrypt.org).
+
+### TCP Relay
+
+Garmin still allows access to HTTP services running on `localhost` (`127.0.0.1`) when using Android. This makes it possible to run a local TCP relay on the phone which forwards requests to the actual evcc server.
+
+Apps that can provide this functionality include:
+- [TCP Relay](https://play.google.com/store/apps/details?id=net.ldmsys.tcprelay)
+- [Android Proxy Server Pro](https://play.google.com/store/apps/details?id=com.drony.android.server.pro)
+
+In this setup:
+- the Garmin app connects to `127.0.0.1`
+- the relay app forwards the traffic to the real evcc server
+
+The main challenge with this approach is reliably keeping the relay active in the background.
+
+For TCP Relay, an automation tool such as [Automate](https://play.google.com/store/apps/details?id=com.llamalab.automate) is typically needed to automatically start the relay after Android boots. Android Proxy Server Pro includes built-in auto-start support.
+
+In both cases, Android battery optimization settings usually need to be adjusted so the relay app is allowed to continue running in the background. The required settings vary depending on the phone manufacturer.
 
 # Settings
 

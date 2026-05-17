@@ -73,7 +73,7 @@ Typically, this setup is combined with a free TLS certificate from [Let's Encryp
 
 ### TCP Relay
 
-Garmin still allows access to HTTP services running on `localhost` (`127.0.0.1`) when using Android. This makes it possible to run a local TCP relay on the phone which forwards requests to the actual evcc server.
+Garmin still allows access to HTTP services running on`localhost`or`127.0.0.1`when using Android. This makes it possible to run a local TCP relay on the phone which forwards requests to the actual evcc server.
 
 Apps that can provide this functionality include:
 - [TCP Relay](https://play.google.com/store/apps/details?id=net.ldmsys.tcprelay)

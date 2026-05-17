@@ -11,6 +11,7 @@ If you still have questions after reading this guide, check the [Support](#help-
 # Table of Contents
 
 - [Connectivity](#connectivity)
+  - [Access Options on Android](#access-options-on-android)
 
 - [Settings](#settings)
 

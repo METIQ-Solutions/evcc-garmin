@@ -256,7 +256,7 @@ import Toybox.Lang;
         // there is only one vehicle or the vehicle is a
         // guest vehicle, we show the icon, otherwise
         // the title.
-        var showIcon = loadpoint.isOnlyInCategory() && ( vehicle.isOnlyVehicle() || vehicle.isGuest() );
+        var showIcon = loadpoint.isOnlyInCategory() && vehicle.isOnlyVehicle();
 
         // Truncation is only required if the title is shown
         var line = new HorizontalBlock( 

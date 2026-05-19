@@ -183,7 +183,7 @@ class LoadpointView extends EvccSiteViewBase {
         titleLine.addTextWithOptions( title, { :isTruncatable => true, :useEllipsis => true } );
         block.addBlock( titleLine );
 
-        if( loadpointItem instanceof Vehicle ) {
+        if( loadpointItem instanceof Vehicle && ! loadpointItem.isGuest() ) {
             titleLine.addText( ": " + WidgetUiHelper.formatSoc( loadpointItem.getSoc() ) );
         } else if( loadpointItem instanceof Heater ) {
             titleLine.addText( ": " + WidgetUiHelper.formatTemp( loadpointItem.getTemperature() ) );

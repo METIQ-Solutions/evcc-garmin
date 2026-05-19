@@ -93,7 +93,8 @@ import Toybox.Application.Properties;
                         var vehicle = loadpoint.getVehicle();
                         if( vehicle != null ) {
                             var column = new VerticalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
-                            column.addText( vehicle.getTitle().substring( 0, 8 ) as String );
+                            var title = vehicle.getTitle().substring( 0, 8 );
+                            column.addText( title instanceof String ? title.toUpper() : "N/A" );
                             var vehicleState = new HorizontalBlock( { :font => GlanceResourceSet.FONT_GLANCE } );
                             if( vehicle.isGuest() ) {
                                 vehicleState.addBitmap( Rez.Drawables.car_glance, {} as DbOptions );

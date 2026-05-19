@@ -27,7 +27,7 @@ import Toybox.Lang;
 
         // For guest vehicles we use the loadpoint title as name/title
         if( name == null || name.equals( "" ) ) {
-            title = lpTitle;
+            title = "Guest";
             _isGuest = true;
         } else {
             // If it is not a guest, we lookup the SoC and vehicle title

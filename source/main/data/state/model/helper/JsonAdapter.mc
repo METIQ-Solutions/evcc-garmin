@@ -21,11 +21,11 @@ class JsonAdapter {
     // Prints all members of this JSON object
     (:debug)
     public function debug() as Void {
-        Logger.debug( "JSON Object:" );
+        // Logger.debug( "JSON Object:" );
         var keys = _jsonObject.keys();
         for( var i = 0; i < keys.size(); i++ ) {
             var key = keys[i];
-            Logger.debug( "    " + key + " = " + _jsonObject[key] );
+            // Logger.debug( "    " + key + " = " + _jsonObject[key] );
         }
     }
 
@@ -236,14 +236,14 @@ class JsonAdapter {
         });
 
         /*
-        Logger.debug( "Year: " + year );
-        Logger.debug( "Month: " + month );
-        Logger.debug( "Day: " + day );
-        Logger.debug( "Hour: " + hour );
-        Logger.debug( "Minute: " + min );
-        Logger.debug( "Second: " + sec );
-        Logger.debug( "offsetSign: " + offsetSign );
-        Logger.debug( "offsetHour: " + offsetHour );
+        // Logger.debug( "Year: " + year );
+        // Logger.debug( "Month: " + month );
+        // Logger.debug( "Day: " + day );
+        // Logger.debug( "Hour: " + hour );
+        // Logger.debug( "Minute: " + min );
+        // Logger.debug( "Second: " + sec );
+        // Logger.debug( "offsetSign: " + offsetSign );
+        // Logger.debug( "offsetHour: " + offsetHour );
         */
 
         if( offsetSign != null && offsetHour != null ) {

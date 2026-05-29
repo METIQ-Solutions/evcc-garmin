@@ -40,7 +40,7 @@ import Toybox.Lang;
         } else if( dataLp.getBooleanOrFalse( CHARGERFEATUREINTEGRATEDDEVICE ) ) {
             _controllable = new IntegratedDevice( dataLp );
         } else if( dataLp.getBooleanOrFalse( CONNECTED ) ) {
-            _controllable = new Vehicle( dataLp, dataResult, _title );
+            _controllable = new Vehicle( dataLp, dataResult );
         }
     }
 

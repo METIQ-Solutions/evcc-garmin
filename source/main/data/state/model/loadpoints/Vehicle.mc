@@ -12,20 +12,20 @@ import Toybox.Lang;
     private var _title as String;
     private var _soc as Number = 0;
     private var _isGuest as Boolean = false;
-    private var _isOnlyVehicle as Boolean = false;
 
     private const VEHICLENAME = "vehicleName";
-    private const VEHICLES = "vehicles";
+    public static const VEHICLES = "vehicles";
     private const VH_TITLE = "title";
     private const VEHICLESOC = "vehicleSoc";
 
-    function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter, lpTitle as String ) {
+    function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter ) {
         LoadpointItem.initialize( dataLp );
 
         var name = dataLp.getStringOrNull( VEHICLENAME );
         var title = null;
+        var vehicles = dataResult.getJsonObjectOrNull( VEHICLES );
 
-        // For guest vehicles we use the loadpoint title as name/title
+        // If there is no name, then it is a guest vehicle
         if( name == null || name.equals( "" ) ) {
             title = "Guest";
             _isGuest = true;
@@ -33,11 +33,7 @@ import Toybox.Lang;
             // If it is not a guest, we lookup the SoC and vehicle title
             _soc = dataLp.getNumber( VEHICLESOC );
             
-            var vehicles = dataResult.getJsonObjectOrNull( VEHICLES );
             if( vehicles != null ) {
-                if( vehicles.size() == 1 ) {
-                    _isOnlyVehicle = true;                    
-                }
                 var vehicle = vehicles.getJsonObjectOrNull( name );
                 if( vehicle != null ) {
                     title = vehicle.getString( VH_TITLE );
@@ -55,5 +51,4 @@ import Toybox.Lang;
     public function getTitle() as String { return _title; }
     public function getSoc() as Number { return _soc; }
     public function isGuest() as Boolean { return _isGuest; }
-    public function isOnlyVehicle() as Boolean { return _isOnlyVehicle; }
 }

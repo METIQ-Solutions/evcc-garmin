@@ -92,8 +92,9 @@ import Toybox.Lang;
         // If there are two or less loadpoints, we show them directly
         if( state.getLoadpointCount() <= 2 ) {
             var loadpoints = state.getLoadpoints();
+            var vehicleStats = state.getVehicleStats();
             for( var i = 0; i < loadpoints.size(); i++ ) {
-                addLoadpoint( block, loadpoints[i] );
+                addLoadpoint( block, loadpoints[i], vehicleStats );
             }
         } else {
             // If there are more, we look at them per category
@@ -108,7 +109,7 @@ import Toybox.Lang;
                 // If there is only one loadpoint in the category, we directly
                 // display it
                 if( loadpointCount == 1 ) {
-                    addLoadpoint( block, loadpoints[0] );
+                    addLoadpoint( block, loadpoints[0], state.getVehicleStats() );
                 } else if( loadpointCount > 1 ) {
                     // If there are more than one, we add a summary line
                     var loadpointList = loadpointLists[i][1];
@@ -136,13 +137,13 @@ import Toybox.Lang;
     // Returns true if the loadpoint was added, otherwise false.
     // Ignored are loadpoints without a vehicle that are neither heaters
     // nor integrated devices.
-    private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint ) as Void {
+    private function addLoadpoint( block as VerticalBlock, loadpoint as Loadpoint, vehicleStats as VehicleStats ) as Void {
         // Route to different rendering functions for each
         // type of loadpoint (connected vehicle, heater, integrated device)
         if( loadpoint.isHeater() || loadpoint.isIntegratedDevice() ) {
             block.addBlock( renderAuxDevice( loadpoint ) );
         } else if( loadpoint.isVehicle() ) {
-            var loadpointLine = renderVehicle( loadpoint );
+            var loadpointLine = renderVehicle( loadpoint, vehicleStats );
             block.addBlock( loadpointLine );
             // If the vehicle is charging, a separate line with details will be added
             if( loadpoint.isCharging() ) {
@@ -249,14 +250,11 @@ import Toybox.Lang;
 
 
     // Function to generate the main line representing a charger with a connected EV
-    private function renderVehicle( loadpoint as Loadpoint ) as HorizontalBlock {
+    private function renderVehicle( loadpoint as Loadpoint, vehicleStats as VehicleStats ) as HorizontalBlock {
         var vehicle = loadpoint.getVehicle() as Vehicle;
         
-        // If there is only one loadpoint and either
-        // there is only one vehicle or the vehicle is a
-        // guest vehicle, we show the icon, otherwise
-        // the title.
-        var showIcon = loadpoint.isOnlyInCategory() && vehicle.isOnlyVehicle();
+        // If there is only one vehicle, we show the icon, otherwise the title.
+        var showIcon = ( vehicleStats.getGuestCount() + vehicleStats.getVehicleCount() ) <= 1;
 
         // Truncation is only required if the title is shown
         var line = new HorizontalBlock( 
@@ -267,7 +265,15 @@ import Toybox.Lang;
         if( showIcon ) {
             line.addIcon( IconBlock.ICON_CAR, {} );
         } else {
-            line.addTextWithOptions( vehicle.getTitle(), { :isTruncatable => true } );
+            // If there is more than one guest vehicle connected,
+            // we show the loadpoint title instead of the vehicle title 
+            // (which would be "guest" for all of them)
+            var title = 
+                vehicle.isGuest() && vehicleStats.getGuestCount() > 1
+                ? loadpoint.getTitle()
+                : vehicle.getTitle();
+
+            line.addTextWithOptions( title, { :isTruncatable => true } );
         }
         
         // For guest vehicles there is no SoC

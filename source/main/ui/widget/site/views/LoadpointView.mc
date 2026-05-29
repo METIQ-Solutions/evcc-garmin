@@ -121,7 +121,8 @@ class LoadpointView extends EvccSiteViewBase {
     public function addContent( block as VerticalBlock, calcDc as EvccDcInterface ) {
         
         // Get the loadpoints for the category
-        var loadpoints = getWebRequest().getState().getLoadpointCategory( _category )[1].getLoadpoints();
+        var state = getWebRequest().getState();
+        var loadpoints = state.getLoadpointCategory( _category )[1].getLoadpoints();
 
         if( loadpoints.size() > 0 ) {
 
@@ -142,6 +143,7 @@ class LoadpointView extends EvccSiteViewBase {
                 isAnyLoadpointCharging = isAnyLoadpointCharging || loadpoints[i].getChargePowerRounded() > 0;
             }
 
+            var vehicleStats = state.getVehicleStats();
             // Iterate and render all loadpoints
             var first = true;
             for( var i = loadpointRange[0]; i <= loadpointRange[1]; i++ ) {
@@ -159,7 +161,7 @@ class LoadpointView extends EvccSiteViewBase {
                     );
                 }
                 // Render and add the loadpoint
-                addLoadpoint( block, loadpoints[i], isAnyLoadpointCharging );
+                addLoadpoint( block, loadpoints[i], isAnyLoadpointCharging, vehicleStats );
             }
         } else {
             block.addText( "No loadpoints" );
@@ -174,12 +176,17 @@ class LoadpointView extends EvccSiteViewBase {
     private function addLoadpoint( 
         block as VerticalBlock, 
         loadpoint as Loadpoint, 
-        isAnyLoadpointCharging as Boolean 
+        isAnyLoadpointCharging as Boolean,
+        vehicleStats as VehicleStats 
     ) as Void {
         var loadpointItem = loadpoint.getControllable();
 
         var titleLine = new HorizontalBlock( { :truncateSpacing => getContentArea().truncateSpacing } );
-        var title = loadpointItem instanceof Vehicle ? loadpointItem.getTitle() : loadpoint.getTitle();
+        var title = 
+            loadpointItem instanceof Vehicle
+            && ! ( loadpointItem.isGuest() && vehicleStats.getGuestCount() > 1 ) 
+            ? loadpointItem.getTitle() 
+            : loadpoint.getTitle();
         titleLine.addTextWithOptions( title, { :isTruncatable => true, :useEllipsis => true } );
         block.addBlock( titleLine );
 

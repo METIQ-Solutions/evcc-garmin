@@ -127,6 +127,10 @@ import Toybox.Time;
         return categories[index];
     }
 
+    // Statistics on the vehicles available in the system
+    private var _vehicleStats as VehicleStats;
+    public function getVehicleStats() as VehicleStats { return _vehicleStats; }
+    
     // Solar forecast
     private var _solarForecast as SolarForecast?;
     public function getSolarForecast() as SolarForecast? { return _solarForecast; }
@@ -195,6 +199,7 @@ import Toybox.Time;
         _pvPower = result.getNumberOrNull( PVPOWER );
         _siteTitle = result.getStringOrNull( SITETITLE );
 
+        var guestCount = 0;
         var loadpoints = result.getArrayOrNull( LOADPOINTS );
         // If there are no loadpoints, we get null, not an empty array
         if( loadpoints != null ) {
@@ -208,10 +213,14 @@ import Toybox.Time;
                 } else if ( loadpoint.isIntegratedDevice() ) {
                     _integratedDevices.add( loadpoint );
                 } else { 
-                    _chargers.add( loadpoint ); 
+                    _chargers.add( loadpoint );
+                    var vehicle = loadpoint.getVehicle();
+                    guestCount += ( vehicle != null && vehicle.isGuest() ) ? 1 : 0;
                 }
             }
         }
+
+        _vehicleStats = new VehicleStats( result, guestCount );
 
         _tariffGrid = result.getFloatOrNull( TARIFF_GRID );
 

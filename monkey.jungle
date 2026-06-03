@@ -131,22 +131,6 @@ vivoactive4s.resourcePath=resources-site-settings/site5;resources;resources-draw
 base.sourcePath = $(sourceGlanceFull)
 base.excludeAnnotations = $(glanceFull);$(fontsVector);$(memoryStandard);$(sitesMultiple);$(select30);$(hasSelect);$(swipeLeftDefault);$(viewPreRenderingEnabled)
 
-# Full glance devices, but with static/optimized fonts
-venu2.excludeAnnotations = $(glanceFull);$(fontsStaticOptimized);$(memoryStandard);$(sitesMultiple);$(select30);$(swipeLeftDefault);$(viewPreRenderingEnabled)
-venu2plus.excludeAnnotations = $(venu2.excludeAnnotations)
-venu2s.excludeAnnotations = $(venu2.excludeAnnotations)
-vivoactive5.excludeAnnotations = $(venu2.excludeAnnotations)
-# Full glance devices, but with select button at 27°
-fr265.excludeAnnotations = $(glanceFull);$(fontsVector);$(memoryStandard);$(sitesMultiple);$(select27);$(hasSelect);$(swipeLeftDefault);$(viewPreRenderingEnabled)
-fr265s.excludeAnnotations = $(fr265.excludeAnnotations)
-fr165.excludeAnnotations = $(fr265.excludeAnnotations)
-fr165m.excludeAnnotations = $(fr265.excludeAnnotations)
-fr965.excludeAnnotations = $(fr265.excludeAnnotations)
-# Full glance devices, but with swipe left override
-epix2pro47mm.excludeAnnotations = $(glanceFull);$(fontsVector);$(memoryStandard);$(sitesMultiple);$(select30);$(hasSelect);$(swipeLeftOverride);$(viewPreRenderingEnabled)
-epix2pro42mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
-epix2pro51mm.excludeAnnotations = $(epix2pro47mm.excludeAnnotations)
-
 # Tiny glance devices
 # One site, static font, no select behavior since there is only one site and never a select action
 fr745.sourcePath = $(sourceGlanceTiny)
@@ -179,7 +163,7 @@ vivoactive3mlte.sourcePath = $(vivoactive3m.sourcePath)
 vivoactive3mlte.excludeAnnotations = $(vivoactive3m.excludeAnnotations)
 # With multiple sites
 fr645m.sourcePath = $(sourceGlanceNone)
-fr645m.excludeAnnotations = $(glanceNone);$(fontsStatic);$(memoryStandard);$(sitesMultiple);$(selectTouch);$(swipeLeftDefault);$(viewPreRenderingEnabled)
+fr645m.excludeAnnotations = $(glanceNone);$(fontsStaticOptimized);$(memoryStandard);$(sitesMultiple);$(select30);$(swipeLeftDefault);$(viewPreRenderingEnabled)
 vivoactive4.sourcePath = $(sourceGlanceNone)
 vivoactive4.excludeAnnotations = $(glanceNone);$(fontsStatic);$(memoryStandard);$(sitesMultiple);$(selectTouch);$(swipeLeftDefault);$(viewPreRenderingEnabled)
 vivoactive4s.sourcePath = $(vivoactive4.sourcePath)

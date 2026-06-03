@@ -62,12 +62,12 @@
             "icon_medium":"40"
         },
         "fr645":{
-            "fontMode":"static",
+            "fontMode":"static-opt",
             "logo_flash":"40",
             "logo_evcc":"13",
-            "icon_glance":"19",
-            "icon_micro":"19",
-            "icon_xtiny":"19",
+            "icon_glance":"26",
+            "icon_micro":"26",
+            "icon_xtiny":"26",
             "icon_tiny":"26",
             "icon_small":"29",
             "icon_medium":"34"

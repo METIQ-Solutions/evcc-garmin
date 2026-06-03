@@ -29,7 +29,7 @@ import Toybox.Lang;
     
     function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter ) {
         _title = dataLp.getString( TITLE );
-        _isCharging = dataLp.getBoolean( CHARGING );
+        _isCharging = dataLp.getBooleanOrFalse( CHARGING );
         _activePhases = dataLp.getNumber( PHASESACTIVE );
         _chargePower = dataLp.getNumber( CHARGEPOWER );
         _mode = dataLp.getString( MODE );

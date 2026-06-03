@@ -33,6 +33,6 @@ import Toybox.Time;
         var siteData = {} as JsonContainer;
         siteData[NAME_DATA] = json;
         siteData[NAME_DATATIMESTAMP] = timestamp.value();
-        Storage.setValue( EvccConstants.STORAGE_SITE_PREFIX + siteIndex, siteData as Dictionary<Application.PropertyKeyType, Application.PropertyValueType> );
+        Storage.setValue( EvccConstants.STORAGE_SITE_PREFIX + siteIndex, siteData as Lang.Dictionary<Storage.KeyType, Storage.ValueType> );
     }
 }

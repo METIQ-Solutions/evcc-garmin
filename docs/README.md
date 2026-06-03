@@ -315,47 +315,15 @@ The table below lists supported devices along with their capabilities. Click on 
 | fenix6pro          | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
 | fenix6spro         | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
 | fenix6xpro         | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fenix7             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7s            | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7x            | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| epix2pro42mm       | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| epix2pro47mm       | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| epix2pro51mm       | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7pro          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7pronowifi    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7spro         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7xpro         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix7xpronowifi   | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix843mm         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix847mm         | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix8solar47mm    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix8solar51mm    | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fenix8pro47mm      | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| fr645              | -              | 5                       | Yes                              | Static&#8209;Opt           |                                                                                    |
 | fr745              | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
 | fr945              | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
 | fr945lte           | Tiny              | 1                       | Yes                              | Static           |                                                                                    |
-| fr955              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr165              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr165m             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr265              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr265s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr965              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| fr970              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu2              | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| venu2plus          | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| venu2s             | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| venu3              | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu3s             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venux1             | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu441mm          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
-| venu445mm          | Full              | 5                       | Yes                              | Vector           |                                                                                    |
 | vivoactive3        | -                 | 1                       | No                               | Static           | May not work with large sites (memory limit)                                       |
 | vivoactive3m       | -                 | 5                       | Yes                              | Static           |                                                                                    |
 | vivoactive3mlte    | -                 | 5                       | Yes                              | Static           | May not work with large sites (cpu limit)                                          |
 | vivoactive4        | -                 | 5                       | Yes                              | Static           |                                                                                    |
-| vivoactive4s       | -                 | 5                       | Yes                              | Sbtatic           |                                                                                    |
-| vivoactive5        | Full              | 5                       | Yes                              | Static&#8209;Opt |                                                                                    |
-| vivoactive6        | Full              | 5                       | Yes                              | Vector           |                                                                                    |
+| vivoactive4s       | -                 | 5                       | Yes                              | Static           |                                                                                    |
 
 ## Max Sites
 

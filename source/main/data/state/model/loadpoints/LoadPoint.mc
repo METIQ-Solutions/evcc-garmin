@@ -31,7 +31,7 @@ import Toybox.Lang;
         _title = dataLp.getString( TITLE );
         _isCharging = dataLp.getBooleanOrFalse( CHARGING );
         _activePhases = dataLp.getNumber( PHASESACTIVE );
-        _chargePower = dataLp.getNumber( CHARGEPOWER );
+        _chargePower = dataLp.getNumberOrZero( CHARGEPOWER );
         _mode = dataLp.getString( MODE );
         _chargeRemainingDuration = dataLp.getNumberOrNull( CHARGEREMAININGDURATION );
 

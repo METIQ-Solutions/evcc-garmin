@@ -147,6 +147,11 @@ class JsonAdapter {
         }
     }
 
+    public function getNumberOrZero( key as String ) as Number {
+        var value = getNumberOrNull( key );
+        return value != null ? value : 0;
+    }
+
     public function getNumberOrNull( key as String ) as Number? {
         var value = _jsonObject[key];
         if( value instanceof Number || value == null ) {

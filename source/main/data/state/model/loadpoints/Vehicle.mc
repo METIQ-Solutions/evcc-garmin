@@ -12,43 +12,41 @@ import Toybox.Lang;
     private var _title as String;
     private var _soc as Number = 0;
     private var _isGuest as Boolean = false;
+    private var _isConnected as Boolean = false;
 
-    private const VEHICLENAME = "vehicleName";
+    private static const CONNECTED = "connected";
     public static const VEHICLES = "vehicles";
-    private const VH_TITLE = "title";
-    private const VEHICLESOC = "vehicleSoc";
+    private static const VEHICLETITLE = "vehicleTitle";
+    private static const VEHICLESOC = "vehicleSoc";
 
-    function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter ) {
+    public static function isVehicle( dataLp as JsonAdapter ) as Boolean {
+        return dataLp.getBooleanOrFalse( CONNECTED ) || dataLp.getNumberOrZero( VEHICLESOC ) > 0;
+    }
+
+    public function initialize( dataLp as JsonAdapter ) {
         LoadpointItem.initialize( dataLp );
 
-        var name = dataLp.getStringOrNull( VEHICLENAME );
-        var title = null;
-        var vehicles = dataResult.getJsonObjectOrNull( VEHICLES );
+        var title = dataLp.getStringOrNull( VEHICLETITLE );
+        _isConnected = dataLp.getBooleanOrFalse( CONNECTED );
+        _soc = dataLp.getNumberOrZero( VEHICLESOC );
 
         // If there is no name, then it is a guest vehicle
-        if( name == null || name.equals( "" ) ) {
-            title = "Guest";
+        if( _isConnected && ( title == null || title.equals( "" ) ) ) {
+            _title = "Guest";
             _isGuest = true;
-        } else {
+        } else if( _isConnected || _soc > 0 ) {
             // If it is not a guest, we lookup the SoC and vehicle title
-            _soc = dataLp.getNumber( VEHICLESOC );
-            
-            if( vehicles != null ) {
-                var vehicle = vehicles.getJsonObjectOrNull( name );
-                if( vehicle != null ) {
-                    title = vehicle.getString( VH_TITLE );
-                }
+            if( title == null || title.equals( "" ) ) {
+                throw new InvalidValueException( "JSON: vehicle connected or SoC provided, but vehicle title is empty." );
             }
-        }
-
-        if( title != null ) {
             _title = title;
         } else {
-            throw new InvalidValueException( "JSON: could not find vehicle " + name );
+            throw new InvalidValueException( "JSON: class Vehicle was instantiated without vehicle data present." );
         }
     }
     
     public function getTitle() as String { return _title; }
     public function getSoc() as Number { return _soc; }
     public function isGuest() as Boolean { return _isGuest; }
+    public function isConnected() as Boolean { return _isConnected; }
 }

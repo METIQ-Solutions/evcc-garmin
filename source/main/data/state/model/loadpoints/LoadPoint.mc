@@ -20,14 +20,13 @@ import Toybox.Lang;
     private const TITLE = "title";
     private const CHARGING = "charging";
     private const PHASESACTIVE = "phasesActive";
-    private const CONNECTED = "connected";
     private const MODE = "mode";
     private const CHARGEPOWER = "chargePower";
     private const CHARGEREMAININGDURATION = "chargeRemainingDuration";
     private const CHARGERFEATUREHEATING = "chargerFeatureHeating";
     private const CHARGERFEATUREINTEGRATEDDEVICE = "chargerFeatureIntegratedDevice";
     
-    function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter ) {
+    public function initialize( dataLp as JsonAdapter, dataResult as JsonAdapter ) {
         _title = dataLp.getString( TITLE );
         _isCharging = dataLp.getBooleanOrFalse( CHARGING );
         _activePhases = dataLp.getNumber( PHASESACTIVE );
@@ -39,8 +38,8 @@ import Toybox.Lang;
             _controllable = new Heater( dataLp );
         } else if( dataLp.getBooleanOrFalse( CHARGERFEATUREINTEGRATEDDEVICE ) ) {
             _controllable = new IntegratedDevice( dataLp );
-        } else if( dataLp.getBooleanOrFalse( CONNECTED ) ) {
-            _controllable = new Vehicle( dataLp, dataResult );
+        } else if( Vehicle.isVehicle( dataLp ) ) {
+            _controllable = new Vehicle( dataLp );
         }
     }
 

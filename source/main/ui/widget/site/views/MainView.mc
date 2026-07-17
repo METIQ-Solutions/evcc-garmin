@@ -290,6 +290,10 @@ import Toybox.Lang;
             addMode( line, loadpoint );
         }
 
+        if( ! vehicle.isConnected() ) {
+            line.setOption( :color, EvccColors.ACCENT );
+        }
+
         return line;
     }
 

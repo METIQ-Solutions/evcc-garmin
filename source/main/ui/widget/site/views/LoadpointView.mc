@@ -214,6 +214,12 @@ class LoadpointView extends EvccSiteViewBase {
             + " (" + WidgetUiHelper.formatMode( loadpoint ) + ")"
         );
 
+        // Vehicles that are not connected are shown in gray
+        if( loadpointItem instanceof Vehicle && ! loadpointItem.isConnected() ) {
+            titleLine.setOption( :color, EvccColors.ACCENT );
+            stateLine.setOption( :color, EvccColors.ACCENT );
+        }
+        
         block.addBlock( stateLine );
 
         if( loadpointItem instanceof Vehicle && loadpoint.getChargeRemainingDuration() > 0 ) {

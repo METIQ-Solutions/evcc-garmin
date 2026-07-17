@@ -103,6 +103,9 @@ import Toybox.Application.Properties;
                             }
                             vehicleState.addIcon( IconBlock.ICON_ACTIVE_PHASES, { :charging => loadpoint.isCharging(), :activePhases => loadpoint.getActivePhases() } );
                             column.addBlock( vehicleState );
+                            if( ! vehicle.isConnected() ) {
+                                column.setOption( :color, EvccColors.ACCENT );
+                            }
                             line.addBlock( column );
                             hasVehicle = true;
                         }
@@ -114,11 +117,9 @@ import Toybox.Application.Properties;
                 }
 
                 var elements = line.getElements();
-                // If there is less than 3 elements, we use
-                // three times the width of a space character as effectiveSpacing,
-                // otherwise only one time 
                 var baseSpacing = getBaseSpacingInPixel( dc );
-                var effectiveSpacing = elements.size() < 3 
+                // If there is less than 4 elements, we use more spacing
+                var effectiveSpacing = elements.size() < 4 
                                         ? baseSpacing * 2
                                         : baseSpacing;
 

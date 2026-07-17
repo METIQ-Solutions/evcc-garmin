@@ -25,7 +25,7 @@ class JsonAdapter {
         var keys = _jsonObject.keys();
         for( var i = 0; i < keys.size(); i++ ) {
             var key = keys[i];
-            // Logger.debug( "    " + key + " = " + _jsonObject[key] );
+            Logger.info( "    " + key + " = " + _jsonObject[key] );
         }
     }
 

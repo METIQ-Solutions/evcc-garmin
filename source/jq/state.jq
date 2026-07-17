@@ -163,7 +163,7 @@ def price_period($slots; $mode):
                     chargerFeatureIntegratedDevice,
                     charging,
                     connected,
-                    vehicleName,
+                    vehicleTitle,
                     vehicleSoc,
                     title,
                     phasesActive,

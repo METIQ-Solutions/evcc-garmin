@@ -23,7 +23,7 @@ import Toybox.System;
 // :useEllipsis - if true, "..." is added at the end of a truncated element.
 // :truncateSpacing - indicates spacing that needs to be left for the page indicator when truncating
 // :parent - parent drawing element. :color, :backgroundColor and :font may be inherited from a parent
-// :batterySoc, :power, :activePhases - for icons that change bases on these inputs
+// :batterySoc, :power, :activePhases, :connected - for icons that change bases on these inputs
 // :verticalJustifyToBaseFont - by default, text is center aligned to the passed coordinate. If :verticalJustifyToBaseFont of a text element within a horizontal container is set to true, it will be aligned to the bottom instead.
 // :spreadToHeight - if set for a vertical block, it will spread out the content to the specified height in pixel
 // :baseFont - not to be set but calculated only, showing the applicable :font, without considering :relativeFont
@@ -122,10 +122,10 @@ import Toybox.System;
     // For often used options, we have dedicated accessor functions
     // doing the type-casting, which saves a tiny bit of memory.
     public function getJustify() as TextJustification { return getOption( :justify ) as TextJustification; }
-    public function getMarginLeft() as Number { return getOption( :marginLeft ) as Number; }
-    public function getMarginRight() as Number { return getOption( :marginRight ) as Number; }
-    public function getMarginTop() as Number { return getOption( :marginTop ) as Number; }
-    public function getMarginBottom() as Number { return getOption( :marginBottom ) as Number; }
+    public function getMarginLeft() as Number { return getNumberOptionOrZero( :marginLeft ); }
+    public function getMarginRight() as Number { return getNumberOptionOrZero( :marginRight ); }
+    public function getMarginTop() as Number { return getNumberOptionOrZero( :marginTop ); }
+    public function getMarginBottom() as Number { return getNumberOptionOrZero( :marginBottom ); }
     public function getFont() as EvccFont { return getOption( :font ) as EvccFont; }
     
     // If isDrawingSuppressed returns true, subclasses shall not perform drawing
@@ -136,15 +136,22 @@ import Toybox.System;
                 ? value as Boolean
                 : false;
     }
-public function getFloatOption( option as Symbol ) as Float {
+    
+    public function getNumberOptionOrZero( option as Symbol ) as Number {
         var value = getOption( option );
-        if( value instanceof Float ) {
-            return value as Float;
-        } else {
-            return 0.0;
-        }
+        return value instanceof Number ? value as Number : 0;
+    }
+
+    public function getFloatOptionOrZero( option as Symbol ) as Float {
+        var value = getOption( option );
+        return value instanceof Float ? value as Float : 0.0;
     }
     
+    public function getBooleanOptionOrFalse( option as Symbol ) as Boolean {
+        var value = getOption( option );
+        return value instanceof Boolean ? value as Boolean : false;
+    }
+
     // For view pre-rendering, we default to the stub since pre-rendering
     // happens at a time where no real Dc is available
     public function getDc() as EvccDcInterface { 

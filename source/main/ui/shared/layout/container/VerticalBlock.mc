@@ -96,7 +96,7 @@ class VerticalBlock extends ContainerBlock {
     // space than 1/2 text line above and below the content
     // and if yes, spread out the elements vertically
     protected function spreadToHeight() as Void {
-        var spreadToHeight = getOption( :spreadToHeight ) as Number;
+        var spreadToHeight = getNumberOptionOrZero( :spreadToHeight );
         if( spreadToHeight > 0 ) {
             var heightWithSpace = getHeight() + getFontHeight();
             if( spreadToHeight > heightWithSpace ) {

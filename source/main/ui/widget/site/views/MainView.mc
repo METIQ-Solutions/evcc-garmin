@@ -147,7 +147,7 @@ import Toybox.Lang;
             block.addBlock( loadpointLine );
             // If the vehicle is charging, a separate line with details will be added
             if( loadpoint.isCharging() ) {
-                block.addBlock( renderVehicleChargingDetails( loadpoint, loadpointLine.getOption( :marginLeft ) as Number ) );
+                block.addBlock( renderVehicleChargingDetails( loadpoint, loadpointLine.getNumberOptionOrZero( :marginLeft ) ) );
             }
         } else {
             block.addBlock( renderDisconnectedLoadpoint( loadpoint ) );
@@ -263,7 +263,7 @@ import Toybox.Lang;
 
         // Add icon or title
         if( showIcon ) {
-            line.addIcon( IconBlock.ICON_CAR, {} );
+            line.addIcon( IconBlock.ICON_CONNECTION, { :connected => vehicle.isConnected() } );
         } else {
             // If there is more than one guest vehicle connected,
             // we show the loadpoint title instead of the vehicle title 

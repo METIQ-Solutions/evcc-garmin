@@ -28,7 +28,7 @@ class HorizontalBlock extends ContainerBlock {
         // var elementHeights = getHeight() - marginTop - getOption( :marginBottom );
         // y = y - getHeight() / 2 + marginTop + elementHeights / 2;
 
-        var availableWidth = getDcWidthAtY( y ) - getOption( :truncateSpacing ) as Number;
+        var availableWidth = getDcWidthAtY( y ) - getNumberOptionOrZero( :truncateSpacing );
         if( _truncatableElement != null ) {
             var truncatableElement = _truncatableElement as TextBlock;
             var first = true;

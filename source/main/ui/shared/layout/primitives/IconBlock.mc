@@ -29,6 +29,7 @@ import Toybox.WatchUi;
         ICON_CHARGER,
         ICON_CHARGER_COLORED,
         ICON_CAR,
+        ICON_PLUG,
         ICON_HEATER,
         ICON_HEATER_COLORED,
         ICON_DEVICE,
@@ -51,7 +52,11 @@ import Toybox.WatchUi;
         // Another special icon, based on active phases we
         // are showing one left arrow (one phase) or three
         // left arrows (three phases)
-        ICON_ACTIVE_PHASES = -3
+        ICON_ACTIVE_PHASES = -3,
+
+        // Based on the connection state of a loadpoint shows
+        // either the car icon (connected) or the car_disconnected icon (disconnected)
+        ICON_CONNECTION = -4
     }
 
     public function initialize( icon as Icon, options as DbOptions ) {
@@ -61,7 +66,7 @@ import Toybox.WatchUi;
         // store the interpreted icon
         // For the battery we determine the icon based on SoC
         if( icon == ICON_BATTERY ) {
-            var batterySoc = getOption( :batterySoc ) as Number;
+            var batterySoc = getNumberOptionOrZero( :batterySoc );
             if( batterySoc >= 90 ) {
                 _icon = ICON_BATTERY_FULL;
             } else if( batterySoc >= 63 ) {
@@ -76,12 +81,15 @@ import Toybox.WatchUi;
         // For power flow we determine the icon (in/out)
         // based on the power
         } else if( icon == ICON_POWER_FLOW ) {
-            var power = getOption( :power ) as Number;
+            var power = getNumberOptionOrZero( :power );
             _icon = power < 0 ? ICON_ARROW_LEFT : ICON_ARROW_RIGHT;
         // And for active phases it is based on the active phases
         } else if( icon == ICON_ACTIVE_PHASES ) {
-            var activePhases = getOption( :activePhases ) as Number;
+            var activePhases = getNumberOptionOrZero( :activePhases );
             _icon = activePhases == 3 ? ICON_ARROW_LEFT_THREE : ICON_ARROW_LEFT;
+        } else if( icon == ICON_CONNECTION ) {
+            var connected = getBooleanOptionOrFalse( :connected );
+            _icon = connected ? ICON_CAR : ICON_PLUG;
         } else {
             _icon = icon as BaseIcon;
         }

@@ -25,9 +25,9 @@ import Toybox.Graphics;
     // Constructor
     function initialize( options as DbOptions ) {
         DrawingBlockBase.initialize( options );
-        _relativeToScreenWidth = getFloatOption(:relativeToScreenWidth);
-        _relativeToScreenHeight = getFloatOption(:relativeToScreenHeight);
-        _relativeToFontHeight = getFloatOption(:relativeToFontHeight);
+        _relativeToScreenWidth = getFloatOptionOrZero(:relativeToScreenWidth);
+        _relativeToScreenHeight = getFloatOptionOrZero(:relativeToScreenHeight);
+        _relativeToFontHeight = getFloatOptionOrZero(:relativeToFontHeight);
     }
 
     // Calculate width & height

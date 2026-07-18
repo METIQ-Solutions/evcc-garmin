@@ -8,8 +8,53 @@ def avg:
         null
     end;
 
+# Converts either a Unix timestamp or an RFC3339 timestamp
+# into a Unix timestamp in seconds
+def unix_timestamp:
+    if type == "number" then
+        .
+    elif type == "string" then
+        capture(
+            "^(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2})(?:\\.[0-9]+)?(?<timezone>Z|[+-][0-9]{2}:[0-9]{2})$"
+        ) as $parts
+        | (
+            $parts.date
+            | strptime("%Y-%m-%dT%H:%M:%S")
+            | mktime
+        ) as $base
+        | if $parts.timezone == "Z" then
+            $base
+          else
+            ($parts.timezone[0:1]) as $sign
+            | ($parts.timezone[1:3] | tonumber) as $hours
+            | ($parts.timezone[4:6] | tonumber) as $minutes
+            | (($hours * 3600) + ($minutes * 60)) as $offset
+            | if $sign == "+" then
+                $base - $offset
+              else
+                $base + $offset
+              end
+          end
+    else
+        null
+    end;
+
+# Converts all timestamps in the grid forecast to Unix seconds
+def normalize_grid:
+    [
+        (. // [])[]
+        | (.start | unix_timestamp) as $start
+        | (.end | unix_timestamp) as $end
+        | select($start != null and $end != null)
+        | {
+            start: $start,
+            end: $end,
+            value
+        }
+    ];
+
 # Calculates the average of values that fall between
-# two timestamps
+# two Unix timestamps
 def grid_avg_between($grid; $from; $to):
     [
         ($grid // [])[]
@@ -18,25 +63,18 @@ def grid_avg_between($grid; $from; $to):
     ]
     | avg;
 
-# Adds the given number of days to the current timestamp
-# and outputs the date of the resulting timestamp
-def local_day($offset):
-    (now + $offset)
+# Outputs the local date for the given Unix timestamp
+def local_day($timestamp):
+    $timestamp
     | strflocaltime("%Y-%m-%d");
 
-# Adds the given number of seconds to the current timestamp
-# and outputs the resulting timestamp
-def localtime_after($seconds):
-    (now + $seconds)
-    | strflocaltime("%Y-%m-%dT%H:%M:%S%z")
-    | sub("(..)$"; ":\\1");
-
-# Find the window with the given length ($slots) where
-# the average price is the lowest ($mode="min") or 
-# highest ($mode="max")
-def price_period($slots; $mode):
-    localtime_after(0) as $from
-    | [ .[] | select(.start >= $from) ] as $entries
+# Finds the window with the given length where the average
+# price is the lowest or highest
+def price_period($grid; $slots; $mode; $from):
+    [
+        ($grid // [])[]
+        | select(.start >= $from)
+    ] as $entries
     | if ($entries | length) >= $slots then
         [
             range(0; ($entries | length) - $slots + 1) as $i
@@ -44,7 +82,10 @@ def price_period($slots; $mode):
             | {
                 start: $window[0].start,
                 end: $window[-1].end,
-                average: (($window | map(.value) | add) / $slots)
+                average: (
+                    ($window | map(.value) | add)
+                    / $slots
+                )
             }
         ]
         | if $mode == "max" then
@@ -56,142 +97,203 @@ def price_period($slots; $mode):
         null
       end;
 
+
 # MAIN FILTER
 
 . as $root
-    # The filter supports either the legacy structure
-    # with a "result" root element or the new one without
-    | ($root.result // $root) as $data
-    | {
-        batteryPower: $data.batteryPower,
-        batterySoc: $data.batterySoc,
-        battery:
-            if ($data.battery | type) == "object" then
+
+# Supports both the legacy structure with a "result"
+# root element and the newer structure without it
+| ($root.result // $root) as $data
+
+# Capture the current time once for consistent calculations
+| now as $now
+
+# Normalize old RFC3339 and new Unix timestamp input
+| ($data.forecast.grid | normalize_grid) as $grid
+
+| {
+    batteryPower: $data.batteryPower,
+    batterySoc: $data.batterySoc,
+
+    battery:
+        if ($data.battery | type) == "object" then
+            {
+                power: $data.battery.power,
+                soc: $data.battery.soc
+            }
+        else
+            null
+        end,
+
+    forecast: {
+        grid:
+            if $data.smartCostAvailable then
                 {
-                    power: $data.battery.power,
-                    soc: $data.battery.soc
+                    next60MinutesAverage: (
+                        grid_avg_between(
+                            $grid;
+                            $now;
+                            $now + 3600
+                        )
+                    ),
+
+                    next60To120MinutesAverage: (
+                        grid_avg_between(
+                            $grid;
+                            $now + 3600;
+                            $now + 7200
+                        )
+                    ),
+
+                    remainingTodayAverage: (
+                        local_day($now) as $day
+                        | [
+                            $grid[]
+                            | select(
+                                .start >= $now
+                                and local_day(.start) == $day
+                            )
+                            | .value
+                        ]
+                        | avg
+                    ),
+
+                    tomorrowAverage: (
+                        local_day($now + 86400) as $day
+                        | [
+                            $grid[]
+                            | select(
+                                local_day(.start) == $day
+                            )
+                            | .value
+                        ]
+                        | avg
+                    ),
+
+                    cheapest1h: (
+                        price_period(
+                            $grid;
+                            4;
+                            "min";
+                            $now
+                        )
+                    ),
+
+                    cheapest2h: (
+                        price_period(
+                            $grid;
+                            8;
+                            "min";
+                            $now
+                        )
+                    ),
+
+                    cheapest3h: (
+                        price_period(
+                            $grid;
+                            12;
+                            "min";
+                            $now
+                        )
+                    ),
+
+                    mostExpensive1h: (
+                        price_period(
+                            $grid;
+                            4;
+                            "max";
+                            $now
+                        )
+                    )
                 }
             else
                 null
             end,
-        forecast: {
-            # For grid, evcc delivers only time series, which is too large
-            # to be processed within the app. Therefore we use JQ to aggregate
-            # all values that are displayed already on the server-side
-            grid: 
-                # Use this when testing grid price forecast on an instance without
-                # smart costs enabled
-                # if true then 
-                if $data.smartCostAvailable then 
-                    {
-                        next60MinutesAverage: (
-                            localtime_after(0) as $from
-                            | localtime_after(3600) as $to
-                            | grid_avg_between($data.forecast.grid; $from; $to)
-                        ),
-                        next60To120MinutesAverage: (
-                            localtime_after(3600) as $from
-                            | localtime_after(7200) as $to
-                            | grid_avg_between($data.forecast.grid; $from; $to)
-                        ),
-                        remainingTodayAverage: (
-                            localtime_after(0) as $from
-                            | local_day(86400) as $nextDay
-                            | [
-                                ($data.forecast.grid // [])[]
-                                | select(.start >= $from and (.start | startswith($nextDay) | not))
-                                | .value
-                            ]
-                            | avg
-                        ),
-                        tomorrowAverage: (
-                            local_day(86400) as $day
-                            | [
-                                ($data.forecast.grid // [])[]
-                                | select(.start | startswith($day))
-                                | .value
-                            ]
-                            | avg
-                        ),
-                        cheapest1h: (
-                            ($data.forecast.grid // [])
-                            | price_period(4; "min")
-                        ),
-                        cheapest2h: (
-                            ($data.forecast.grid // [])
-                            | price_period(8; "min")
-                        ),
-                        cheapest3h: (
-                            ($data.forecast.grid // [])
-                            | price_period(12; "min")
-                        ),
-                        mostExpensive1h: (
-                            ($data.forecast.grid // [])
-                            | price_period(4; "max")
-                        ) 
-                    }
-                else
-                    null
-                end,
-            solar: (
-                $data.forecast.solar
-                | {
-                    scale,
-                    today: {
-                        energy: .today.energy
-                    },
-                    tomorrow: {
-                        energy: .tomorrow.energy
-                    },
-                    dayAfterTomorrow: {
-                        energy: .dayAfterTomorrow.energy
-                    }
+
+        solar: (
+            $data.forecast.solar
+            | {
+                scale,
+                today: {
+                    energy: .today.energy
+                },
+                tomorrow: {
+                    energy: .tomorrow.energy
+                },
+                dayAfterTomorrow: {
+                    energy: .dayAfterTomorrow.energy
                 }
-            )
-        },
-        gridPower: $data.gridPower,
-        grid: {
-            power: $data.grid.power
-        },
-        homePower: $data.homePower,
-        loadpoints: [
-            (
-                $data.loadpoints[]
-                | {
-                    chargePower,
-                    chargerFeatureHeating,
-                    chargerFeatureIntegratedDevice,
-                    charging,
-                    connected,
-                    vehicleTitle,
-                    vehicleSoc,
-                    title,
-                    phasesActive,
-                    mode,
-                    chargeRemainingDuration
-                }
-            )
-        ],
-        pvPower: $data.pvPower,
-        siteTitle: $data.siteTitle,
-        smartCostAvailable: $data.smartCostAvailable,
-        statistics: (
-            $data.statistics
-            | map_values({ solarPercentage })
-        ),
-        tariffGrid: $data.tariffGrid,
-        vehicles: (
-            $data.vehicles
-            | map_values({ title })
+            }
         )
-    }
-    # This final function removes any empty objects or arrays
-    | walk(
-        if type == "object" then
-            with_entries(select(.value != null and .value != {} and .value != []))
-        elif type == "array" then
-            map(select(. != null and . != {} and . != []))
-        else
-            .
-        end
+    },
+    gridPower: $data.gridPower,
+
+    grid: {
+        power: $data.grid.power
+    },
+
+    homePower: $data.homePower,
+
+    loadpoints: [
+        (
+            $data.loadpoints[]
+            | {
+                chargePower,
+                chargerFeatureHeating,
+                chargerFeatureIntegratedDevice,
+                charging,
+                connected,
+                vehicleTitle,
+                vehicleSoc,
+                title,
+                phasesActive,
+                mode,
+                chargeRemainingDuration
+            }
+        )
+    ],
+
+    pvPower: $data.pvPower,
+    siteTitle: $data.siteTitle,
+    smartCostAvailable: $data.smartCostAvailable,
+
+    statistics: (
+        $data.statistics
+        | map_values({
+            solarPercentage
+        })
+    ),
+
+    tariffGrid: $data.tariffGrid,
+
+    vehicles: (
+        $data.vehicles
+        | map_values({
+            title
+        })
     )
+}
+
+# Removes null values and empty objects or arrays
+| walk(
+    if type == "object" then
+        with_entries(
+            select(
+                .value != null
+                and .value != {}
+                and .value != []
+            )
+        )
+    elif type == "array" then
+        map(
+            select(
+                . != null
+                and . != {}
+                and . != []
+            )
+        )
+    else
+        .
+    end
+)

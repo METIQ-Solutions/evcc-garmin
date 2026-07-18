@@ -115,7 +115,7 @@ class JsonAdapter {
 
 
     // MOMENT
-    // Parses an ISO time field into a (UTC) moment
+    // Parses an UNIX timestamp into a (UTC) moment
 
     public function getMoment( key as String ) as Moment {
         var value = getMomentOrNull( key );
@@ -127,11 +127,11 @@ class JsonAdapter {
     }
 
     public function getMomentOrNull( key as String ) as Moment? {
-        var value = getStringOrNull( key );
+        var value = getNumberOrNull( key );
         if( value == null ) {
             return null;
         } else {
-            return parseIsoLocalMoment( value );
+            return new Moment( value );
         }
     }
 
@@ -209,6 +209,7 @@ class JsonAdapter {
 
 
     // Helper function for parsing an ISO timestamp
+    /*
     private function parseIsoLocalMoment( value as String ) as Moment? {
         // Minimal length check: "YYYY-MM-DDTHH:MM:SS"
         if (value == null || value.length() < 19) {
@@ -240,17 +241,6 @@ class JsonAdapter {
             :second => sec
         });
 
-        /*
-        // Logger.debug( "Year: " + year );
-        // Logger.debug( "Month: " + month );
-        // Logger.debug( "Day: " + day );
-        // Logger.debug( "Hour: " + hour );
-        // Logger.debug( "Minute: " + min );
-        // Logger.debug( "Second: " + sec );
-        // Logger.debug( "offsetSign: " + offsetSign );
-        // Logger.debug( "offsetHour: " + offsetHour );
-        */
-
         if( offsetSign != null && offsetHour != null ) {
             var offsetSecond = offsetHour * 3600;
             if( offsetSign.equals( "+" ) ) {
@@ -270,27 +260,10 @@ class JsonAdapter {
         return s.toNumber();
     }
 
+    */
 
     public function size() as Number {
         return _jsonObject.size();
     }
 
-    // Helper function to format the Moment again for serialization
-    /*
-    public static function momentToIsoLocalString( moment as Moment ) as String {
-        var info = Gregorian.utcInfo( moment, Time.FORMAT_SHORT );
-
-        var month = info.month;
-        if( ! ( month instanceof Number ) ) {
-            throw new InvalidValueException( "Failed to serialize timestamp: the month value is not a valid number." );
-        }
-
-        return info.year.toString()
-            + "-" + StringFormatter.pad2( month )
-            + "-" + StringFormatter.pad2( info.day )
-            + "T" + StringFormatter.pad2( info.hour )
-            + ":" + StringFormatter.pad2( info.min )
-            + ":" + StringFormatter.pad2( info.sec );
-    }
-    */
 }

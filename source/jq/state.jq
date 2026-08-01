@@ -39,18 +39,38 @@ def unix_timestamp:
         null
     end;
 
-# Converts all timestamps in the grid forecast to Unix seconds
+# Normalizes both supported grid forecast formats to:
+# [start, end, value]
+#
+# Legacy format:
+# {"start":"RFC3339","end":"RFC3339","value":...}
+#
+# New format:
+# [unixStart, unixEnd, value]
 def normalize_grid:
     [
         (. // [])[]
-        | (.start | unix_timestamp) as $start
-        | (.end | unix_timestamp) as $end
-        | select($start != null and $end != null)
-        | {
-            start: $start,
-            end: $end,
-            value
-        }
+        | if type == "array" and length >= 3 then
+            (.[0] | unix_timestamp) as $start
+            | (.[1] | unix_timestamp) as $end
+            | select($start != null and $end != null)
+            | [
+                $start,
+                $end,
+                .[2]
+            ]
+          elif type == "object" then
+            (.start | unix_timestamp) as $start
+            | (.end | unix_timestamp) as $end
+            | select($start != null and $end != null)
+            | [
+                $start,
+                $end,
+                .value
+            ]
+          else
+            empty
+          end
     ];
 
 # Calculates the average of values that fall between
@@ -58,8 +78,8 @@ def normalize_grid:
 def grid_avg_between($grid; $from; $to):
     [
         ($grid // [])[]
-        | select(.start >= $from and .start < $to)
-        | .value
+        | select(.[0] >= $from and .[0] < $to)
+        | .[2]
     ]
     | avg;
 
@@ -73,17 +93,17 @@ def local_day($timestamp):
 def price_period($grid; $slots; $mode; $from):
     [
         ($grid // [])[]
-        | select(.start >= $from)
+        | select(.[0] >= $from)
     ] as $entries
     | if ($entries | length) >= $slots then
         [
             range(0; ($entries | length) - $slots + 1) as $i
             | ($entries[$i:$i + $slots]) as $window
             | {
-                start: $window[0].start,
-                end: $window[-1].end,
+                start: $window[0][0],
+                end: $window[-1][1],
                 average: (
-                    ($window | map(.value) | add)
+                    ($window | map(.[2]) | add)
                     / $slots
                 )
             }
@@ -109,7 +129,8 @@ def price_period($grid; $slots; $mode; $from):
 # Capture the current time once for consistent calculations
 | now as $now
 
-# Normalize old RFC3339 and new Unix timestamp input
+# Normalize both supported grid forecast formats to:
+# [start, end, value]
 | ($data.forecast.grid | normalize_grid) as $grid
 
 | {
@@ -151,10 +172,10 @@ def price_period($grid; $slots; $mode; $from):
                         | [
                             $grid[]
                             | select(
-                                .start >= $now
-                                and local_day(.start) == $day
+                                .[0] >= $now
+                                and local_day(.[0]) == $day
                             )
-                            | .value
+                            | .[2]
                         ]
                         | avg
                     ),
@@ -164,9 +185,9 @@ def price_period($grid; $slots; $mode; $from):
                         | [
                             $grid[]
                             | select(
-                                local_day(.start) == $day
+                                local_day(.[0]) == $day
                             )
-                            | .value
+                            | .[2]
                         ]
                         | avg
                     ),
@@ -210,7 +231,6 @@ def price_period($grid; $slots; $mode; $from):
             else
                 null
             end,
-
         solar: (
             $data.forecast.solar
             | {
@@ -227,6 +247,7 @@ def price_period($grid; $slots; $mode; $from):
             }
         )
     },
+
     gridPower: $data.gridPower,
 
     grid: {

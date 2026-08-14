@@ -61,7 +61,9 @@ import Toybox.Lang;
 
     public function getIntegratedDevice() as IntegratedDevice? { return isIntegratedDevice() ? _controllable as IntegratedDevice : null; }
 
-    // Possible values: "pv", "now", "minpv", "off"
+    // Update 12/08/2026:
+    // Possible values in current version: "pv", "now", "minpv", "off"
+    // Possible values in future version: "off", "smart", "now"
     public function getMode() as String { return _mode != null ? _mode : "unknown"; }
 
     public function getChargeRemainingDuration() as Number { return _chargeRemainingDuration != null ? _chargeRemainingDuration : 0; }

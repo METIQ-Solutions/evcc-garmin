@@ -1,4 +1,4 @@
 <strings>
-    <string id="AppName" scope="glance">evcc-beta</string>
-    <string id="AppVersion" scope="glance">v2.0.6-beta4</string>
+    <string id="AppName" scope="glance">evcc</string>
+    <string id="AppVersion" scope="glance">v2.0.6</string>
 </strings>

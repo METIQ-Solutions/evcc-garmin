@@ -60,12 +60,44 @@ class WidgetUiHelper extends GlanceUiHelper {
 
     // Returns the text to be displayed for the charging mode
     public static function formatMode( loadpoint as Loadpoint ) as String { 
+        // 12/08/2026
+        // As of this date, evcc supports four values for all device types:
+        // off, pv, minpv, now
+        //
+        // In an upcoming release, these will be reduced to three values:
+        // off, smart, now
+        //
+        // These values will then be mapped to different display text
+        // depending on the device type.
         var mode = loadpoint.getMode();
-        if( mode.equals( "pv" ) ) { return "SOLAR"; }
-        else if( mode.equals( "minpv" ) ) { return "MIN+SOLAR"; }
-        else if( mode.equals( "now" ) ) { return "FAST"; }
-        else if( mode.equals( "off" ) ) { return "OFF"; }
-        else { return mode; }
+
+        if( mode.equals( "off" ) ) { 
+            return loadpoint.isHeater() ? "NORMAL" : "OFF"; 
+        }
+
+        if( mode.equals( "smart" ) ) { 
+            return "SMART"; 
+        }
+
+        if( mode.equals( "now" ) ) { 
+            if( loadpoint.isHeater() ) { 
+                return "BOOST"; 
+            } 
+            if ( loadpoint.isIntegratedDevice() ) { 
+                return "ON"; 
+            }
+            return "FAST"; 
+        }
+
+        if( mode.equals( "pv" ) ) { 
+            return "SOLAR"; 
+        }
+
+        if( mode.equals( "minpv" ) ) { 
+            return "MIN+SOLAR"; 
+        }
+
+        return mode;
     }
 
     

@@ -8,14 +8,84 @@ var file = fso.OpenTextFile(inputPath, 1);
 var text = file.ReadAll();
 file.Close();
 
-// Remove full-line jq comments before removing line breaks.
+// Strip a UTF-8 byte-order mark if present (PowerShell's -Encoding utf8 on
+// Windows PowerShell 5.1 writes one). OpenTextFile in ASCII mode reads the
+// three BOM bytes as the characters U+00EF U+00BB U+00BF ("ï»¿"); strip them
+// too. The BOM would otherwise break comment stripping and leak into the jq.
+if( text.charCodeAt( 0 ) === 0xFEFF ) {
+    text = text.substring( 1 );
+} else if( text.charCodeAt( 0 ) === 0xEF
+        && text.charCodeAt( 1 ) === 0xBB
+        && text.charCodeAt( 2 ) === 0xBF ) {
+    text = text.substring( 3 );
+}
+
+// Remove full-line jq comments.
 text = text.replace(/^\s*#.*$/gm, "");
 
-// Replace line breaks with spaces.
-text = text.replace(/[\r\n]+/g, " ");
-
-// Collapse repeated whitespace.
-text = text.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+// Minify by removing WHITESPACE in a jq-token-aware way. Whitespace is only
+// ever meaningful in jq as a TOKEN SEPARATOR, so instead of removing it
+// blindly we keep a single space exactly where the gojq lexer needs one and
+// drop it everywhere else. This keeps the output small (important because
+// evcc >= 0.315.0 caps the jq query at 512 bytes) while remaining valid for
+// the full original filter (keywords, `def`, dotted paths and `as` bindings
+// included).
+//
+// Rules (whitespace is dropped unless):
+//   1. it sits between two word characters ([A-Za-z0-9_]) - needed so that
+//      `def avg` does not fuse into the identifier `defavg`;
+//   2. it sits between a lone "." and a following word character, but ONLY
+//      when the source had a space there (so ". as $r" stays ". as $r" while
+//      dotted paths like ".battery.soc" stay glued).
+// Whitespace inside strings and comments is never touched.
+var isWord = function( c ) {
+    return ( c >= "a" && c <= "z" ) || ( c >= "A" && c <= "Z" )
+        || ( c >= "0" && c <= "9" ) || c === "_";
+};
+var minified = "";
+var prevCh = ""; // last emitted non-whitespace character
+var inString = null; // null, "'" or '"'
+for( var i = 0; i < text.length; i++ ) {
+    var ch = text.charAt( i );
+    if( inString !== null ) {
+        // Inside a string: copy verbatim, honouring backslash escapes.
+        minified += ch;
+        if( ch === "\\" && i + 1 < text.length ) {
+            minified += text.charAt( i + 1 ); // escaped char
+            i++;
+        } else if( ch === inString ) {
+            inString = null;
+        }
+        prevCh = ch;
+        continue;
+    }
+    if( ch === "'" || ch === '"' ) {
+        inString = ch;
+        minified += ch;
+        prevCh = ch;
+    } else if( /\s/.test( ch ) ) {
+        // Find the next non-whitespace char to decide whether a separator is
+        // required; if we reach the end there is nothing to separate.
+        var j = i + 1;
+        while( j < text.length && /\s/.test( text.charAt( j ) ) ) {
+            j++;
+        }
+        if( j < text.length ) {
+            var next = text.charAt( j );
+            var need = ( isWord( prevCh ) && isWord( next ) )
+                    || ( prevCh === "." && isWord( next ) );
+            if( need ) {
+                minified += " ";
+            }
+        }
+        // Skip the whole whitespace run so it is processed exactly once.
+        i = j - 1;
+    } else {
+        minified += ch;
+        prevCh = ch;
+    }
+}
+text = minified;
 
 // Escape for Monkey C string.
 text = text.replace(/\\/g, "\\\\");

@@ -114,6 +114,48 @@ Repeatable workflow for validating a filter against a live evcc server:
   parser/model behavior first. Do not generalize: verify per-field how the app
   handles absence before touching Monkey C.
 
+## Adding support for a new Garmin device/model
+
+To add a new watch model, keep these definitions in sync (each is per-device and
+named after the model ID):
+
+1. `manifest.xml` — add `<iq:product id="<device-id>"/>` inside `<iq:products>`.
+2. `monkey.jungle` — add `<model>.resourcePath` and (only when overriding default
+   properties) `<model>.sourcePath` pointing at `source/properties/devices/<model>`.
+   Set `<model>.excludeAnnotations` only when non-default; most modern devices use
+   the base default (vector fonts, round screen, 30° select, onSelect behavior).
+3. `source/properties/devices/<model>/DevicePropertiesOverride.mc` — device-specific
+   property overrides (e.g. `GLANCE_HAS_LEFT_MARGIN = true` for the Fenix 8/9 AMOLED
+   glance styling). Include the folder in `sourcePath` only if it is created.
+4. `resources/drawables/src/build/generate.json` — add a `device-families` entry named
+   after the device with `fontMode` and icon/logo sizes. This drives icon generation.
+5. Docs — add the device to the Supported Devices table in `docs/README.md` and the
+   CIQ reference table in `README.md`.
+6. Regenerate icons — `cd scripts/generate-drawables; generate.bat <family>` (or run
+   only the affected families when just font sizes change).
+
+**Picking a sibling device to model a new one on:** treat the new device as a sibling
+of an existing model with the same resolution, screen type (AMOLED vs MIP), and launcher
+icon size. Font/`logo_flash` sizes copied from that sibling are a sound starting point
+(the operator verifies actual sizes on-device later).
+
+**Authoritative device data — the SDK device store.** For exact device properties use
+`%APPDATA%\Garmin\ConnectIQ\Devices\<device-id>\compiler.json`. It holds `resolution`,
+`deviceFamily`, `displayType` (amoled/mip), `launcherIcon` size, `deviceGroup` /
+`connectIQVersion`, and `partNumbers`. `logo_flash` in `generate.json` must equal the
+device's `launcherIcon` size.
+
+**README CIQ API column semantics:** the column records the device's Connect IQ SDK
+level (taken from `compiler.json` `connectIQVersion`, e.g. Fenix 9 = `6.0.3`). Verify the
+value for the new device rather than assuming a constant — some older table entries predate
+this convention.
+
+**Icon generation pitfalls:**
+* A "File count ... does not match!" error usually means stale files were left in the
+  target drawable folder by a previously interrupted run — delete that folder and rerun.
+* When only some font sizes change, regenerate only the affected `generate.json`
+  device families so other device folders are not churned.
+
 ## Validation workflow
 
 * Review `git status` before and after changes; distinguish generated files from
@@ -123,4 +165,12 @@ Repeatable workflow for validating a filter against a live evcc server:
 * Regenerate derived files (minified JQ, drawables) rather than editing them.
 * After relevant changes, verify the Garmin project still builds/type-checks
   (e.g. no compile/type errors across `source/main`).
+* The Monkey C VS Code manifest linter can flag a newly-added device ID as
+  "Invalid device id" until the extension refreshes its device cache. Do not
+  treat that as an error — verify the ID exists under
+  `%APPDATA%\Garmin\ConnectIQ\Devices\<device-id>\compiler.json` instead.
+* Do not add post-split devices to `docs/legacy/README.md`. That manual is frozen
+  before the legacy/main split; its device table may list newer devices only as
+  historical leftovers (a note says the legacy app does not support them). New
+  device support goes in `docs/README.md` and `README.md` only.
 * Do not commit unless the task explicitly asks for a commit.

@@ -144,6 +144,25 @@ fenix8solar51mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix8solar5
 fenix8pro47mm.resourcePath = $(fenix847mm.resourcePath)
 fenix8pro47mm.sourcePath = $(fenix847mm.sourcePath)
 
+# Fenix 9 series
+# Note: Fenix 9 builds assume the same capabilities as Fenix 8 watches.
+# The logo_flash/font sizes in generate.json are placeholders copied from the
+# similarly-sized Fenix 8 models and need to be verified by the operator.
+fenix943mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix943mm
+fenix943mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix943mm
+fenix947mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix947mm
+fenix947mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix947mm
+fenix9pro43mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9pro43mm
+fenix9pro43mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9pro43mm
+fenix9pro47mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9pro47mm
+fenix9pro47mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9pro47mm
+fenix9pro51mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9pro51mm
+fenix9pro51mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9pro51mm
+fenix9prosolar47mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9prosolar47mm
+fenix9prosolar47mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9prosolar47mm
+fenix9prosolar51mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9prosolar51mm
+fenix9prosolar51mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9prosolar51mm
+
 # Forerunner series
 fr165.resourcePath = $(resourceBase);$(resourceDrawables)/fr165
 fr165.sourcePath = $(base.sourcePath);$(sourceProperties)/fr165

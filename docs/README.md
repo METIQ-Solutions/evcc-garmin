@@ -371,6 +371,13 @@ The table below lists supported devices along with their capabilities. Click on 
 | fenix8solar47mm         | Vector           |       |
 | fenix8solar51mm         | Vector           |       |
 | fenix8pro47mm           | Vector           |       |
+| fenix943mm              | Vector           |       |
+| fenix947mm              | Vector           |       |
+| fenix9pro43mm           | Vector           |       |
+| fenix9pro47mm           | Vector           |       |
+| fenix9pro51mm           | Vector           |       |
+| fenix9prosolar47mm      | Vector           |       |
+| fenix9prosolar51mm      | Vector           |       |
 | fr165                   | Vector           |       |
 | fr165m                  | Vector           |       |
 | fr255                   | Static           |       |

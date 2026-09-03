@@ -46,11 +46,7 @@ The other options involve either setting up your own reverse proxy or using a lo
 
 evcc includes a remote access feature that provides access to both the web interface and the REST API through a cloud-based reverse proxy. The connection is secured using HTTPS with a valid certificate.
 
-At the time of writing, this feature is still experimental and must first be enabled using an environment variable. See the following pull request for details:
-
-https://github.com/evcc-io/evcc/pull/28688
-
-Once enabled, setup is done directly through the evcc UI:
+Setup is done directly through the evcc UI:
 
 1. Open the **Configuration** screen
 2. Scroll to **Integrations** and open **Remote Access**

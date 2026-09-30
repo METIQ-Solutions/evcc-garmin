@@ -81,14 +81,14 @@ import Toybox.Application.Properties;
                     // This gives us a space that is suitable for each screen size/resolution
 
                     var displayedLPs = new ArrayOfLoadpoints[0];
-                    for (var i = 0; i < loadpoints.size(); i++) {
+                    for( var i = 0; i < loadpoints.size(); i++) {
                         var loadpoint = loadpoints[i] as Loadpoint;
                         if( loadpoint.getVehicle() != null ) {
                             displayedLPs.add( loadpoint );
                         }
                     }
 
-                    for (var i = 0; i < displayedLPs.size(); i++) {
+                    for( var i = 0; i < displayedLPs.size(); i++) {
                         var loadpoint = displayedLPs[i] as Loadpoint;
                         var vehicle = loadpoint.getVehicle();
                         if( vehicle != null ) {

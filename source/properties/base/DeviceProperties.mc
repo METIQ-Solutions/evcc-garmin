@@ -27,7 +27,8 @@ class DeviceProperties {
     // glance content. This is used for devices that have a
     // visual separator between the logo and the content,
     // preventing the content from being too close to the separator.
-    public static const GLANCE_HAS_LEFT_MARGIN as Boolean = false;
+    // 30/09/2026: removed left margin to align the glances with native glance design
+    // public static const GLANCE_HAS_LEFT_MARGIN as Boolean = false;
 
     // The default vector font faces are:
     // - RobotoRegular: system font on Fenix 8

@@ -125,8 +125,8 @@ named after the model ID):
    Set `<model>.excludeAnnotations` only when non-default; most modern devices use
    the base default (vector fonts, round screen, 30° select, onSelect behavior).
 3. `source/properties/devices/<model>/DevicePropertiesOverride.mc` — device-specific
-   property overrides (e.g. `GLANCE_HAS_LEFT_MARGIN = true` for the Fenix 8/9 AMOLED
-   glance styling). Include the folder in `sourcePath` only if it is created.
+   property overrides (e.g. `SELECT_INDICATOR_ANGLE` for adjusting the position of
+   input indicators). Include the folder in `sourcePath` only if it is created.
 4. `resources/drawables/src/build/generate.json` — add a `device-families` entry named
    after the device with `fontMode` and icon/logo sizes. This drives icon generation.
 5. Docs — add the device to the Supported Devices table in `docs/README.md` and the

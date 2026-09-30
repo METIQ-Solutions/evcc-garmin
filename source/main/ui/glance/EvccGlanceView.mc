@@ -131,9 +131,12 @@ import Toybox.Application.Properties;
                 // On some devices, effectiveSpacing is also applied to the left,
                 // as they have a separator between the logo and the content
                 // that directly borders the content.
+                // 30/09/2026: removed left margin to align the glances with native glance design
+                /*
                 if( DeviceProperties.get().GLANCE_HAS_LEFT_MARGIN ) {
                     line.setOption( :marginLeft, baseSpacing );
                 }
+                */
 
                 dc.setColor( EvccColors.CONTENT, Graphics.COLOR_TRANSPARENT );
                 line.draw( dc, 0, dc.getHeight() / 2 );

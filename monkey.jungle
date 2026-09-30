@@ -111,7 +111,6 @@ descentmk351mm.resourcePath = $(epix2pro51mm.resourcePath)
 
 # Enduro series
 enduro3.resourcePath = $(resourceBase);$(resourceDrawables)/enduro3
-enduro3.sourcePath = $(base.sourcePath);$(sourceProperties)/enduro3
 
 # Epix series
 epix2.resourcePath = $(resourceBase);$(resourceDrawables)/epix2
@@ -132,15 +131,10 @@ fenix7spro.resourcePath = $(fenix7s.resourcePath)
 fenix7xpro.resourcePath = $(fenix7x.resourcePath)
 fenix7xpronowifi.resourcePath = $(fenix7x.resourcePath)
 fenixe.resourcePath = $(resourceBase);$(resourceDrawables)/fenix843mm
-fenixe.sourcePath = $(base.sourcePath);$(sourceProperties)/fenixe
 fenix843mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix843mm
-fenix843mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix843mm
 fenix847mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix847mm
-fenix847mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix847mm
 fenix8solar47mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix8solar47mm
-fenix8solar47mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix8solar47mm
 fenix8solar51mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix8solar51mm
-fenix8solar51mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix8solar51mm
 fenix8pro47mm.resourcePath = $(fenix847mm.resourcePath)
 fenix8pro47mm.sourcePath = $(fenix847mm.sourcePath)
 
@@ -149,26 +143,18 @@ fenix8pro47mm.sourcePath = $(fenix847mm.sourcePath)
 # The logo_flash/font sizes in generate.json are placeholders copied from the
 # similarly-sized Fenix 8 models and need to be verified by the operator.
 fenix943mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix943mm
-fenix943mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix943mm
 fenix947mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix947mm
-fenix947mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix947mm
 fenix9pro43mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9pro43mm
-fenix9pro43mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9pro43mm
 fenix9pro47mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9pro47mm
-fenix9pro47mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9pro47mm
 fenix9pro51mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9pro51mm
-fenix9pro51mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9pro51mm
 fenix9prosolar47mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9prosolar47mm
-fenix9prosolar47mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9prosolar47mm
 fenix9prosolar51mm.resourcePath = $(resourceBase);$(resourceDrawables)/fenix9prosolar51mm
-fenix9prosolar51mm.sourcePath = $(base.sourcePath);$(sourceProperties)/fenix9prosolar51mm
 
 # Forerunner series
 fr165.resourcePath = $(resourceBase);$(resourceDrawables)/fr165
 fr165.sourcePath = $(base.sourcePath);$(sourceProperties)/fr165
 fr165.excludeAnnotations = $(fr265.excludeAnnotations)
 fr165m.resourcePath = $(fr165.resourcePath)
-fr165m.sourcePath = $(fr165.sourcePath)
 fr165m.excludeAnnotations = $(fr265.excludeAnnotations)
 fr255.resourcePath = $(resourceBase);$(resourceDrawables)/fr255
 fr255.excludeAnnotations = $(fontsStatic);$(screenRound);$(hasSelect);$(swipeLeftDefault)
@@ -230,12 +216,9 @@ venusq2m.sourcePath = $(venusq2.sourcePath)
 venu3.resourcePath = $(resourceBase);$(resourceDrawables)/venu3
 venu3s.resourcePath = $(resourceBase);$(resourceDrawables)/venu3s
 venux1.resourcePath = $(resourceBase);$(resourceDrawables)/venux1
-venux1.sourcePath = $(base.sourcePath);$(sourceProperties)/venux1
 venux1.excludeAnnotations = $(fontsVector);$(screenRectangular);$(hasSelect);$(swipeLeftDefault)
 venu441mm.resourcePath = $(resourceBase);$(resourceDrawables)/fr165
-venu441mm.sourcePath = $(base.sourcePath);$(sourceProperties)/venu441mm
 venu445mm.resourcePath = $(resourceBase);$(resourceDrawables)/fr57047mm
-venu445mm.sourcePath = $(base.sourcePath);$(sourceProperties)/venu445mm
 
 # Vivoactive series
 vivoactive5.resourcePath = $(resourceBase);$(resourceDrawables)/vivoactive5

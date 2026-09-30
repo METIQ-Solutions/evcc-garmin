@@ -54,7 +54,8 @@ import Toybox.Application.Properties;
                     :dc => dc, 
                     :font => GlanceResourceSet.FONT_GLANCE, 
                     :justify => Graphics.TEXT_JUSTIFY_LEFT, 
-                    :backgroundColor => Graphics.COLOR_TRANSPARENT } );
+                    :backgroundColor => Graphics.COLOR_TRANSPARENT 
+                } );
 
                 _stateRequest.checkForError();
                 
